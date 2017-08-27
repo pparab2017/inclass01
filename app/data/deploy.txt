@@ -1,0 +1,121 @@
+ec2-34-231-213-107.compute-1.amazonaws.com
+
+cd ~/Documents/WebServerFiles/hscale/app/data/
+ssh -i hscaleapp.pem ec2-user@ec2-34-231-213-107.compute-1.amazonaws.com
+
+cd /var/www/hscale/app
+mysql --user="root" --password="mysql2017" --database="inclass01"
+
+mysql --user="root" --password="mysql2017" < "db_encoding.sql"
+
+use storycall;
+
+
+
+SELECT @@global.time_zone, @@session.time_zone;
+
+
+
+To setup the SSH:
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/SSL-on-an-instance.html
+
+Create instance
+
+Get Key and Change its permissions
+chmod 400 hscaleapp.pem
+
+connect to the instance using ssh
+cd ~/Documents/WebServerFiles/womenshealth/app/data/
+ssh -i womens_project.pem ec2-user@ec2-34-195-29-0.compute-1.amazonaws.com
+
+Installing the LAMP server
+
+sudo yum update -y
+sudo yum install -y httpd24 php56 mysql56-server php56-mysqlnd php56-common php56-mbstring
+
+sudo service httpd start
+sudo chkconfig httpd on
+chkconfig --list httpd
+
+sudo groupadd www
+sudo usermod -a -G www ec2-user
+exit
+groups
+sudo chown -R root:www /var/www
+sudo chmod 2775 /var/www
+find /var/www -type d -exec sudo chmod 2775 {} \;
+find /var/www -type f -exec sudo chmod 0664 {} \;
+
+Add the HTTP to the security rules
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule
+
+Install Git
+sudo yum install git-all
+
+Install Composer Globally
+https://getcomposer.org/download/
+https://getcomposer.org/doc/00-intro.md#globally
+
+MySQL Setup
+Password : rDpEGWGnKmbJuNiqy2QQMshi
+http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-LAMP.html
+
+sudo service mysqld start
+sudo mysql_secure_installation
+sudo chkconfig mysqld on
+
+
+Setup the app website to point to the correct location
+sudo nano /etc/httpd/conf/httpd.conf
+change the webserver to point to the public directory
+AllowOverride All
+sudo service httpd restart
+
+/var/www/hscale/public
+
+PHP setup
+sudo nano /etc/php.ini
+
+date.timezone = "America/New_York"
+memory_limit = 128M
+upload_max_filesize = 24M
+post_max_size = 32M
+
+sudo service httpd restart
+
+
+Git Hub Setup
+
+git clone https://mshehab@bitbucket.org/mshehab/hscale-web-app.git hscale
+git config --global credential.helper 'cache --timeout=36000'
+
+
+force the git pull
+git pull
+git fetch --all
+git reset --hard origin/master
+git pull origin master
+
+Update the apache setup to point to the project public folder
+make sure to update the server setting to allow override
+delete the vendor folder
+
+composer install
+delete propel links
+ln -s vendor/bin/propel propel
+
+./propel config:convert
+./propel status
+
+
+
+Setup the timezone
+ls /usr/share/zoneinfo
+
+sudo nano /etc/sysconfig/clock
+
+ZONE="America/New_York"
+
+
+sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
+sudo reboot

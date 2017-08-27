@@ -1,0 +1,9 @@
+DROP DATABASE IF EXISTS  hscale;
+
+CREATE DATABASE  IF NOT EXISTS `hscale`
+DEFAULT CHARACTER SET utf8
+DEFAULT COLLATE utf8_general_ci
+
+ /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `hscale`;
+SET character_set_client = utf8;
