@@ -7,7 +7,7 @@ return [
                     'adapter' => 'mysql',
                     'dsn' => 'mysql:host=localhost;port=3306;dbname=inclass01',
                     'user' => 'root',
-                    'password' => 'rDpEGWGnKmbJuNiqy2QQMshi',
+                    'password' => 'mysql2017',
                     'settings' => [
                         'charset' => 'utf8',
                         'queries' => [
