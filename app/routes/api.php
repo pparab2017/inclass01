@@ -172,9 +172,9 @@ $app->post('/api/update/myInfo', function ($request, $response, $args){
         $error = 'Address is empty';
     }
 
-    if(Utils::checkIfNotEmpty($userId) && isset($params['id']) && Utils::checkIfNotEmpty($params['id']))
+    if(Utils::checkIfNotEmpty($userId))
     {
-        $user =  UserQuery::create()->filterById($params['id'],UserQuery::EQUAL)->findOne();
+        $user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
         if($user != null)
         {
             $user->setFname($params['fname']);
@@ -198,4 +198,42 @@ $app->post('/api/update/myInfo', function ($request, $response, $args){
         ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
 
 })->setName('api.update.myInfo');
+
+$app->post('/api/myInfo', function ($request, $response, $args){
+
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+
+
+    if(Utils::checkIfNotEmpty($userId))
+    {
+        $user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
+        if($user != null)
+        {
+            $data["status"] = "ok";
+            $data["userId"] = $user->getId();
+            $data["userEmail"] = $user->getEmail();
+            $data["userFname"] = $user->getFname();
+            $data["userLname"] = $user->getLname();
+            $data["age"] = $user->getAge();
+            $data["weight"] = $user->getWeight();
+            $data["gender"] = $user->getGender();
+            $data["address"] = $user->getAddress();
+
+            //$data = array("user"=>$user->toArray(), "status"=>"ok");
+            return $response->withJson($data);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+})->setName('api.update.myInfo');
+
+
+
+
 
