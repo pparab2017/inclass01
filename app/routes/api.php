@@ -116,8 +116,6 @@ $app->post('/api/login', function ($request, $response, $args) {
         } else{
             $now = new DateTime();
             $future = new DateTime("now +1 years");
-
-
             $jti = Base62::encode(random_bytes(16));
             $payload = [
                 "iat" => $now->getTimeStamp(),
@@ -160,8 +158,6 @@ $app->post('/api/update/myInfo', function ($request, $response, $args){
         $error = 'First name is empty';
     } else if(!v::key('lname')->validate($params) || !v::stringType()->length(1, null)->validate($params['lname'])){
         $error = 'Last name is empty';
-    } else if(!v::key('password')->validate($params) || !v::stringType()->length(6, null)->validate($params['password'])){
-        $error = 'Password has to be 6 characters or more';
     } else if(!v::key('gender')->validate($params) || !v::stringType()->length(1, null)->validate($params['gender'])){
         $error = 'Gender is empty';
     } else if(!v::key('age')->validate($params) || !v::stringType()->length(1, null)->validate($params['age'])){
@@ -179,7 +175,6 @@ $app->post('/api/update/myInfo', function ($request, $response, $args){
         {
             $user->setFname($params['fname']);
             $user->setLname($params['lname']);
-            $user->setHash(Utils::generateHash($params['password']));
             $user->setGender($params['gender']);
             $user->setWeight($params['weight']);
             $user->setAge($params['age']);
