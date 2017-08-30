@@ -181,7 +181,16 @@ $app->post('/api/update/myInfo', function ($request, $response, $args){
             $user->setAddress($params['address']);
             $user->save();
 
-            $data = array("user"=>$user->toArray(), "status"=>"ok");
+            $data["status"] = "ok";
+            $data["userId"] = $user->getId();
+            $data["userEmail"] = $user->getEmail();
+            $data["userFname"] = $user->getFname();
+            $data["userLname"] = $user->getLname();
+            $data["age"] = $user->getAge();
+            $data["weight"] = $user->getWeight();
+            $data["gender"] = $user->getGender();
+            $data["address"] = $user->getAddress();
+
             return $response->withJson($data);
         }
         return $response
