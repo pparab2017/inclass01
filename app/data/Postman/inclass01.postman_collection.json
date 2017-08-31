@@ -1,0 +1,241 @@
+{
+	"id": "1235b78c-fc30-8e7b-a575-c3f96df73b37",
+	"name": "inclass01",
+	"description": "",
+	"order": [
+		"2fb3c45e-da5a-3eb8-7d19-afd0a426f735",
+		"bb215fdc-dda4-d31d-239d-7df5d7605fe2",
+		"d2f6f38e-fdc0-e854-3e40-928b824c9688",
+		"c5de0241-1c7f-df7f-287c-b793f6731e10"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1503769314641,
+	"owner": "1517128",
+	"public": false,
+	"requests": [
+		{
+			"id": "2fb3c45e-da5a-3eb8-7d19-afd0a426f735",
+			"headers": "",
+			"headerData": [],
+			"url": "{{URL}}/api/signup",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "fname",
+					"value": "Joanne",
+					"description": "First Name (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "lname",
+					"value": "Offiara",
+					"description": "Last Name (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "email",
+					"value": "jfo@test.com",
+					"description": "Email (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "test12",
+					"description": "Password (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "gender",
+					"value": "FEMALE",
+					"description": "Gender ENUM(MALE,FEMALE)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "weight",
+					"value": "120",
+					"description": "Weight (INT)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "age",
+					"value": "34",
+					"description": "Age (INT)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "address",
+					"value": "224 barton creek drive, apt G",
+					"description": "Address (STRING)",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1503953908825,
+			"name": "/api/signup",
+			"description": "",
+			"collectionId": "1235b78c-fc30-8e7b-a575-c3f96df73b37",
+			"responses": []
+		},
+		{
+			"id": "bb215fdc-dda4-d31d-239d-7df5d7605fe2",
+			"headers": "",
+			"headerData": [],
+			"url": "{{URL}}/api/login",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "u1@test.com",
+					"description": "Username (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "123456",
+					"description": "Password (STRING)",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1503953723546,
+			"name": "/api/login",
+			"description": "",
+			"collectionId": "1235b78c-fc30-8e7b-a575-c3f96df73b37",
+			"responses": []
+		},
+		{
+			"id": "c5de0241-1c7f-df7f-287c-b793f6731e10",
+			"headers": "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MDM5NTM1OTYsImV4cCI6MTUzNTQ4OTU5NiwianRpIjoiMWZrTFJVaW1qTzVCNG53cGM0VlFTaCIsInVzZXIiOjF9.TIFoa0XEBbKhunG6tDcbuCG-hgda11CGjWrlgHwZhLM\n",
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MDM5NTM1OTYsImV4cCI6MTUzNTQ4OTU5NiwianRpIjoiMWZrTFJVaW1qTzVCNG53cGM0VlFTaCIsInVzZXIiOjF9.TIFoa0XEBbKhunG6tDcbuCG-hgda11CGjWrlgHwZhLM",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/api/myInfo",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1503953725063,
+			"name": "/api/myInfo",
+			"description": "Gets user info ",
+			"collectionId": "1235b78c-fc30-8e7b-a575-c3f96df73b37",
+			"responses": []
+		},
+		{
+			"id": "d2f6f38e-fdc0-e854-3e40-928b824c9688",
+			"headers": "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MDM5NTMyMTcsImV4cCI6MTUzNTQ4OTIxNywianRpIjoiNTVVOVVGek5XY0JMak0zaDJsV3JrSSIsInVzZXIiOjF9.RCrznPUBGgiUooVgtIA-hZemiN62bEMutygHiSx1Gc8\n",
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE1MDM5NTMyMTcsImV4cCI6MTUzNTQ4OTIxNywianRpIjoiNTVVOVVGek5XY0JMak0zaDJsV3JrSSIsInVzZXIiOjF9.RCrznPUBGgiUooVgtIA-hZemiN62bEMutygHiSx1Gc8",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{URL}}/api/update/myInfo",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "fname",
+					"value": "Adarsh",
+					"description": "First Name (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "lname",
+					"value": "Sawant",
+					"description": "Last Name (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "12345678",
+					"description": "Password (STRING)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "gender",
+					"value": "MALE",
+					"description": "Gender ENUM (MALE,FEMALE)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "weight",
+					"value": "170",
+					"description": "Weight (INT)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "age",
+					"value": "25",
+					"description": "Age (INT)",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "address",
+					"value": "212 Barton Creek Dr, Apt G, Charlotte - NC, 28262",
+					"description": "Address (STRING)",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1503953726714,
+			"name": "/api/update/myInfo",
+			"description": "",
+			"collectionId": "1235b78c-fc30-8e7b-a575-c3f96df73b37",
+			"responses": []
+		}
+	]
+}
