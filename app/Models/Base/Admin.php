@@ -2,7 +2,6 @@
 
 namespace Base;
 
-use \Admin as ChildAdmin;
 use \AdminQuery as ChildAdminQuery;
 use \DateTime;
 use \Exception;
@@ -767,20 +766,8 @@ abstract class Admin implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-
-                if (!$this->isColumnModified(AdminTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
-                if (!$this->isColumnModified(AdminTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(AdminTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1366,20 +1353,6 @@ abstract class Admin implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(AdminTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildAdmin The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[AdminTableMap::COL_UPDATED_AT] = true;
-
-        return $this;
     }
 
     /**

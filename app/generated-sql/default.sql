@@ -23,6 +23,23 @@ CREATE TABLE `Admin`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- Results
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `Results`;
+
+CREATE TABLE `Results`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `discount` INTEGER,
+    `name` VARCHAR(300),
+    `photo` VARCHAR(300),
+    `price` DECIMAL(10,2),
+    `region` VARCHAR(300),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- User
 -- ---------------------------------------------------------------------
 

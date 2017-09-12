@@ -2,11 +2,10 @@
 
 namespace Base;
 
-use \UserQuery as ChildUserQuery;
-use \DateTime;
+use \ResultsQuery as ChildResultsQuery;
 use \Exception;
 use \PDO;
-use Map\UserTableMap;
+use Map\ResultsTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -18,21 +17,20 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'User' table.
+ * Base class that represents a row from the 'Results' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class User implements ActiveRecordInterface
+abstract class Results implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\UserTableMap';
+    const TABLE_MAP = '\\Map\\ResultsTableMap';
 
 
     /**
@@ -69,74 +67,39 @@ abstract class User implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the email field.
-     *
-     * @var        string
-     */
-    protected $email;
-
-    /**
-     * The value for the hash field.
-     *
-     * @var        string
-     */
-    protected $hash;
-
-    /**
-     * The value for the fname field.
-     *
-     * @var        string
-     */
-    protected $fname;
-
-    /**
-     * The value for the lname field.
-     *
-     * @var        string
-     */
-    protected $lname;
-
-    /**
-     * The value for the gender field.
-     *
-     * @var        string
-     */
-    protected $gender;
-
-    /**
-     * The value for the age field.
+     * The value for the discount field.
      *
      * @var        int
      */
-    protected $age;
+    protected $discount;
 
     /**
-     * The value for the weight field.
-     *
-     * @var        int
-     */
-    protected $weight;
-
-    /**
-     * The value for the address field.
+     * The value for the name field.
      *
      * @var        string
      */
-    protected $address;
+    protected $name;
 
     /**
-     * The value for the created_at field.
+     * The value for the photo field.
      *
-     * @var        DateTime
+     * @var        string
      */
-    protected $created_at;
+    protected $photo;
 
     /**
-     * The value for the updated_at field.
+     * The value for the price field.
      *
-     * @var        DateTime
+     * @var        string
      */
-    protected $updated_at;
+    protected $price;
+
+    /**
+     * The value for the region field.
+     *
+     * @var        string
+     */
+    protected $region;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -147,7 +110,7 @@ abstract class User implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Base\User object.
+     * Initializes internal state of Base\Results object.
      */
     public function __construct()
     {
@@ -242,9 +205,9 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>User</code> instance.  If
-     * <code>obj</code> is an instance of <code>User</code>, delegates to
-     * <code>equals(User)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Results</code> instance.  If
+     * <code>obj</code> is an instance of <code>Results</code>, delegates to
+     * <code>equals(Results)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -310,7 +273,7 @@ abstract class User implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|User The current object, for fluid interface
+     * @return $this|Results The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -382,130 +345,60 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [email] column value.
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Get the [hash] column value.
-     *
-     * @return string
-     */
-    public function getHash()
-    {
-        return $this->hash;
-    }
-
-    /**
-     * Get the [fname] column value.
-     *
-     * @return string
-     */
-    public function getFname()
-    {
-        return $this->fname;
-    }
-
-    /**
-     * Get the [lname] column value.
-     *
-     * @return string
-     */
-    public function getLname()
-    {
-        return $this->lname;
-    }
-
-    /**
-     * Get the [gender] column value.
-     *
-     * @return string
-     */
-    public function getGender()
-    {
-        return $this->gender;
-    }
-
-    /**
-     * Get the [age] column value.
+     * Get the [discount] column value.
      *
      * @return int
      */
-    public function getAge()
+    public function getDiscount()
     {
-        return $this->age;
+        return $this->discount;
     }
 
     /**
-     * Get the [weight] column value.
-     *
-     * @return int
-     */
-    public function getWeight()
-    {
-        return $this->weight;
-    }
-
-    /**
-     * Get the [address] column value.
+     * Get the [name] column value.
      *
      * @return string
      */
-    public function getAddress()
+    public function getName()
     {
-        return $this->address;
+        return $this->name;
     }
 
     /**
-     * Get the [optionally formatted] temporal [created_at] column value.
+     * Get the [photo] column value.
      *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return string
      */
-    public function getCreatedAt($format = NULL)
+    public function getPhoto()
     {
-        if ($format === null) {
-            return $this->created_at;
-        } else {
-            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
-        }
+        return $this->photo;
     }
 
     /**
-     * Get the [optionally formatted] temporal [updated_at] column value.
+     * Get the [price] column value.
      *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return string
      */
-    public function getUpdatedAt($format = NULL)
+    public function getPrice()
     {
-        if ($format === null) {
-            return $this->updated_at;
-        } else {
-            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
-        }
+        return $this->price;
+    }
+
+    /**
+     * Get the [region] column value.
+     *
+     * @return string
+     */
+    public function getRegion()
+    {
+        return $this->region;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\User The current object (for fluent API support)
+     * @return $this|\Results The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -515,211 +408,111 @@ abstract class User implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[UserTableMap::COL_ID] = true;
+            $this->modifiedColumns[ResultsTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [email] column.
-     *
-     * @param string $v new value
-     * @return $this|\User The current object (for fluent API support)
-     */
-    public function setEmail($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->email !== $v) {
-            $this->email = $v;
-            $this->modifiedColumns[UserTableMap::COL_EMAIL] = true;
-        }
-
-        return $this;
-    } // setEmail()
-
-    /**
-     * Set the value of [hash] column.
-     *
-     * @param string $v new value
-     * @return $this|\User The current object (for fluent API support)
-     */
-    public function setHash($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->hash !== $v) {
-            $this->hash = $v;
-            $this->modifiedColumns[UserTableMap::COL_HASH] = true;
-        }
-
-        return $this;
-    } // setHash()
-
-    /**
-     * Set the value of [fname] column.
-     *
-     * @param string $v new value
-     * @return $this|\User The current object (for fluent API support)
-     */
-    public function setFname($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->fname !== $v) {
-            $this->fname = $v;
-            $this->modifiedColumns[UserTableMap::COL_FNAME] = true;
-        }
-
-        return $this;
-    } // setFname()
-
-    /**
-     * Set the value of [lname] column.
-     *
-     * @param string $v new value
-     * @return $this|\User The current object (for fluent API support)
-     */
-    public function setLname($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->lname !== $v) {
-            $this->lname = $v;
-            $this->modifiedColumns[UserTableMap::COL_LNAME] = true;
-        }
-
-        return $this;
-    } // setLname()
-
-    /**
-     * Set the value of [gender] column.
-     *
-     * @param string $v new value
-     * @return $this|\User The current object (for fluent API support)
-     */
-    public function setGender($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->gender !== $v) {
-            $this->gender = $v;
-            $this->modifiedColumns[UserTableMap::COL_GENDER] = true;
-        }
-
-        return $this;
-    } // setGender()
-
-    /**
-     * Set the value of [age] column.
+     * Set the value of [discount] column.
      *
      * @param int $v new value
-     * @return $this|\User The current object (for fluent API support)
+     * @return $this|\Results The current object (for fluent API support)
      */
-    public function setAge($v)
+    public function setDiscount($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->age !== $v) {
-            $this->age = $v;
-            $this->modifiedColumns[UserTableMap::COL_AGE] = true;
+        if ($this->discount !== $v) {
+            $this->discount = $v;
+            $this->modifiedColumns[ResultsTableMap::COL_DISCOUNT] = true;
         }
 
         return $this;
-    } // setAge()
+    } // setDiscount()
 
     /**
-     * Set the value of [weight] column.
-     *
-     * @param int $v new value
-     * @return $this|\User The current object (for fluent API support)
-     */
-    public function setWeight($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->weight !== $v) {
-            $this->weight = $v;
-            $this->modifiedColumns[UserTableMap::COL_WEIGHT] = true;
-        }
-
-        return $this;
-    } // setWeight()
-
-    /**
-     * Set the value of [address] column.
+     * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return $this|\User The current object (for fluent API support)
+     * @return $this|\Results The current object (for fluent API support)
      */
-    public function setAddress($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->address !== $v) {
-            $this->address = $v;
-            $this->modifiedColumns[UserTableMap::COL_ADDRESS] = true;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[ResultsTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setAddress()
+    } // setName()
 
     /**
-     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     * Set the value of [photo] column.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\User The current object (for fluent API support)
+     * @param string $v new value
+     * @return $this|\Results The current object (for fluent API support)
      */
-    public function setCreatedAt($v)
+    public function setPhoto($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
-                $this->created_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[UserTableMap::COL_CREATED_AT] = true;
-            }
-        } // if either are not null
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->photo !== $v) {
+            $this->photo = $v;
+            $this->modifiedColumns[ResultsTableMap::COL_PHOTO] = true;
+        }
 
         return $this;
-    } // setCreatedAt()
+    } // setPhoto()
 
     /**
-     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     * Set the value of [price] column.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\User The current object (for fluent API support)
+     * @param string $v new value
+     * @return $this|\Results The current object (for fluent API support)
      */
-    public function setUpdatedAt($v)
+    public function setPrice($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
-                $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[UserTableMap::COL_UPDATED_AT] = true;
-            }
-        } // if either are not null
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->price !== $v) {
+            $this->price = $v;
+            $this->modifiedColumns[ResultsTableMap::COL_PRICE] = true;
+        }
 
         return $this;
-    } // setUpdatedAt()
+    } // setPrice()
+
+    /**
+     * Set the value of [region] column.
+     *
+     * @param string $v new value
+     * @return $this|\Results The current object (for fluent API support)
+     */
+    public function setRegion($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->region !== $v) {
+            $this->region = $v;
+            $this->modifiedColumns[ResultsTableMap::COL_REGION] = true;
+        }
+
+        return $this;
+    } // setRegion()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -757,44 +550,23 @@ abstract class User implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ResultsTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->email = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ResultsTableMap::translateFieldName('Discount', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->discount = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Hash', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->hash = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ResultsTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('Fname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->fname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ResultsTableMap::translateFieldName('Photo', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->photo = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('Lname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->lname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ResultsTableMap::translateFieldName('Price', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->price = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('Gender', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->gender = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('Age', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->age = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('Weight', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->weight = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('Address', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->address = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ResultsTableMap::translateFieldName('Region', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->region = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -803,10 +575,10 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ResultsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\User'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Results'), 0, $e);
         }
     }
 
@@ -848,13 +620,13 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ResultsTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildUserQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildResultsQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -873,8 +645,8 @@ abstract class User implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see User::setDeleted()
-     * @see User::isDeleted()
+     * @see Results::setDeleted()
+     * @see Results::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -883,11 +655,11 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ResultsTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildUserQuery::create()
+            $deleteQuery = ChildResultsQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -918,7 +690,7 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ResultsTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -937,7 +709,7 @@ abstract class User implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                UserTableMap::addInstanceToPool($this);
+                ResultsTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -994,48 +766,33 @@ abstract class User implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[UserTableMap::COL_ID] = true;
+        $this->modifiedColumns[ResultsTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . UserTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ResultsTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserTableMap::COL_ID)) {
+        if ($this->isColumnModified(ResultsTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
-            $modifiedColumns[':p' . $index++]  = 'email';
+        if ($this->isColumnModified(ResultsTableMap::COL_DISCOUNT)) {
+            $modifiedColumns[':p' . $index++]  = 'discount';
         }
-        if ($this->isColumnModified(UserTableMap::COL_HASH)) {
-            $modifiedColumns[':p' . $index++]  = 'hash';
+        if ($this->isColumnModified(ResultsTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(UserTableMap::COL_FNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'fname';
+        if ($this->isColumnModified(ResultsTableMap::COL_PHOTO)) {
+            $modifiedColumns[':p' . $index++]  = 'photo';
         }
-        if ($this->isColumnModified(UserTableMap::COL_LNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'lname';
+        if ($this->isColumnModified(ResultsTableMap::COL_PRICE)) {
+            $modifiedColumns[':p' . $index++]  = 'price';
         }
-        if ($this->isColumnModified(UserTableMap::COL_GENDER)) {
-            $modifiedColumns[':p' . $index++]  = 'gender';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_AGE)) {
-            $modifiedColumns[':p' . $index++]  = 'age';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_WEIGHT)) {
-            $modifiedColumns[':p' . $index++]  = 'weight';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_ADDRESS)) {
-            $modifiedColumns[':p' . $index++]  = 'address';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'created_at';
-        }
-        if ($this->isColumnModified(UserTableMap::COL_UPDATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'updated_at';
+        if ($this->isColumnModified(ResultsTableMap::COL_REGION)) {
+            $modifiedColumns[':p' . $index++]  = 'region';
         }
 
         $sql = sprintf(
-            'INSERT INTO User (%s) VALUES (%s)',
+            'INSERT INTO Results (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1047,35 +804,20 @@ abstract class User implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'email':
-                        $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+                    case 'discount':
+                        $stmt->bindValue($identifier, $this->discount, PDO::PARAM_INT);
                         break;
-                    case 'hash':
-                        $stmt->bindValue($identifier, $this->hash, PDO::PARAM_STR);
+                    case 'name':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'fname':
-                        $stmt->bindValue($identifier, $this->fname, PDO::PARAM_STR);
+                    case 'photo':
+                        $stmt->bindValue($identifier, $this->photo, PDO::PARAM_STR);
                         break;
-                    case 'lname':
-                        $stmt->bindValue($identifier, $this->lname, PDO::PARAM_STR);
+                    case 'price':
+                        $stmt->bindValue($identifier, $this->price, PDO::PARAM_STR);
                         break;
-                    case 'gender':
-                        $stmt->bindValue($identifier, $this->gender, PDO::PARAM_STR);
-                        break;
-                    case 'age':
-                        $stmt->bindValue($identifier, $this->age, PDO::PARAM_INT);
-                        break;
-                    case 'weight':
-                        $stmt->bindValue($identifier, $this->weight, PDO::PARAM_INT);
-                        break;
-                    case 'address':
-                        $stmt->bindValue($identifier, $this->address, PDO::PARAM_STR);
-                        break;
-                    case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'region':
+                        $stmt->bindValue($identifier, $this->region, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1123,7 +865,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ResultsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1143,34 +885,19 @@ abstract class User implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getEmail();
+                return $this->getDiscount();
                 break;
             case 2:
-                return $this->getHash();
+                return $this->getName();
                 break;
             case 3:
-                return $this->getFname();
+                return $this->getPhoto();
                 break;
             case 4:
-                return $this->getLname();
+                return $this->getPrice();
                 break;
             case 5:
-                return $this->getGender();
-                break;
-            case 6:
-                return $this->getAge();
-                break;
-            case 7:
-                return $this->getWeight();
-                break;
-            case 8:
-                return $this->getAddress();
-                break;
-            case 9:
-                return $this->getCreatedAt();
-                break;
-            case 10:
-                return $this->getUpdatedAt();
+                return $this->getRegion();
                 break;
             default:
                 return null;
@@ -1195,32 +922,19 @@ abstract class User implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
-        if (isset($alreadyDumpedObjects['User'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Results'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['User'][$this->hashCode()] = true;
-        $keys = UserTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Results'][$this->hashCode()] = true;
+        $keys = ResultsTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getEmail(),
-            $keys[2] => $this->getHash(),
-            $keys[3] => $this->getFname(),
-            $keys[4] => $this->getLname(),
-            $keys[5] => $this->getGender(),
-            $keys[6] => $this->getAge(),
-            $keys[7] => $this->getWeight(),
-            $keys[8] => $this->getAddress(),
-            $keys[9] => $this->getCreatedAt(),
-            $keys[10] => $this->getUpdatedAt(),
+            $keys[1] => $this->getDiscount(),
+            $keys[2] => $this->getName(),
+            $keys[3] => $this->getPhoto(),
+            $keys[4] => $this->getPrice(),
+            $keys[5] => $this->getRegion(),
         );
-        if ($result[$keys[9]] instanceof \DateTime) {
-            $result[$keys[9]] = $result[$keys[9]]->format('c');
-        }
-
-        if ($result[$keys[10]] instanceof \DateTime) {
-            $result[$keys[10]] = $result[$keys[10]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -1239,11 +953,11 @@ abstract class User implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\User
+     * @return $this|\Results
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ResultsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1254,7 +968,7 @@ abstract class User implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\User
+     * @return $this|\Results
      */
     public function setByPosition($pos, $value)
     {
@@ -1263,34 +977,19 @@ abstract class User implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setEmail($value);
+                $this->setDiscount($value);
                 break;
             case 2:
-                $this->setHash($value);
+                $this->setName($value);
                 break;
             case 3:
-                $this->setFname($value);
+                $this->setPhoto($value);
                 break;
             case 4:
-                $this->setLname($value);
+                $this->setPrice($value);
                 break;
             case 5:
-                $this->setGender($value);
-                break;
-            case 6:
-                $this->setAge($value);
-                break;
-            case 7:
-                $this->setWeight($value);
-                break;
-            case 8:
-                $this->setAddress($value);
-                break;
-            case 9:
-                $this->setCreatedAt($value);
-                break;
-            case 10:
-                $this->setUpdatedAt($value);
+                $this->setRegion($value);
                 break;
         } // switch()
 
@@ -1316,40 +1015,25 @@ abstract class User implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = UserTableMap::getFieldNames($keyType);
+        $keys = ResultsTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setEmail($arr[$keys[1]]);
+            $this->setDiscount($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setHash($arr[$keys[2]]);
+            $this->setName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setFname($arr[$keys[3]]);
+            $this->setPhoto($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setLname($arr[$keys[4]]);
+            $this->setPrice($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setGender($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setAge($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setWeight($arr[$keys[7]]);
-        }
-        if (array_key_exists($keys[8], $arr)) {
-            $this->setAddress($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setCreatedAt($arr[$keys[9]]);
-        }
-        if (array_key_exists($keys[10], $arr)) {
-            $this->setUpdatedAt($arr[$keys[10]]);
+            $this->setRegion($arr[$keys[5]]);
         }
     }
 
@@ -1370,7 +1054,7 @@ abstract class User implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\User The current object, for fluid interface
+     * @return $this|\Results The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1390,40 +1074,25 @@ abstract class User implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ResultsTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserTableMap::COL_ID)) {
-            $criteria->add(UserTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(ResultsTableMap::COL_ID)) {
+            $criteria->add(ResultsTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(UserTableMap::COL_EMAIL)) {
-            $criteria->add(UserTableMap::COL_EMAIL, $this->email);
+        if ($this->isColumnModified(ResultsTableMap::COL_DISCOUNT)) {
+            $criteria->add(ResultsTableMap::COL_DISCOUNT, $this->discount);
         }
-        if ($this->isColumnModified(UserTableMap::COL_HASH)) {
-            $criteria->add(UserTableMap::COL_HASH, $this->hash);
+        if ($this->isColumnModified(ResultsTableMap::COL_NAME)) {
+            $criteria->add(ResultsTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(UserTableMap::COL_FNAME)) {
-            $criteria->add(UserTableMap::COL_FNAME, $this->fname);
+        if ($this->isColumnModified(ResultsTableMap::COL_PHOTO)) {
+            $criteria->add(ResultsTableMap::COL_PHOTO, $this->photo);
         }
-        if ($this->isColumnModified(UserTableMap::COL_LNAME)) {
-            $criteria->add(UserTableMap::COL_LNAME, $this->lname);
+        if ($this->isColumnModified(ResultsTableMap::COL_PRICE)) {
+            $criteria->add(ResultsTableMap::COL_PRICE, $this->price);
         }
-        if ($this->isColumnModified(UserTableMap::COL_GENDER)) {
-            $criteria->add(UserTableMap::COL_GENDER, $this->gender);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_AGE)) {
-            $criteria->add(UserTableMap::COL_AGE, $this->age);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_WEIGHT)) {
-            $criteria->add(UserTableMap::COL_WEIGHT, $this->weight);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_ADDRESS)) {
-            $criteria->add(UserTableMap::COL_ADDRESS, $this->address);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
-            $criteria->add(UserTableMap::COL_CREATED_AT, $this->created_at);
-        }
-        if ($this->isColumnModified(UserTableMap::COL_UPDATED_AT)) {
-            $criteria->add(UserTableMap::COL_UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(ResultsTableMap::COL_REGION)) {
+            $criteria->add(ResultsTableMap::COL_REGION, $this->region);
         }
 
         return $criteria;
@@ -1441,8 +1110,8 @@ abstract class User implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildUserQuery::create();
-        $criteria->add(UserTableMap::COL_ID, $this->id);
+        $criteria = ChildResultsQuery::create();
+        $criteria->add(ResultsTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1504,23 +1173,18 @@ abstract class User implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \User (or compatible) type.
+     * @param      object $copyObj An object of \Results (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setEmail($this->getEmail());
-        $copyObj->setHash($this->getHash());
-        $copyObj->setFname($this->getFname());
-        $copyObj->setLname($this->getLname());
-        $copyObj->setGender($this->getGender());
-        $copyObj->setAge($this->getAge());
-        $copyObj->setWeight($this->getWeight());
-        $copyObj->setAddress($this->getAddress());
-        $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setDiscount($this->getDiscount());
+        $copyObj->setName($this->getName());
+        $copyObj->setPhoto($this->getPhoto());
+        $copyObj->setPrice($this->getPrice());
+        $copyObj->setRegion($this->getRegion());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1536,7 +1200,7 @@ abstract class User implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \User Clone of current object.
+     * @return \Results Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1557,16 +1221,11 @@ abstract class User implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
-        $this->email = null;
-        $this->hash = null;
-        $this->fname = null;
-        $this->lname = null;
-        $this->gender = null;
-        $this->age = null;
-        $this->weight = null;
-        $this->address = null;
-        $this->created_at = null;
-        $this->updated_at = null;
+        $this->discount = null;
+        $this->name = null;
+        $this->photo = null;
+        $this->price = null;
+        $this->region = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1596,7 +1255,7 @@ abstract class User implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ResultsTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

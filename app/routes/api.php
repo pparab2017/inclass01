@@ -239,5 +239,26 @@ $app->post('/api/myInfo', function ($request, $response, $args){
 
 
 
+$app->get('/api/getAllProducts', function ($request, $response, $args) {
+// No token required ..
+       $results = ResultsQuery::create()
+           ->find();
+
+       for($i =0;$i<$results->count();$i++)
+       {
+           if(Utils::checkIfNotEmpty ($results[$i]->getPhoto()))
+           $results[$i]->setPhoto("/imgs/products/" . $results[$i]->getPhoto());
+       }
+
+        if($results != NULL){
+            $data = array("results"=>$results->toArray(), "status"=>"ok");
+            return $response->withJson($data);
+        }
+
+    $data = array("status"=>"error", "message" =>"Unable to retrieve participant information.");
+    return $response->withJson($data);
+})->setName('api.getAllProducts');
+
+
 
 
