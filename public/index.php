@@ -67,7 +67,7 @@ $app->add(new \Slim\Middleware\JwtAuthentication([
     "secure" => false,
     "secret" => getenv("JWT_SECRET"),
     "path" => ["/api"],
-    "passthrough" => ["/api/signup", "/api/login", "/api/forgotPassword","/api/getAllProducts"],
+    "passthrough" => ["/api/signup", "/api/login", "/api/forgotPassword","/api/getAllProducts","/api/getProductsByType/"],
     "attribute" => "jwt",
     "error" => function ($request, $response, $arguments) {
         $data["status"] = "error";
