@@ -1,0 +1,58 @@
+{
+	"id": "d80aa629-d400-78fa-3a00-cfb290100088",
+	"name": "inclass02",
+	"description": "",
+	"order": [
+		"abdd1c61-e92f-f88e-d76f-f1c87595c819",
+		"1b41c8e6-cac1-002f-2a37-2efe03e2ad2f"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1505316037562,
+	"owner": "1517128",
+	"public": false,
+	"requests": [
+		{
+			"id": "1b41c8e6-cac1-002f-2a37-2efe03e2ad2f",
+			"headers": "",
+			"headerData": [],
+			"url": "{{LURL}}/api/getProductsByType/produce",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1505316821149,
+			"name": "/api/getProductsByType/{type}",
+			"description": "",
+			"collectionId": "d80aa629-d400-78fa-3a00-cfb290100088",
+			"responses": []
+		},
+		{
+			"id": "abdd1c61-e92f-f88e-d76f-f1c87595c819",
+			"headers": "",
+			"headerData": [],
+			"url": "{{URL}}/api/getAllProducts",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1505317136265,
+			"name": "/api/getAllProducts",
+			"description": "",
+			"collectionId": "d80aa629-d400-78fa-3a00-cfb290100088",
+			"responses": []
+		}
+	]
+}
