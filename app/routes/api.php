@@ -284,13 +284,31 @@ $app->get('/api/getMessagesByRegion/{region}', function ($request, $response, $a
 
         if (Utils::checkIfNotEmpty($userId)) {
             //$user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
-            $Msgs = MessagesQuery::create()
-                ->filterByToid($userId, MessagesQuery::EQUAL)
-                ->filterByRegion( $args['region'], MessagesQuery::EQUAL)
-                ->find();
+//            $Msgs = MessagesQuery::create()
+//                ->filterByToid($userId, MessagesQuery::EQUAL)
+//                ->filterByRegion( $args['region'], MessagesQuery::EQUAL)
+//                ->find();
+
+
+            $sql = "SELECT 
+                M.Id, M.Time, M.Region, M.Content, M.MsgLock, M.MsgRead,
+                M.fromID, M.toID,
+                CONCAT(F.fname,' ',F.lname) AS FromName,
+                CONCAT(T.fname,' ',T.lname) AS ToName
+                 FROM Messages M
+                JOIN User F on M.fromID = F.id
+                JOIN User T on M.toID = T.id
+                WHERE M.toID = {_ID} AND  M.region = '{_REGION}' ";
+
+            $sql = str_replace("{_ID}",$userId,$sql);
+            $sql = str_replace("{_REGION}",$args['region'],$sql);
+            $conn = Propel::getConnection();
+            $reader = $conn->prepare($sql);
+            $reader->execute();
+            $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
 
             if ($Msgs != null) {
-                return $response->withJson(['status' => 'ok', 'Messages' => $Msgs->toArray()]);
+                return $response->withJson(['status' => 'ok', 'Messages' => $Msgs]);
             }
             return $response
                 ->withStatus(400)
