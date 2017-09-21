@@ -330,8 +330,9 @@ $app->get('/api/getAllMessages', function ($request, $response, $args) {
                  FROM Messages M
                 JOIN User F on M.fromID = F.id
                 JOIN User T on M.toID = T.id
-                WHERE M.toID = {ID}";
-        $sql = str_replace("{ID}",$userId);
+                WHERE M.toID = {_ID} ";
+
+        $sql = str_replace("{_ID}",$userId,$sql);
         $conn = Propel::getConnection();
         $reader = $conn->prepare($sql);
         $reader->execute();
