@@ -23,6 +23,33 @@ CREATE TABLE `Admin`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- Messages
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `Messages`;
+
+CREATE TABLE `Messages`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `fromID` INTEGER,
+    `toID` INTEGER,
+    `time` DATETIME,
+    `region` VARCHAR(300),
+    `Content` VARCHAR(3000),
+    `msgRead` enum('READ','NEW') DEFAULT 'NEW',
+    `msgLock` enum('LOCK','UNLOCK') DEFAULT 'LOCK',
+    PRIMARY KEY (`id`),
+    INDEX `fk_from_Id_idx` (`fromID`),
+    INDEX `fk_to_id_idx` (`toID`),
+    CONSTRAINT `fk_from_Id`
+        FOREIGN KEY (`fromID`)
+        REFERENCES `User` (`id`),
+    CONSTRAINT `fk_to_id`
+        FOREIGN KEY (`toID`)
+        REFERENCES `User` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- Results
 -- ---------------------------------------------------------------------
 

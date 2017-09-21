@@ -244,6 +244,8 @@ $app->get('/api/getProductsByType/{type}', function ($request, $response, $args)
     if(isset($args['type']) && Utils::checkIfNotEmpty($args['type'])) {
 
 
+
+
         $results = ResultsQuery::create()
             ->filterByRegion($args['type'], ResultsQuery::EQUAL)
             ->find();
@@ -263,6 +265,207 @@ $app->get('/api/getProductsByType/{type}', function ($request, $response, $args)
     $data = array("status"=>"error", "message" =>"Unable to retrieve participant information.");
     return $response->withJson($data);
 })->setName('api.getProductsByType');
+
+
+
+
+
+
+
+$app->get('/api/getMessagesByRegion/{region}', function ($request, $response, $args) {
+    if(isset($args['region']) && Utils::checkIfNotEmpty($args['region'])) {
+
+
+        $params = $request->getParsedBody();
+        $userId = $this->jwt->user;
+
+
+        if (Utils::checkIfNotEmpty($userId)) {
+            //$user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
+            $Msgs = MessagesQuery::create()
+                ->filterByToid($userId, MessagesQuery::EQUAL)
+                ->filterByRegion( $args['region'], MessagesQuery::EQUAL)
+                ->find();
+
+            if ($Msgs != null) {
+                return $response->withJson(['status' => 'ok', 'Messages' => $Msgs->toArray()]);
+            }
+            return $response
+                ->withStatus(400)
+                ->withJson(['status' => 'error', "message" => "Invalid user ID"]);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status' => 'error', "message" => "Invalid user ID"]);
+    }
+
+    $data = array("status"=>"error", "message" =>"Unable to retrieve participant information.");
+    return $response->withJson($data);
+
+
+})->setName('api.getMessagesByRegion');
+
+
+$app->get('/api/getAllMessages', function ($request, $response, $args) {
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+
+
+    if(Utils::checkIfNotEmpty($userId))
+    {
+        //$user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
+        $Msgs = MessagesQuery::create()
+            ->filterByToid($userId, MessagesQuery::EQUAL)
+            ->find();
+
+        if($Msgs != null)
+        {
+            return $response->withJson(['status'=>'ok', 'Messages'=>$Msgs->toArray()]);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+
+})->setName('api.getAllMessages');
+
+
+$app->post('/api/createNewMessage', function ($request, $response, $args) {
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+
+
+    if(!v::key('from')->validate($params) || !v::stringType()->length(1, null)->validate($params['from'])){
+        $error = 'From is Empty';
+    } else if(!v::key('to')->validate($params) || !v::stringType()->length(1, null)->validate($params['to'])){
+        $error = 'To is empty';
+    } else if(!v::key('region')->validate($params) || !v::stringType()->length(1, null)->validate($params['region'])){
+        $error = 'Region is empty';
+    } else if(!v::key('content')->validate($params) || !v::stringType()->length(1, null)->validate($params['content'])){
+        $error = 'Message content is empty';
+    }
+
+    if(Utils::checkIfNotEmpty($userId))
+    {
+
+        $date = new DateTime("now");
+        $msg = new Messages();
+        $msg->setToid(intval($params['to']));
+        $msg->setFromid(intval($params['from']));
+        $msg->setRegion(($params['region']));
+        $msg->setContent(($params['content']));
+        $msg->setTime($date);
+        $msg->save();
+
+        //$user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
+        $Msgs = MessagesQuery::create()
+            ->filterByToid($userId, MessagesQuery::EQUAL)
+            ->find();
+
+        if($Msgs != null)
+        {
+            return $response->withJson(['status'=>'ok', 'Messages'=>$Msgs->toArray()]);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+
+})->setName('api.getAllMessages');
+
+
+
+
+$app->get('/api/deleteMessage/{id}', function ($request, $response, $args) {
+// No token required ..
+    if(isset($args['id']) && Utils::checkIfNotEmpty($args['id'])) {
+
+
+        $msg = MessagesQuery::create()
+            ->filterById($args['id'], ResultsQuery::EQUAL)
+            ->findOne();
+
+
+        if($msg!= null)
+        {
+            $msg->delete();
+            return $response->withJson(['status'=>'ok']);
+        }
+
+    }
+
+
+    $data = array("status"=>"error", "message" =>"Unable to delete message.");
+    return $response->withJson($data);
+})->setName('api.deleteMessage');
+
+
+
+
+$app->get('/api/setMessageAsUnlock/{id}', function ($request, $response, $args) {
+// No token required ..
+    if(isset($args['id']) && Utils::checkIfNotEmpty($args['id'])) {
+
+
+        $msg = MessagesQuery::create()
+            ->filterById($args['id'], ResultsQuery::EQUAL)
+            ->findOne();
+
+
+        if($msg!= null)
+        {
+            $msg->setMsglock("UNLOCK");
+            $msg->save();
+            return $response->withJson(['status'=>'ok']);
+        }
+
+    }
+
+
+    $data = array("status"=>"error", "message" =>"Unable to Change Status.");
+    return $response->withJson($data);
+})->setName('api.setMessageAsUnlock');
+
+
+
+
+$app->get('/api/setMessageAsRead/{id}', function ($request, $response, $args) {
+// No token required ..
+    if(isset($args['id']) && Utils::checkIfNotEmpty($args['id'])) {
+
+
+        $msg = MessagesQuery::create()
+            ->filterById($args['id'], ResultsQuery::EQUAL)
+            ->findOne();
+
+
+        if($msg!= null)
+        {
+            $msg->setMsgread("READ");
+            $msg->save();
+            return $response->withJson(['status'=>'ok']);
+        }
+
+    }
+
+
+    $data = array("status"=>"error", "message" =>"Unable to Change Status.");
+    return $response->withJson($data);
+})->setName('api.setMessageAsRead');
+
+
+
+
+
+
 
 
 

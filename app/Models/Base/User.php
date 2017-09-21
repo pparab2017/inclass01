@@ -2,16 +2,21 @@
 
 namespace Base;
 
+use \Messages as ChildMessages;
+use \MessagesQuery as ChildMessagesQuery;
+use \User as ChildUser;
 use \UserQuery as ChildUserQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Map\MessagesTableMap;
 use Map\UserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -139,12 +144,36 @@ abstract class User implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * @var        ObjectCollection|ChildMessages[] Collection to store aggregation of ChildMessages objects.
+     */
+    protected $collMessagessRelatedByFromid;
+    protected $collMessagessRelatedByFromidPartial;
+
+    /**
+     * @var        ObjectCollection|ChildMessages[] Collection to store aggregation of ChildMessages objects.
+     */
+    protected $collMessagessRelatedByToid;
+    protected $collMessagessRelatedByToidPartial;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildMessages[]
+     */
+    protected $messagessRelatedByFromidScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildMessages[]
+     */
+    protected $messagessRelatedByToidScheduledForDeletion = null;
 
     /**
      * Initializes internal state of Base\User object.
@@ -864,6 +893,10 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collMessagessRelatedByFromid = null;
+
+            $this->collMessagessRelatedByToid = null;
+
         } // if (deep)
     }
 
@@ -972,6 +1005,42 @@ abstract class User implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->messagessRelatedByFromidScheduledForDeletion !== null) {
+                if (!$this->messagessRelatedByFromidScheduledForDeletion->isEmpty()) {
+                    foreach ($this->messagessRelatedByFromidScheduledForDeletion as $messagesRelatedByFromid) {
+                        // need to save related object because we set the relation to null
+                        $messagesRelatedByFromid->save($con);
+                    }
+                    $this->messagessRelatedByFromidScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collMessagessRelatedByFromid !== null) {
+                foreach ($this->collMessagessRelatedByFromid as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->messagessRelatedByToidScheduledForDeletion !== null) {
+                if (!$this->messagessRelatedByToidScheduledForDeletion->isEmpty()) {
+                    foreach ($this->messagessRelatedByToidScheduledForDeletion as $messagesRelatedByToid) {
+                        // need to save related object because we set the relation to null
+                        $messagesRelatedByToid->save($con);
+                    }
+                    $this->messagessRelatedByToidScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collMessagessRelatedByToid !== null) {
+                foreach ($this->collMessagessRelatedByToid as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -1189,10 +1258,11 @@ abstract class User implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
         if (isset($alreadyDumpedObjects['User'][$this->hashCode()])) {
@@ -1226,6 +1296,38 @@ abstract class User implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->collMessagessRelatedByFromid) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'messagess';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Messagess';
+                        break;
+                    default:
+                        $key = 'Messagess';
+                }
+
+                $result[$key] = $this->collMessagessRelatedByFromid->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collMessagessRelatedByToid) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'messagess';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Messagess';
+                        break;
+                    default:
+                        $key = 'Messagess';
+                }
+
+                $result[$key] = $this->collMessagessRelatedByToid->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
 
         return $result;
     }
@@ -1521,6 +1623,26 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setAddress($this->getAddress());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getMessagessRelatedByFromid() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addMessagesRelatedByFromid($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getMessagessRelatedByToid() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addMessagesRelatedByToid($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1547,6 +1669,475 @@ abstract class User implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('MessagesRelatedByFromid' == $relationName) {
+            return $this->initMessagessRelatedByFromid();
+        }
+        if ('MessagesRelatedByToid' == $relationName) {
+            return $this->initMessagessRelatedByToid();
+        }
+    }
+
+    /**
+     * Clears out the collMessagessRelatedByFromid collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addMessagessRelatedByFromid()
+     */
+    public function clearMessagessRelatedByFromid()
+    {
+        $this->collMessagessRelatedByFromid = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collMessagessRelatedByFromid collection loaded partially.
+     */
+    public function resetPartialMessagessRelatedByFromid($v = true)
+    {
+        $this->collMessagessRelatedByFromidPartial = $v;
+    }
+
+    /**
+     * Initializes the collMessagessRelatedByFromid collection.
+     *
+     * By default this just sets the collMessagessRelatedByFromid collection to an empty array (like clearcollMessagessRelatedByFromid());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initMessagessRelatedByFromid($overrideExisting = true)
+    {
+        if (null !== $this->collMessagessRelatedByFromid && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = MessagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collMessagessRelatedByFromid = new $collectionClassName;
+        $this->collMessagessRelatedByFromid->setModel('\Messages');
+    }
+
+    /**
+     * Gets an array of ChildMessages objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildMessages[] List of ChildMessages objects
+     * @throws PropelException
+     */
+    public function getMessagessRelatedByFromid(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collMessagessRelatedByFromidPartial && !$this->isNew();
+        if (null === $this->collMessagessRelatedByFromid || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMessagessRelatedByFromid) {
+                // return empty collection
+                $this->initMessagessRelatedByFromid();
+            } else {
+                $collMessagessRelatedByFromid = ChildMessagesQuery::create(null, $criteria)
+                    ->filterByUserRelatedByFromid($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collMessagessRelatedByFromidPartial && count($collMessagessRelatedByFromid)) {
+                        $this->initMessagessRelatedByFromid(false);
+
+                        foreach ($collMessagessRelatedByFromid as $obj) {
+                            if (false == $this->collMessagessRelatedByFromid->contains($obj)) {
+                                $this->collMessagessRelatedByFromid->append($obj);
+                            }
+                        }
+
+                        $this->collMessagessRelatedByFromidPartial = true;
+                    }
+
+                    return $collMessagessRelatedByFromid;
+                }
+
+                if ($partial && $this->collMessagessRelatedByFromid) {
+                    foreach ($this->collMessagessRelatedByFromid as $obj) {
+                        if ($obj->isNew()) {
+                            $collMessagessRelatedByFromid[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collMessagessRelatedByFromid = $collMessagessRelatedByFromid;
+                $this->collMessagessRelatedByFromidPartial = false;
+            }
+        }
+
+        return $this->collMessagessRelatedByFromid;
+    }
+
+    /**
+     * Sets a collection of ChildMessages objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $messagessRelatedByFromid A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setMessagessRelatedByFromid(Collection $messagessRelatedByFromid, ConnectionInterface $con = null)
+    {
+        /** @var ChildMessages[] $messagessRelatedByFromidToDelete */
+        $messagessRelatedByFromidToDelete = $this->getMessagessRelatedByFromid(new Criteria(), $con)->diff($messagessRelatedByFromid);
+
+
+        $this->messagessRelatedByFromidScheduledForDeletion = $messagessRelatedByFromidToDelete;
+
+        foreach ($messagessRelatedByFromidToDelete as $messagesRelatedByFromidRemoved) {
+            $messagesRelatedByFromidRemoved->setUserRelatedByFromid(null);
+        }
+
+        $this->collMessagessRelatedByFromid = null;
+        foreach ($messagessRelatedByFromid as $messagesRelatedByFromid) {
+            $this->addMessagesRelatedByFromid($messagesRelatedByFromid);
+        }
+
+        $this->collMessagessRelatedByFromid = $messagessRelatedByFromid;
+        $this->collMessagessRelatedByFromidPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Messages objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Messages objects.
+     * @throws PropelException
+     */
+    public function countMessagessRelatedByFromid(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collMessagessRelatedByFromidPartial && !$this->isNew();
+        if (null === $this->collMessagessRelatedByFromid || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMessagessRelatedByFromid) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getMessagessRelatedByFromid());
+            }
+
+            $query = ChildMessagesQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUserRelatedByFromid($this)
+                ->count($con);
+        }
+
+        return count($this->collMessagessRelatedByFromid);
+    }
+
+    /**
+     * Method called to associate a ChildMessages object to this object
+     * through the ChildMessages foreign key attribute.
+     *
+     * @param  ChildMessages $l ChildMessages
+     * @return $this|\User The current object (for fluent API support)
+     */
+    public function addMessagesRelatedByFromid(ChildMessages $l)
+    {
+        if ($this->collMessagessRelatedByFromid === null) {
+            $this->initMessagessRelatedByFromid();
+            $this->collMessagessRelatedByFromidPartial = true;
+        }
+
+        if (!$this->collMessagessRelatedByFromid->contains($l)) {
+            $this->doAddMessagesRelatedByFromid($l);
+
+            if ($this->messagessRelatedByFromidScheduledForDeletion and $this->messagessRelatedByFromidScheduledForDeletion->contains($l)) {
+                $this->messagessRelatedByFromidScheduledForDeletion->remove($this->messagessRelatedByFromidScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildMessages $messagesRelatedByFromid The ChildMessages object to add.
+     */
+    protected function doAddMessagesRelatedByFromid(ChildMessages $messagesRelatedByFromid)
+    {
+        $this->collMessagessRelatedByFromid[]= $messagesRelatedByFromid;
+        $messagesRelatedByFromid->setUserRelatedByFromid($this);
+    }
+
+    /**
+     * @param  ChildMessages $messagesRelatedByFromid The ChildMessages object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeMessagesRelatedByFromid(ChildMessages $messagesRelatedByFromid)
+    {
+        if ($this->getMessagessRelatedByFromid()->contains($messagesRelatedByFromid)) {
+            $pos = $this->collMessagessRelatedByFromid->search($messagesRelatedByFromid);
+            $this->collMessagessRelatedByFromid->remove($pos);
+            if (null === $this->messagessRelatedByFromidScheduledForDeletion) {
+                $this->messagessRelatedByFromidScheduledForDeletion = clone $this->collMessagessRelatedByFromid;
+                $this->messagessRelatedByFromidScheduledForDeletion->clear();
+            }
+            $this->messagessRelatedByFromidScheduledForDeletion[]= $messagesRelatedByFromid;
+            $messagesRelatedByFromid->setUserRelatedByFromid(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collMessagessRelatedByToid collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addMessagessRelatedByToid()
+     */
+    public function clearMessagessRelatedByToid()
+    {
+        $this->collMessagessRelatedByToid = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collMessagessRelatedByToid collection loaded partially.
+     */
+    public function resetPartialMessagessRelatedByToid($v = true)
+    {
+        $this->collMessagessRelatedByToidPartial = $v;
+    }
+
+    /**
+     * Initializes the collMessagessRelatedByToid collection.
+     *
+     * By default this just sets the collMessagessRelatedByToid collection to an empty array (like clearcollMessagessRelatedByToid());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initMessagessRelatedByToid($overrideExisting = true)
+    {
+        if (null !== $this->collMessagessRelatedByToid && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = MessagesTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collMessagessRelatedByToid = new $collectionClassName;
+        $this->collMessagessRelatedByToid->setModel('\Messages');
+    }
+
+    /**
+     * Gets an array of ChildMessages objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildMessages[] List of ChildMessages objects
+     * @throws PropelException
+     */
+    public function getMessagessRelatedByToid(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collMessagessRelatedByToidPartial && !$this->isNew();
+        if (null === $this->collMessagessRelatedByToid || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collMessagessRelatedByToid) {
+                // return empty collection
+                $this->initMessagessRelatedByToid();
+            } else {
+                $collMessagessRelatedByToid = ChildMessagesQuery::create(null, $criteria)
+                    ->filterByUserRelatedByToid($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collMessagessRelatedByToidPartial && count($collMessagessRelatedByToid)) {
+                        $this->initMessagessRelatedByToid(false);
+
+                        foreach ($collMessagessRelatedByToid as $obj) {
+                            if (false == $this->collMessagessRelatedByToid->contains($obj)) {
+                                $this->collMessagessRelatedByToid->append($obj);
+                            }
+                        }
+
+                        $this->collMessagessRelatedByToidPartial = true;
+                    }
+
+                    return $collMessagessRelatedByToid;
+                }
+
+                if ($partial && $this->collMessagessRelatedByToid) {
+                    foreach ($this->collMessagessRelatedByToid as $obj) {
+                        if ($obj->isNew()) {
+                            $collMessagessRelatedByToid[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collMessagessRelatedByToid = $collMessagessRelatedByToid;
+                $this->collMessagessRelatedByToidPartial = false;
+            }
+        }
+
+        return $this->collMessagessRelatedByToid;
+    }
+
+    /**
+     * Sets a collection of ChildMessages objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $messagessRelatedByToid A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setMessagessRelatedByToid(Collection $messagessRelatedByToid, ConnectionInterface $con = null)
+    {
+        /** @var ChildMessages[] $messagessRelatedByToidToDelete */
+        $messagessRelatedByToidToDelete = $this->getMessagessRelatedByToid(new Criteria(), $con)->diff($messagessRelatedByToid);
+
+
+        $this->messagessRelatedByToidScheduledForDeletion = $messagessRelatedByToidToDelete;
+
+        foreach ($messagessRelatedByToidToDelete as $messagesRelatedByToidRemoved) {
+            $messagesRelatedByToidRemoved->setUserRelatedByToid(null);
+        }
+
+        $this->collMessagessRelatedByToid = null;
+        foreach ($messagessRelatedByToid as $messagesRelatedByToid) {
+            $this->addMessagesRelatedByToid($messagesRelatedByToid);
+        }
+
+        $this->collMessagessRelatedByToid = $messagessRelatedByToid;
+        $this->collMessagessRelatedByToidPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Messages objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Messages objects.
+     * @throws PropelException
+     */
+    public function countMessagessRelatedByToid(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collMessagessRelatedByToidPartial && !$this->isNew();
+        if (null === $this->collMessagessRelatedByToid || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collMessagessRelatedByToid) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getMessagessRelatedByToid());
+            }
+
+            $query = ChildMessagesQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUserRelatedByToid($this)
+                ->count($con);
+        }
+
+        return count($this->collMessagessRelatedByToid);
+    }
+
+    /**
+     * Method called to associate a ChildMessages object to this object
+     * through the ChildMessages foreign key attribute.
+     *
+     * @param  ChildMessages $l ChildMessages
+     * @return $this|\User The current object (for fluent API support)
+     */
+    public function addMessagesRelatedByToid(ChildMessages $l)
+    {
+        if ($this->collMessagessRelatedByToid === null) {
+            $this->initMessagessRelatedByToid();
+            $this->collMessagessRelatedByToidPartial = true;
+        }
+
+        if (!$this->collMessagessRelatedByToid->contains($l)) {
+            $this->doAddMessagesRelatedByToid($l);
+
+            if ($this->messagessRelatedByToidScheduledForDeletion and $this->messagessRelatedByToidScheduledForDeletion->contains($l)) {
+                $this->messagessRelatedByToidScheduledForDeletion->remove($this->messagessRelatedByToidScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildMessages $messagesRelatedByToid The ChildMessages object to add.
+     */
+    protected function doAddMessagesRelatedByToid(ChildMessages $messagesRelatedByToid)
+    {
+        $this->collMessagessRelatedByToid[]= $messagesRelatedByToid;
+        $messagesRelatedByToid->setUserRelatedByToid($this);
+    }
+
+    /**
+     * @param  ChildMessages $messagesRelatedByToid The ChildMessages object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeMessagesRelatedByToid(ChildMessages $messagesRelatedByToid)
+    {
+        if ($this->getMessagessRelatedByToid()->contains($messagesRelatedByToid)) {
+            $pos = $this->collMessagessRelatedByToid->search($messagesRelatedByToid);
+            $this->collMessagessRelatedByToid->remove($pos);
+            if (null === $this->messagessRelatedByToidScheduledForDeletion) {
+                $this->messagessRelatedByToidScheduledForDeletion = clone $this->collMessagessRelatedByToid;
+                $this->messagessRelatedByToidScheduledForDeletion->clear();
+            }
+            $this->messagessRelatedByToidScheduledForDeletion[]= $messagesRelatedByToid;
+            $messagesRelatedByToid->setUserRelatedByToid(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1585,8 +2176,20 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collMessagessRelatedByFromid) {
+                foreach ($this->collMessagessRelatedByFromid as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collMessagessRelatedByToid) {
+                foreach ($this->collMessagessRelatedByToid as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collMessagessRelatedByFromid = null;
+        $this->collMessagessRelatedByToid = null;
     }
 
     /**
