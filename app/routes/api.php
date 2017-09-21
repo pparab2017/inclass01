@@ -298,7 +298,8 @@ $app->get('/api/getMessagesByRegion/{region}', function ($request, $response, $a
                  FROM Messages M
                 JOIN User F on M.fromID = F.id
                 JOIN User T on M.toID = T.id
-                WHERE M.toID = {_ID} AND  M.region = '{_REGION}' ";
+                WHERE M.toID = {_ID} AND  M.region = '{_REGION}'
+                 ORDER BY  M.MsgRead DESC, M.Time DESC";
 
             $sql = str_replace("{_ID}",$userId,$sql);
             $sql = str_replace("{_REGION}",$args['region'],$sql);
@@ -379,7 +380,7 @@ $app->get('/api/getAllMessages', function ($request, $response, $args) {
                  FROM Messages M
                 JOIN User F on M.fromID = F.id
                 JOIN User T on M.toID = T.id
-                WHERE M.toID = {_ID} ";
+                WHERE M.toID = {_ID} ORDER BY  M.MsgRead DESC, M.Time DESC";
 
         $sql = str_replace("{_ID}",$userId,$sql);
         $conn = Propel::getConnection();
