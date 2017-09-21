@@ -308,6 +308,37 @@ $app->get('/api/getMessagesByRegion/{region}', function ($request, $response, $a
 })->setName('api.getMessagesByRegion');
 
 
+$app->get('/api/getAllUsers', function ($request, $response, $args) {
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+
+    if(Utils::checkIfNotEmpty($userId)) {
+
+            $users = UserQuery::create()
+                ->filterById($userId, UserQuery::NOT_EQUAL)
+                ->find();
+
+
+        if($users != null)
+        {
+            return $response->withJson(['status'=>'ok', 'Users'=>$users->toArray()]);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+
+})->setName('api.getAllUsers');
+
+
+
+
+
 $app->get('/api/getAllMessages', function ($request, $response, $args) {
     $params = $request->getParsedBody();
     $userId = $this->jwt->user;
@@ -353,6 +384,9 @@ $app->get('/api/getAllMessages', function ($request, $response, $args) {
 
 
 })->setName('api.getAllMessages');
+
+
+
 
 
 $app->post('/api/createNewMessage', function ($request, $response, $args) {
@@ -481,6 +515,9 @@ $app->get('/api/setMessageAsRead/{id}', function ($request, $response, $args) {
     $data = array("status"=>"error", "message" =>"Unable to Change Status.");
     return $response->withJson($data);
 })->setName('api.setMessageAsRead');
+
+
+
 
 
 
