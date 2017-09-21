@@ -12,6 +12,8 @@ use Utils\Utils;
 use Respect\Validation\Validator as v;
 use Firebase\JWT\JWT;
 use Tuupola\Base62;
+use Propel\Runtime\Propel;
+
 
 //Authentication "/api/signup", "/api/login", "/api/forgotPassword" exempted from token requirements
 $app->post('/api/signup', function ($request, $response, $args) {
@@ -313,14 +315,30 @@ $app->get('/api/getAllMessages', function ($request, $response, $args) {
 
     if(Utils::checkIfNotEmpty($userId))
     {
-        //$user =  UserQuery::create()->filterById($userId,UserQuery::EQUAL)->findOne();
-        $Msgs = MessagesQuery::create()
-            ->filterByToid($userId, MessagesQuery::EQUAL)
-            ->find();
+
+//        $Msgs = MessagesQuery::create()
+//
+//            ->joinWithUserRelatedByFromid()
+//            ->select(array('Id','Content','Fromid','Toid','Region','Content','Msgread','Msglock','User.Fname','User.Lname'))
+//            ->filterByToid($userId, MessagesQuery::EQUAL)
+//            ->find();
+        $sql = "SELECT 
+                M.Id, M.Time, M.Region, M.Content, M.MsgLock, M.MsgRead,
+                M.fromID, M.toID,
+                CONCAT(F.fname,' ',F.lname) AS FromName,
+                CONCAT(T.fname,' ',T.lname) AS ToName
+                 FROM Messages M
+                JOIN User F on M.fromID = F.id
+                JOIN User T on M.toID = T.id";
+        $conn = Propel::getConnection();
+        $reader = $conn->prepare($sql);
+        $reader->execute();
+        $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
+
 
         if($Msgs != null)
         {
-            return $response->withJson(['status'=>'ok', 'Messages'=>$Msgs->toArray()]);
+            return $response->withJson(['status'=>'ok', 'Messages'=>$Msgs]);
         }
         return $response
             ->withStatus(400)
