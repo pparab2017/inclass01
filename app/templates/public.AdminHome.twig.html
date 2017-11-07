@@ -1,0 +1,120 @@
+{% extends "public.base.login.twig.html" %}
+
+{% block title %}Mobile Application Development {% endblock %}
+{% block header %}
+<div class="col-lg-12 my-header"  style=" margin-top: 50px; padding: 20px; ">
+<div class="container"  style="color: white" >
+    <img src="/imgs/inclass.png" style="margin-bottom: -20px" height="120px">
+
+
+       <span style="font-size: 40px; vertical-align:text-top;">  <b> &nbsp Assignment -  01  </b></span> <!--: Feedback -->
+
+</div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+
+
+<br>
+
+<div class="row" >
+
+
+
+        <div class="col-md-4 col-sm-6 col-lg-4 col-xs-12" style="margin-top: 30px"  >
+            <a href="{{path_for('adminLogin')}}" class="hover-animate">
+            <div class="bgimg backDp" style="height: 180px; position: relative; margin-left: 5px; margin-right: 5px">
+
+                 <img src="/imgs/rT.png" height="180px" style="position: absolute; right: 0px" >
+
+                <img class="glyphicon" src="/imgs/admin.png" height="160px" style="margin-left: 20px !important; top:20px; position: absolute">
+                <span class="tileText" > Admin</span>
+                <span class="tileTextSmall" >  Manage Users: Add, update and delete.</span>
+
+            </div>
+
+
+            <div style="margin-left: 5px; margin-right: 5px ; margin-top: 20px; color: white">
+
+
+              <!--  Manage Patient, doctor and nurse: Add, update and delete. -->
+
+
+
+            </div>
+            </a>
+
+
+            <br>
+            
+            <div class="col-md-6 text-center"  style="padding-left: 0px;">
+                <a target="_blank" href="https://github.com/pparab2017/AInclass01" style="cursor: pointer; text-decoration: none">
+                <div style="border-radius: 3px;background-color: #B388FF; padding: 5px; color: white">
+
+            <img src="/imgs/git.png" width="50px">
+                <h6>Mobile app Code</h6>
+                </div></a>
+            </div>
+
+            <div class="col-md-6 text-center"  style="padding-right: 0px;">
+                <a target="_blank" href="https://github.com/pparab2017/inclass01" style="cursor: pointer; text-decoration: none">
+                <div style="border-radius: 3px;background-color: #FBC02D; padding: 5px; color: white">
+
+                <img src="/imgs/git.png" width="50px">
+                <h6>Api app Code</h6>
+                </div></a>
+            </div>
+
+
+            <div class="col-md-2"> </div>
+
+
+        </div>
+
+
+    <div class="col-lg-8" style="padding-bottom: 10px; color: white; margin-top: 30px; border-left: dashed 1px white ">
+
+<h5>API Implementation</h5>
+        <ul>
+        <li> You are not allowed to use frameworks such as Firebase, or Parse.com.</li>
+        <li>You should use an online provisioning provider, such as Amazon AWS, or Microsoft Azure, or others.</li>
+        <li>Your api should provide sign in, login, and logout features.</li>
+        <li>Your api should provide a mechanism to allow the user to access protected resources after a successful login. For example, the protected api could return the user's profile information (name, age, weight, address). This api should only work for logged-in users.</li>
+        <li>Your api should provide an error reporting mechanism.</li>
+        <li>The API can be implemented using any language of your choice.</li>
+        <li>The API should be deployed on a remote server, which means local host is not acceptable for your submission.
+        </li>
+        </ul>
+
+        <h5>Mobile App Implementation</h5>
+        <ul>
+           <li> The API should be connected to the mobile application, and should also demonstrate the protected API.</li>
+           <li> Sign in, Login, Profile Screen.</li>
+           <li> The profile screen should allow the user to view the profile information and update the profile information.</li>
+
+
+        </ul>
+
+    </div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block myscripts %}
+
+<script  type="text/javascript">
+
+    $(document).ready(function() {
+
+
+
+    });
+</script>
+{% endblock %}
+

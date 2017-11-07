@@ -569,3 +569,88 @@ $app->get('/api/getAllProducts', function ($request, $response, $args) {
 
 
 
+
+// New App API  --- >  SurveyAPP APIS
+
+
+
+$app->post('/api/SurveyAppLogin', function ($request, $response, $args) {
+    //email – email ID of the user
+    //password – password for the account
+
+    $params = $request->getParsedBody();
+    if(Utils::checkIfNotEmpty($params['email']) && Utils::checkIfNotEmpty($params['password'])){
+        $user = NewuserQuery::create()
+            ->filterByEmail($params['email'],NewuserQuery::EQUAL)
+            ->findOne();
+
+        if($user == NULL || !Utils::verifyPassword($params['password'], $user->getHash()) ){
+            //error
+        } else{
+            $now = new DateTime();
+            $future = new DateTime("now +1 years");
+            $jti = Base62::encode(random_bytes(16));
+            $payload = [
+                "iat" => $now->getTimeStamp(),
+                "exp" => $future->getTimeStamp(),
+                "jti" => $jti,
+                "user" => $user->getId()
+            ];
+            $secret = getenv("JWT_SECRET");
+            $token = JWT::encode($payload, $secret, "HS256");
+            $data["status"] = "ok";
+            $data["token"] = $token;
+            $data["userId"] = $user->getId();
+            $data["userEmail"] = $user->getEmail();
+            $data["userFname"] = $user->getFname();
+            $data["userLname"] = $user->getLname();
+            return $response->withStatus(201)
+                ->withHeader("Content-Type", "application/json")
+                ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        }
+    }
+
+    $data["status"] = "error";
+    $data["message"] = "Incorrect email and/or password";
+    return $response->withStatus(401)
+        ->withHeader("Content-Type", "application/json")
+        ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+})->setName('api.SurveyApp.login');
+
+
+
+
+
+//activity logs
+$app->post('/api/survey/submit', function ($request, $response, $args) {
+    $params = $request->getParsedBody();
+    $patient_id = $this->jwt->user;
+
+    if(Utils::checkIfNotEmpty($patient_id)){
+        $p = NewuserQuery::create()->filterById($patient_id,NewuserQuery::EQUAL)->findOne();
+        if($p != NULL) {
+            $survey = new Surveylog();
+            $survey->setPatientId($patient_id);
+
+            for($i=1; $i<=33; $i++){
+                $qid = "Q".$i;
+                $foo = "set".$qid;
+                if(isset($params[$qid]) && Utils::checkIfNotEmpty($params[$qid])){
+                    $survey->$foo(trim($params[$qid]));
+                }
+            }
+
+
+            $survey->save();
+
+            return $response->withJson(['status'=>'ok']);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
+    }
+
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
+})->setName('api.survey.submit');

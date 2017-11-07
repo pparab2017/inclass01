@@ -40,6 +40,36 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
+  <table name="NewUser" idMethod="native" phpName="Newuser">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="email" phpName="Email" type="VARCHAR" size="255" required="true"/>
+    <column name="hash" phpName="Hash" type="VARCHAR" size="255" required="true"/>
+    <column name="fname" phpName="Fname" type="VARCHAR" size="255"/>
+    <column name="lname" phpName="Lname" type="VARCHAR" size="255"/>
+    <column name="gender" phpName="Gender" type="CHAR" sqlType="enum('FEMALE','MALE')"/>
+    <column name="role" phpName="Role" type="CHAR" sqlType="enum('ADMIN','PATIENT')" defaultValue="PATIENT"/>
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <unique name="email_UNIQUE">
+      <unique-column name="email"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="Patient" idMethod="native" phpName="Patient">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="NewUser" name="fkkuserid_participant" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <index name="fkkuserid_participant_idx">
+      <index-column name="user_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
   <table name="Results" idMethod="native" phpName="Results">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="discount" phpName="Discount" type="INTEGER"/>
@@ -47,6 +77,54 @@
     <column name="photo" phpName="Photo" type="VARCHAR" size="300"/>
     <column name="price" phpName="Price" type="DECIMAL" size="10" scale="2"/>
     <column name="region" phpName="Region" type="VARCHAR" size="300"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="SurveyLog" idMethod="native" phpName="Surveylog">
+    <column name="id" phpName="Id" type="INTEGER" size="5" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="patient_id" phpName="PatientId" type="INTEGER" required="true"/>
+    <column name="Q1" phpName="Q1" type="VARCHAR" size="255"/>
+    <column name="Q2" phpName="Q2" type="VARCHAR" size="255"/>
+    <column name="Q3" phpName="Q3" type="VARCHAR" size="255"/>
+    <column name="Q4" phpName="Q4" type="VARCHAR" size="255"/>
+    <column name="Q5" phpName="Q5" type="VARCHAR" size="255"/>
+    <column name="Q6" phpName="Q6" type="VARCHAR" size="255"/>
+    <column name="Q7" phpName="Q7" type="VARCHAR" size="255"/>
+    <column name="Q8" phpName="Q8" type="VARCHAR" size="255"/>
+    <column name="Q9" phpName="Q9" type="VARCHAR" size="255"/>
+    <column name="Q10" phpName="Q10" type="VARCHAR" size="255"/>
+    <column name="Q11" phpName="Q11" type="VARCHAR" size="255"/>
+    <column name="Q12" phpName="Q12" type="VARCHAR" size="255"/>
+    <column name="Q13" phpName="Q13" type="VARCHAR" size="255"/>
+    <column name="Q14" phpName="Q14" type="VARCHAR" size="255"/>
+    <column name="Q15" phpName="Q15" type="VARCHAR" size="255"/>
+    <column name="Q16" phpName="Q16" type="VARCHAR" size="255"/>
+    <column name="Q17" phpName="Q17" type="VARCHAR" size="255"/>
+    <column name="Q18" phpName="Q18" type="VARCHAR" size="255"/>
+    <column name="Q19" phpName="Q19" type="VARCHAR" size="255"/>
+    <column name="Q20" phpName="Q20" type="VARCHAR" size="255"/>
+    <column name="Q21" phpName="Q21" type="VARCHAR" size="255"/>
+    <column name="Q22" phpName="Q22" type="VARCHAR" size="255"/>
+    <column name="Q23" phpName="Q23" type="VARCHAR" size="255"/>
+    <column name="Q24" phpName="Q24" type="VARCHAR" size="255"/>
+    <column name="Q25" phpName="Q25" type="VARCHAR" size="255"/>
+    <column name="Q26" phpName="Q26" type="VARCHAR" size="255"/>
+    <column name="Q27" phpName="Q27" type="VARCHAR" size="255"/>
+    <column name="Q28" phpName="Q28" type="VARCHAR" size="255"/>
+    <column name="Q29" phpName="Q29" type="VARCHAR" size="255"/>
+    <column name="Q30" phpName="Q30" type="VARCHAR" size="255"/>
+    <column name="Q31" phpName="Q31" type="VARCHAR" size="255"/>
+    <column name="Q32" phpName="Q32" type="VARCHAR" size="255"/>
+    <column name="Q33" phpName="Q33" type="VARCHAR" size="255"/>
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <foreign-key foreignTable="NewUser" name="fk_User">
+      <reference local="patient_id" foreign="id"/>
+    </foreign-key>
+    <index name="fkkpatientidd_idx">
+      <index-column name="patient_id"/>
+    </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
