@@ -1,0 +1,802 @@
+{% extends "public.base.twig.html" %}
+
+{% block title %}Patient Profile{% endblock %}
+
+{% block header %}
+<div class="container"  style="color: white" >
+    <div class="row">
+        <div class="col-lg-12">
+            <h4 > Patient Profile <span class="glyphicon glyphicon-user"></span>  </h4></div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<div class="tabContainer topCornersRounded">
+
+<div class="row" >
+
+<div class="col-sm-3 text-center" style="border-right: 1px solid #ddd">
+    <img id="userImg" >
+    <h4 class="font_wt">{{Patient.getFname}} {{Patient.getLname}}</h4>
+    <p class="font_wt">( {{Patient.getEmail}} )</p>
+</div>
+
+
+    <div class="col-sm-4 " style="padding-left: 20px"  >
+
+        <div class="row" >
+
+            <div class="col-sm-6 userInfo"  >
+
+                <div class="input-group">
+
+                    <h4   >First Name</h4>
+                    <p class="font_wt font_md">{{Patient.getFname}}</p>
+                </div>
+            </div>
+
+            <div class="col-sm-6 userInfo" >
+
+                <div class="input-group">
+
+                    <h4 >Last Name</h4 >
+                    <p class="font_wt font_md">  {{Patient.getLname}}</p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row"  >
+
+            <div class="col-sm-6 userInfo">
+
+                <div class="input-group">
+
+                    <h4   >Email ID</h4>
+                    <p class="font_wt font_md">{{Patient.getEmail}}</p>
+
+                </div>
+            </div>
+
+            <div class="col-sm-6 userInfo">
+
+                <div class="input-group">
+
+                    <h4   >Gender</h4>
+                    <p class="font_wt font_md"> {{Patient.getGender}}</p>
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+
+<div class="col-sm-5" style="padding-left: 20px"  >
+    <div class="row" >
+
+        <div class="col-md-12 userInfo">
+
+            <div class="input-group">
+                <h4  >Survey Status</h4>
+                <div class="doc-label label-danger" id="surveyStatus" style="font-weight: 300; background-color: white; font-size: medium">
+                     </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+</div>
+
+
+<div class="tabContainer topCornersRounded " style="margin-top: 20px">
+
+
+    <div class="table-responsive" id="allSurveys">
+        <h4>Survey Results: </h4>
+    <table id="tblpatients" class="table table-striped table-bordered " cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th style="width: 20%"> Date</th>
+            <th style="text-align: center">Medication</th>
+            <th style="text-align: center">Diet</th>
+            <th style="text-align: center">Physical Activity</th>
+            <th style="text-align: center">Smoking</th>
+            <th style="text-align: center">Weight Management</th>
+            <th style="text-align: center">Alcohol</th>
+
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+
+            <th style="width: 20%"> Date</th>
+            <th style="text-align: center">Medication</th>
+            <th style="text-align: center">Diet</th>
+            <th style="text-align: center">Physical Activity</th>
+            <th style="text-align: center">Smoking</th>
+            <th style="text-align: center">Weight Management</th>
+            <th style="text-align: center">Alcohol</th>
+
+        </tr>
+        </tfoot>
+    </table>
+    </div>
+
+
+<div id="feedback_container">
+    <div id="feedback">
+
+
+    </div>
+</div>
+<div id="DetailSurveyView">
+
+  <button onclick="window.print()" class="btn btn-success"> Print Report <span class="glyphicon glyphicon-print"></span> </button>
+<hr>
+    <a href="#allQuestions"  class="pointerHref" data-toggle="collapse">Show Survey Answers <span class="glyphicon glyphicon-chevron-down"></span></a>
+
+ <br><br>
+    <div id="allQuestions" class="collapse">
+    <table class="table ">
+        <tr  style="background-color: #ddd;"><th >Medication Usage<br>
+            How many of the past 7 days did you:</th><th></th></tr>
+        <tr>
+            <td>1. Take your blood pressure pills?</td>
+            <td> <label  id="Q1"/> </td>
+        </tr>
+        <tr>
+            <td>2. Take your blood pressure pills at the same time everyday?</td>
+            <td><label id="Q2"/> </td>
+        </tr>
+        <tr>
+            <td>3. Take the recommended number of blood pressure pills?</td>
+            <td><label id="Q3"/> </td>
+        </tr>
+
+        <tr style="background-color: #ddd">
+            <th>Diet<br>
+                How many of the past 7 days did you:</th><th></th>
+        </tr>
+        <tr>
+            <td>
+                4. Eat nuts or peanut butter?</td>
+            <td><label id="Q4"/> </td>
+        </tr>
+        <tr>
+            <td>
+                5. Eat beans, peas, or lentils?</td>
+            <td><label id="Q5"/> </td>
+        </tr>
+        <tr>
+            <td>
+                6. Eat eggs?</td>
+            <td><label id="Q6"/> </td>
+        </tr>
+        <tr>
+            <td>
+                7. Eat pickles, olives, or other vegetables in brine?</td>
+            <td><label id="Q7"/> </td>
+        </tr>
+        <tr>
+            <td>
+                8. Eat five or more servings of fruits and vegetables?</td>
+            <td><label id="Q8"/> </td>
+        </tr>
+        <tr>
+            <td>
+                9. Eat more than one serving of fruit (fresh, frozen, canned or fruit juice)?</td>
+            <td><label id="Q9"/> </td>
+        </tr>
+        <tr>
+            <td>
+                10. Eat more than one serving of vegetables?</td>
+            <td><label id="Q10"/> </td>
+        </tr>
+        <tr style="background-color: #ddd"><th>Diet<br>
+            How many of the past 7 days did you:</th><th></th></tr>
+
+        <tr>
+            <td>
+                11. Drink milk (in a glass, with cereal, or in coffee, tea or cocoa)?</td>
+            <td><label id="Q11"/> </td>
+        </tr>
+        <tr>
+            <td>
+                12. Eat broccoli, collard greens, spinach, potatoes, squash or sweet potatoes?</td>
+            <td><label id="Q12"/> </td>
+        </tr>
+        <tr>
+            <td>
+                13. Eat apples, bananas, oranges, melon or raisins?</td>
+            <td><label id="Q13"/> </td>
+        </tr>
+        <tr>
+            <td>
+                14. Eat whole grain breads, cereals, grits, oatmeal or brown rice?</td>
+            <td><label id="Q14"/> </td>
+        </tr>
+
+        <tr style="background-color: #ddd"><th>
+            Physical Activity<br>
+            How many of the past 7 days did you:
+        </th><th></th></tr>
+        <tr>
+            <td>
+                15. Do at least 30 minutes total of physical activity?</td>
+            <td><label id="Q15"/> </td>
+        </tr>
+        <tr>
+            <td>
+                16. Do a specific exercise activity (such as swimming, walking, or biking) other than what you do around the house or as part of your work?</td>
+            <td><label id="Q16"/> </td>
+        </tr>
+        <tr>
+            <td>
+                17. Engage in weight lifting or strength training (other than what you do around the house or as part of your work)?</td>
+            <td><label id="Q17"/> </td>
+        </tr>
+        <tr><td>18. Do any repeated heavy lifting or pushing/pulling of heavy items either for your job or around the house or garden?</td>
+            <td><label id="Q18"/> </td></tr>
+
+        <tr style="background-color: #ddd"><th >
+            Smoking<br>
+            How many of the past 7 days did you:
+        </th><th></th></tr>
+        <tr><td>
+            19. Smoke a cigarette or cigar, even just one puff?
+        </td><td><label id="Q19"/> </td></tr>
+        <tr><td>
+            20. Stay in a room or ride in an enclosed vehicle while someone was smoking?
+        </td><td><label id="Q20"/> </td></tr>
+
+        <tr  style="background-color: #ddd"><th>Weight management<br>
+            In order to lose weight or maintain my weight...</th><th></th></tr>
+
+        <tr><td>
+            21. I am careful about what I eat.
+        </td><td><label id="Q21"/> </td></tr>
+        <tr><td>
+            22. I read food labels when I grocery shop.
+        </td><td><label id="Q22"/> </td></tr>
+        <tr><td>
+            23. I exercise in order to lose or maintain weight.
+        </td><td><label id="Q23"/> </td></tr>
+        <tr><td>
+            24. I have cut out drinking sugary sodas and sweet tea.
+        </td><td><label id="Q24"/> </td></tr>
+        <tr><td>
+            25. I eat smaller portions or eat fewer portions.
+        </td><td><label id="Q25"/> </td></tr>
+        <tr><td>
+            26. I have stopped buying or bringing unhealthy foods into my home.
+        </td><td><label id="Q26"/> </td></tr>
+        <tr><td>
+            27. I have cut out or limit some foods that I like but that are not good for me.
+        </td><td><label id="Q27"/> </td></tr>
+        <tr><td>
+            28. I eat at restaurants or fast food places less often.
+        </td><td><label id="Q28"/> </td></tr>
+        <tr><td>
+            29. I substitute healthier foods for things that I used to eat.
+        </td><td><label id="Q29"/> </td></tr>
+        <tr><td>
+            30. I have modified my recipes when I cook.
+        </td><td><label id="Q30"/> </td></tr>
+
+        <tr><td>
+            31. On average, how many days per week do you drink alcohol?
+        </td><td><label id="Q31"/> </td></tr>
+        <tr><td>
+            32. On a typical day that you drink alcohol, how many drinks do you have?
+        </td><td><label id="Q32"/> </td></tr>
+        <tr><td>
+            33. What is the largest number of drinks that you’ve had on any given day within the last month?
+        </td><td><label id="Q33"/> </td></tr>
+
+    </table>
+    </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="modal fade bs-score-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="scoreModalLabel">Modal title
+
+                </h4>
+
+            </div>
+            <div class="modal-body" id="scoreModalBody">
+               <div id="singleScore"> </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block myscripts %}
+
+<script type="text/javascript">
+
+    var tablePatients;
+    var gender =  '{{Patient.getGender}}';
+
+    console.log(gender);
+
+    var patientRoutes = {
+        call:  "{{path_for('doctor.patients.surveyResults', { 'id' : '{id}' })}}"
+    };
+
+
+    function bindEvent()
+    {
+        $("#closeSurvey").click(function () {
+            $("#allSurveys").show();
+            $("#feedback").remove();
+            $("#DetailSurveyView").hide();
+            $('.collapse').collapse("hide");
+
+        });
+
+
+    }
+
+
+    $(document).ready(function() {
+
+        $("#DetailSurveyView").hide();
+
+        if('{{Patient.getGender}}' == "FEMALE")
+        {
+            $('#userImg').attr('src','/imgs/female.png');
+        }
+        else
+        {
+            $('#userImg').attr('src','/imgs/male.png');
+        }
+        var doctors = '';
+        $("#Doctors").append( $(htmlDecode(doctors)) );
+
+
+        var callUrl = patientRoutes.call.replace("{id}",'{{Patient.getId}}');
+
+        tablePatients=    $('#tblpatients')
+            .on('xhr.dt', function ( e, settings, json, xhr ) {//To test the Ajax_output
+                console.log(json);
+                if(json.Surveylogs.length > 0)
+                {
+                    $("#surveyStatus").html("Complete");
+                    $("#surveyStatus").css("background-color" ,"#5CB85C");
+                }
+                else{
+                    $("#surveyStatus").html("Incomplete");
+                    $("#surveyStatus").css("background-color" ,"#D9534F");
+                }
+            } )
+            .DataTable({
+
+                    select: true,
+                    // "bServerSide": true,
+                    "ajax": {
+                        "url": callUrl,
+                        "dataSrc": "Surveylogs"    // Flat array
+                    },
+                    order: [[1, 'asc']],
+                    "columns": [
+                        { "data": 'CreatedAt' },
+                        { "data": 'Q1' },
+                        { "data": 'Q1' },
+                        { "data": 'Q1' },
+                        { "data": 'Q1' },
+                        { "data": 'Q1'},
+                        { "data": 'Q1' }, ],
+                    "columnDefs": [
+                        {"className": "dt-center", "targets": 2},
+                        {
+                            targets:0,
+                            "render": function (data, type, row, meta) {
+                                var DateToDisplay = moment(new Date(data)).format("MM/DD/YYYY");
+                                var timeOnly = moment(new Date(data)).format("LT"); //timeOnly = moment(new Date(data)).utc().format("LT");
+                                DateToDisplay =   DateToDisplay + " <span class='glyphicon glyphicon-time'></span> " + timeOnly;
+                                return "<a href='#' class='pointerHref' id='click'>" +  DateToDisplay + "</a>";
+                            }
+
+                        },
+                        {
+                            targets: 1,
+                            "render": function( data, type, row, meta){
+                                var _medication =  medication(row);
+                                return "<a class='pointerHref medication' id='scoreClick' href='#' data-toggle='modal' data-target='.bs-score-modal-lg'><div class='cir text-center' style='background-color:"+_medication.color +" '>" + _medication.score + "</div></a>";
+                            }
+                        },
+                        {
+                            targets: 2,
+                            "render": function( data, type, row, meta){
+                                var _diet =  diet(row);
+                                return "<a class='pointerHref diet' id='scoreClick' href='#' data-toggle='modal' data-target='.bs-score-modal-lg'><div class='cir text-center' style='background-color:"+_diet.color +" '>" + _diet.score + "</div></a>";
+                            }
+                        },
+                        {
+                            targets: 3,
+                            "render": function( data, type, row, meta){
+                                var _physicalActivity =  physicalActivity(row);
+                                return "<a class='pointerHref physicalActivity' id='scoreClick' href='#' data-toggle='modal' data-target='.bs-score-modal-lg'><div class='cir text-center' style='background-color:"+_physicalActivity.color +" '>" + _physicalActivity.score + "</div></a>";
+                            }
+                        },
+                        {
+                            targets: 4,
+                            "render": function( data, type, row, meta){
+                                var _smoking =  smoking(row);
+                                return "<a class='pointerHref smoking' id='scoreClick' href='#' data-toggle='modal' data-target='.bs-score-modal-lg'><div class='cir text-center' style='background-color:"+_smoking.color +" '>" + _smoking.score + "</div></a>";
+                            }
+                        },
+                        {
+                            targets: 5,
+                            "render": function( data, type, row, meta){
+                                var _weightMgmt =  weightManagement(row);
+                                return "<a class='pointerHref weightManagement' id='scoreClick' href='#' data-toggle='modal' data-target='.bs-score-modal-lg'><div class='cir text-center' style='background-color:"+_weightMgmt.color +" '>" + _weightMgmt.score + "</div></a>";
+
+                            }
+                        },
+                        {
+                            targets: 6,
+                            "render": function( data, type, row, meta){
+                                var _alcohol =  alcohol(row,gender);
+                                return "<a class='pointerHref alcohol' id='scoreClick' href='#' data-toggle='modal' data-target='.bs-score-modal-lg'><div class='cir text-center' style='background-color:"+_alcohol.color +" '>" + _alcohol.score + "</div></a>";
+
+                            }
+                        }
+
+                    ],
+
+
+                    "createdRow": function ( row, data, index ) {}
+                }
+            );
+
+        tablePatients.on('click','#scoreClick',function (e) {
+            e.preventDefault();
+
+            var currentRow = $(this).closest("tr");
+            var data = $('#tblpatients').DataTable().row(currentRow).data();
+            var selected_survey = data;
+            var score_type = e.currentTarget.classList[1];
+            switch (score_type)
+            {
+                case "medication":
+                    var _medication =medication(selected_survey);
+                    $("#scoreModalLabel").text("Medication");
+                    generateModalDisplay( _medication,"Medication");
+                    break;
+                case "diet":
+                    $("#scoreModalLabel").text("Diet");
+                    generateModalDisplay( diet(selected_survey),"Diet");
+                    break;
+                case "physicalActivity":
+                    $("#scoreModalLabel").text("Physical Activity");
+                    generateModalDisplay( physicalActivity(selected_survey),"Physical Activity");
+                    break;
+                case "smoking":
+                    $("#scoreModalLabel").text("Smoking");
+                    generateModalDisplay( smoking(selected_survey),"Smoking");
+                    break;
+                case "weightManagement":
+                    $("#scoreModalLabel").text("Weight Management");
+                    generateModalDisplay( weightManagement(selected_survey),"Weight Management");
+                    break;
+                case "alcohol":
+                    $("#scoreModalLabel").text("Alcohol");
+                    generateModalDisplay( alcohol(selected_survey,gender),"Alcohol");
+                    break;
+
+            }
+
+            console.log(e.currentTarget.classList[1]);
+        });
+
+        tablePatients.on('click', '#click', function (e) {
+            e.preventDefault();
+
+
+            var currentRow = $(this).closest("tr");
+            var data = $('#tblpatients').DataTable().row(currentRow).data();
+            var selected_survey = data;
+            $("#DetailSurveyView").show();
+            $("#allSurveys").hide();
+            $("#feedback").remove();
+            $("#feedback_container").append("<div id='feedback'></div>");
+
+            var DateToDisplay = moment(new Date(selected_survey.CreatedAt)).format("MM/DD/YYYY");
+            var timeOnly = moment(new Date(selected_survey.CreatedAt)).format("LT");
+            DateToDisplay =   DateToDisplay + " <span class='glyphicon glyphicon-time'></span> " + timeOnly;
+            $("#feedback").append(" <div class='text-center'><h4>Date: "+ DateToDisplay  +"<a id='closeSurvey' class='pointerHref' style='float: left;'><span style='font-size: small; font-weight: normal'><span class='glyphicon glyphicon-chevron-left'></span>  Back </span></a></h4><hr></div>");
+            bindEvent();
+
+            var _medication = medication(selected_survey);
+            generateDisplay(_medication,"Domain: Medication &nbsp");
+
+            var _diet = diet(selected_survey);
+            generateDisplay(_diet,"Domain: Diet &nbsp");
+
+            var _physicalActivity = physicalActivity(selected_survey);
+            generateDisplay(_physicalActivity,"Domain: Physical Activity &nbsp");
+
+            var _smoking = smoking(selected_survey);
+            generateDisplay(_smoking,"Domain: Smoking &nbsp");
+
+            var _weightManagement = weightManagement(selected_survey);
+            generateDisplay(_weightManagement,"Domain: Weight Management &nbsp");
+
+            var _alcohol = alcohol(selected_survey,gender);
+            generateDisplay(_alcohol,"Domain: Alcohol &nbsp");
+
+            detailSurveyDisplay(selected_survey);
+
+        });
+
+
+
+
+    });
+
+    function htmlEncode(value){
+        return $('<div/>').text(value).html();
+    }
+    function htmlDecode(value){
+        return $('<div/>').html(value).text();
+    }
+
+    function detailSurveyDisplay(answers) {
+        for(var i =1;i<=33;i++)
+        {
+            var objName = "Q" + i;
+            var inputName = "Q" + i;
+
+            if(i>=1 && i<=20)
+                $("#"+inputName).text(answers[objName] + " days");
+            else if(i>20 && i<=30)
+            {
+                $("#"+inputName).text(getText( parseInt(answers[objName]) ));
+            }
+            else if(i == 31)
+            {
+                $("#"+inputName).text(answers[objName] + " days");
+            }
+            else{
+                $("#"+inputName).text(answers[objName]);
+            }
+
+        }
+    }
+
+    function getText(number) {
+        var toReturn="";
+        switch (number){
+            case 1:
+                toReturn = "Strongly Disagree";
+                break;
+            case 2:
+                toReturn = "Disagree";
+                break;
+            case 3:
+                toReturn = "Not Sure";
+                break;
+            case 4:
+                toReturn = "Agree";
+                break;
+            case 5:
+                toReturn = "Strongly Agree";
+                break;
+
+        }
+        return toReturn;
+    }
+
+
+    function generateModalDisplay(_object, domain) {
+        $("#singleScore").remove();
+        $("#scoreModalBody").append("<div id='singleScore'> </div>");
+
+        $("#singleScore").append("<div><table><tr><td><h4>"+ "Score: &nbsp" + "</h4></td><td><div class='cir text-center' style='background-color:"+_object.color +" '>"+_object.score +"</div></td></tr></table></div>");
+
+        if(_object.color == "#D9534F")
+            $("#singleScore").append("Participants is not adherent!");
+        else
+            $("#singleScore").append("Participants is adherent!");
+
+        for(var i=0;i<_object.feedBack.length;i++)
+        {
+
+            var medication_action= document.createElement("div");
+
+            var medication_probes= document.createElement("ul");
+            var probes_count = 0;
+
+            var colapsable = false;
+        if(jQuery.type(_object.feedBack[i].action ) == "array") {
+            for (var j = 0; j < _object.feedBack[i].action.length; j++) {
+                var node = document.createElement("h5");
+                var text = document.createTextNode(_object.feedBack[i].action[j]);
+                node.appendChild(text);
+                medication_action.appendChild(node);
+            }
+        }else
+        {
+            var node = document.createElement("a");
+            node.setAttribute("href","#singleQuestions" + i);
+            node.setAttribute("data-toggle","collapse");
+            colapsable = true;
+            var text = document.createTextNode(_object.feedBack[i].action);
+            node.appendChild(text);
+            medication_action.appendChild(node);
+        }
+
+
+
+            $("#singleScore").append(medication_action);
+
+
+
+
+
+            if(jQuery.type(_object.feedBack[i].suggestion ) == "array") {
+               // $("#singleScore").append("<div>Messages</div>");
+                var medication_msg= document.createElement("ul");
+                for (var j = 0; j < _object.feedBack[i].suggestion.length; j++) {
+                    var node = document.createElement("li");
+                    var text = document.createTextNode(_object.feedBack[i].suggestion[j]);
+                    node.appendChild(text);
+                   // medication_msg.appendChild(node);
+                }
+            }
+            else
+            {
+                var medication_msg= document.createElement("div");
+                if(colapsable)
+                {
+                    medication_msg.setAttribute("class","collapse");
+                    var medication_msg_ul= document.createElement("ul");
+                    medication_msg.setAttribute("id","singleQuestions" + i);
+                    var node = document.createElement("li");
+                    var text = document.createTextNode(_object.feedBack[i].suggestion);
+                 //   node.appendChild(text);
+                  //  medication_msg_ul.appendChild(node);
+//                    medication_msg.append("Messages");
+//                    medication_msg.appendChild(medication_msg_ul);
+                }else {
+                    var node = document.createElement("li");
+                    var text = document.createTextNode(_object.feedBack[i].suggestion);
+                    node.appendChild(text);
+                    medication_msg.appendChild(node);
+                }
+            }
+
+            $("#singleScore").append(medication_msg);
+
+            for(var j=0;j<_object.feedBack[i].probes.length;j++)
+            {
+                var node =  document.createElement("li");
+                var text =  document.createTextNode(_object.feedBack[i].probes[j]);
+                node.appendChild(text);
+                probes_count++;
+                medication_probes.appendChild(node);
+            }
+
+
+
+
+            if(probes_count > 0)
+               // $("#singleScore").append("<div>Probes</div>");
+            //$("#singleScore").append(medication_probes);
+
+            if(i < (_object.feedBack.length-1))
+                $("#singleScore").append("<hr/>");
+        }
+
+
+    }
+
+    function generateDisplay(_object, domain)
+    {
+
+        $("#feedback").append("<div><table><tr><td><h4>"+domain + "</h4></td><td><div class='cir text-center' style='background-color:"+_object.color +" '>"+_object.score +"</div></td></tr></table></div>");
+
+        for(var i=0;i<_object.feedBack.length;i++)
+        {
+
+            var medication_action= document.createElement("ul");
+            var medication_msg= document.createElement("ul");
+            var medication_probes= document.createElement("ul");
+            var probes_count = 0;
+
+            if(jQuery.type(_object.feedBack[i].action ) == "array") {
+                for (var j = 0; j < _object.feedBack[i].action.length; j++) {
+                    var node = document.createElement("li");
+                    var text = document.createTextNode(_object.feedBack[i].action[j]);
+                    node.appendChild(text);
+                    medication_action.appendChild(node);
+                }
+            }else
+            {
+                var node = document.createElement("li");
+                var text = document.createTextNode(_object.feedBack[i].action);
+                node.appendChild(text);
+                medication_action.appendChild(node);
+            }
+
+            if(jQuery.type(_object.feedBack[i].suggestion ) == "array") {
+                for (var j = 0; j < _object.feedBack[i].suggestion.length; j++) {
+                    var node = document.createElement("li");
+                    var text = document.createTextNode(_object.feedBack[i].suggestion[j]);
+                    node.appendChild(text);
+                    medication_msg.appendChild(node);
+                }
+            }
+            else
+            {
+                var node = document.createElement("li");
+                var text = document.createTextNode(_object.feedBack[i].suggestion);
+                node.appendChild(text);
+                medication_msg.appendChild(node);
+            }
+
+
+            for(var j=0;j<_object.feedBack[i].probes.length;j++)
+            {
+                var node =  document.createElement("li");
+                var text =  document.createTextNode(_object.feedBack[i].probes[j]);
+                node.appendChild(text);
+                probes_count++;
+                medication_probes.appendChild(node);
+            }
+
+
+//            $("#feedback").append("<div>Action</div>");
+//            $("#feedback").append(medication_action);
+//            $("#feedback").append("<div>Messages</div>");
+//            $("#feedback").append(medication_msg);
+//            if(probes_count > 0)
+//            $("#feedback").append("<div>Probes</div>");
+//            $("#feedback").append(medication_probes);
+
+//            if(i < (_object.feedBack.length-1))
+//            $("#feedback").append("<hr/>");
+        }
+
+//        if(domain!= "Domain: Alcohol &nbsp")
+//        $("#feedback").append("<hr/>");
+
+    }
+
+</script>
+{% endblock %}
