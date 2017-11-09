@@ -8,8 +8,8 @@ var colorObject = {
 function checkResponses(answers){
 
   for(var i=1;i<=33;i++){
-      if(answers["Q"+ i] == "null"){
-          answers["Q"+ i] = 0;
+      if(answers["Q"+ i] == "-1"){
+          answers["Q"+ i] = "null";
       }
   }
 return answers;
