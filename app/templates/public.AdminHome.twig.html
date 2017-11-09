@@ -1,13 +1,13 @@
 {% extends "public.base.login.twig.html" %}
 
-{% block title %}Mobile Application Development {% endblock %}
+{% block title %}Survey App {% endblock %}
 {% block header %}
 <div class="col-lg-12 my-header"  style=" margin-top: 50px; padding: 20px; ">
 <div class="container"  style="color: white" >
     <img src="/imgs/inclass.png" style="margin-bottom: -20px" height="120px">
 
 
-       <span style="font-size: 40px; vertical-align:text-top;">  <b> &nbsp Assignment -  01  </b></span> <!--: Feedback -->
+       <span style="font-size: 40px; vertical-align:text-top;">  <b> &nbsp Survey App </b></span> <!--: Feedback -->
 
 </div>
 </div>
@@ -25,7 +25,7 @@
 
 
         <div class="col-md-4 col-sm-6 col-lg-4 col-xs-12" style="margin-top: 30px"  >
-            <a href="{{path_for('adminLogin')}}" class="hover-animate">
+            <a href="{{path_for('MyAdminLogin')}}" class="hover-animate">
             <div class="bgimg backDp" style="height: 180px; position: relative; margin-left: 5px; margin-right: 5px">
 
                  <img src="/imgs/rT.png" height="180px" style="position: absolute; right: 0px" >
@@ -76,27 +76,23 @@
 
 
     <div class="col-lg-8" style="padding-bottom: 10px; color: white; margin-top: 30px; border-left: dashed 1px white ">
-
-<h5>API Implementation</h5>
+    <h1>Admin </h1>
         <ul>
-        <li> You are not allowed to use frameworks such as Firebase, or Parse.com.</li>
-        <li>You should use an online provisioning provider, such as Amazon AWS, or Microsoft Azure, or others.</li>
-        <li>Your api should provide sign in, login, and logout features.</li>
-        <li>Your api should provide a mechanism to allow the user to access protected resources after a successful login. For example, the protected api could return the user's profile information (name, age, weight, address). This api should only work for logged-in users.</li>
-        <li>Your api should provide an error reporting mechanism.</li>
-        <li>The API can be implemented using any language of your choice.</li>
-        <li>The API should be deployed on a remote server, which means local host is not acceptable for your submission.
+        <li>
+            Can Create , edit and delete users.
         </li>
-        </ul>
+            <li>
+                Can view patients score for each survey.
+            </li>
+        <li>
+            Can view patients submitted surveys.
+        </li>
+        <li>
+            Can print the report for each survey.
+        </li>
+    </ul>
 
-        <h5>Mobile App Implementation</h5>
-        <ul>
-           <li> The API should be connected to the mobile application, and should also demonstrate the protected API.</li>
-           <li> Sign in, Login, Profile Screen.</li>
-           <li> The profile screen should allow the user to view the profile information and update the profile information.</li>
 
-
-        </ul>
 
     </div>
 

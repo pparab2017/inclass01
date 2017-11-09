@@ -182,13 +182,6 @@ class NewuserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Patient', '\\Patient', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), 'CASCADE', 'CASCADE', 'Patients', false);
         $this->addRelation('Surveylog', '\\Surveylog', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -197,15 +190,19 @@ class NewuserTableMap extends TableMap
   ),
 ), null, null, 'Surveylogs', false);
     } // buildRelations()
+
     /**
-     * Method to invalidate the instance pool of all tables related to NewUser     * by a foreign key with ON DELETE CASCADE
+     *
+     * Gets the list of behaviors registered for this table
+     *
+     * @return array Associative array (name => parameters) of behaviors
      */
-    public static function clearRelatedInstancePool()
+    public function getBehaviors()
     {
-        // Invalidate objects in related instance pools,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        PatientTableMap::clearInstancePool();
-    }
+        return array(
+            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
+        );
+    } // getBehaviors()
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.

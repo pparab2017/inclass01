@@ -71,25 +71,6 @@ CREATE TABLE `NewUser`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
--- Patient
--- ---------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `Patient`;
-
-CREATE TABLE `Patient`
-(
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `user_id` INTEGER NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `fkkuserid_participant_idx` (`user_id`),
-    CONSTRAINT `fkkuserid_participant`
-        FOREIGN KEY (`user_id`)
-        REFERENCES `NewUser` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE
-) ENGINE=InnoDB;
-
--- ---------------------------------------------------------------------
 -- Results
 -- ---------------------------------------------------------------------
 

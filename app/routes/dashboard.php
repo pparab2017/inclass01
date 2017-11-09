@@ -26,4 +26,17 @@ $app->get('/admin[/[dashboard]]', function ($request, $response, $args) {
     ->add($checkAdminAuthMiddleware);
 
 
+$app->get('/myAdmin[/[dashboard]]', function ($request, $response, $args) {
+
+    $errorString="";
+    $paramValue = $request-> getQueryParam('error',null);
+    if($paramValue!=null)
+        $errorString = Utils::getErrorString($paramValue);
+    return $this->view->render($response, 'public.myAdmin.dashboard.twig.html', [
+        "error" => $errorString
+    ]);
+})->setName('myAdmin.dashboard')
+    ->add($checkAdminAuthMiddleware);
+
+
 

@@ -5,7 +5,20 @@ var colorObject = {
 
 };
 
+function checkResponses(answers){
+
+  for(var i=1;i<=33;i++){
+      if(answers["Q"+ i] == "null"){
+          answers["Q"+ i] = 0;
+      }
+  }
+return answers;
+}
+
 function medication(answers) {
+
+    answers = checkResponses(answers);
+
 
 
     var score = parseInt(answers.Q1) + parseInt(answers.Q2) + parseInt(answers.Q3);
@@ -17,15 +30,15 @@ function medication(answers) {
 
     if(score == 21){
         var toAdd  ={ action: "", suggestion: "", probes:""};
-        toAdd.action ="Excellent - Praise";
-        toAdd.suggestion= "You are doing a great job taking your BP pills every day. Keep up the good work!";
+        toAdd.action ="";
+        toAdd.suggestion= "";
         color = colorObject.good;
         toReturn.push(toAdd);
     }else if(score <21 && score >= 16)
     {
-        action.push("Interpretation: Good - Comment and probe.");
-        suggestion.push("You are doing well taking your mediation. It is really important to keep up with your BP pills.");
-        probes.push("Tell me about your routine for taking your BP pills.","What gets in the way of taking your pills?");
+        action.push("");
+        suggestion.push("");
+        probes.push("");
 
         color = colorObject.good;
         var toAdd  ={ action: action, suggestion: suggestion, probes: probes};
@@ -34,15 +47,15 @@ function medication(answers) {
     }
     else if(score < 16)
     {
-        action.push("Interpretation: Poor - comment and probe.");
+        action.push("");
         color = colorObject.poor;
         if(parseInt(answers.Q1) < 7){
 
-            suggestion.push("It is really important that you take your BP pills every day.");
-            probes.push("Is there someone in your family who could help you remember to take your pills?");
+            suggestion.push("");
+            probes.push("");
         }if(parseInt(answers.Q3) < 7){
-            suggestion.push("You should be taking the number of pills your doctor prescribed.");
-            probes.push("Are you having side effects when you take your pills?");
+            suggestion.push("");
+            probes.push("");
         }
         var toAdd  ={ action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
@@ -68,25 +81,25 @@ function diet(answers) {
     if(score >= 52)
     {
         color = colorObject.good;
-        action.push("Interpretation: Excellent - Praise.");
-        suggestion.push("Looks like you eat a healthy, well-balanced diet. Congratulations! I know how hard that can be.");
+        action.push("");
+        suggestion.push("");
         var toAdd = {action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
     }
     else if(score < 52)
     {
         color = colorObject.poor;
-        action.push("Interpretation: Poor - comment and probe.");
+        action.push("");
         if(parseInt(answers.Q8) < 4)
         {
             //toAdd.action ="Poor - comment and probe";
-            suggestion.push("Eating fresh fruits and vegetables is part of a healthy diet and can help manage BP (or risk of high BP).");
-            probes.push("What are your favorite fruits and vegetables?","How can you eat more of these throughout the day?","Where can you get fresh produce?");
+            suggestion.push("");
+            probes.push("");
 
         } if((parseInt(answers.Q12) +  parseInt(answers.Q13)) < 6)
         {
             //toAdd.action ="Okay - comment and recommend";
-            suggestion.push("Eating foods that have potassium in them is especially important for BP. Eat more broccoli, greens, spinach, potatoes, squash, apples, bananas, oranges, melons, and raisins.");
+            suggestion.push("");
         }
         var toAdd = {action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
@@ -108,8 +121,8 @@ function physicalActivity(answers){
     {
         color = colorObject.good;
 
-        action.push("Interpretation: Excellent - Praise.");
-        suggestion.push("Keep up your activity level! You are meeting the public health guidelines for exercise. That will help manage your blood pressure.");
+        action.push("");
+        suggestion.push("");
         var toAdd = {action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
     }
@@ -117,9 +130,9 @@ function physicalActivity(answers){
     {
         color = colorObject.poor;
 
-        action.push("Interpretation: Poor - comment and probe.");
-        suggestion.push("It can really help your BP and your heart if you move more.  Increase your physical activity slowly- one more day each week where you’re active.");
-        probes.push("What kinds of physical activity do you enjoy?","What gets in the way of being more active?", " Who could support you in increasing your activity level?");
+        action.push("");
+        suggestion.push("");
+        probes.push("");
         var toAdd = {action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
     }
@@ -141,21 +154,21 @@ function smoking(answers) {
     if(score == 0)
     {
         color = colorObject.good;
-        action.push("Interpretation: Excellent - Praise.");
-        suggestion.push("You are avoiding tobacco and cigarette smoke, which can increase blood pressure and risk for lung cancer. Great job!");
+        action.push("");
+        suggestion.push("");
         var toAdd = {action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
     }else if(score > 0 )
     {
         color = colorObject.poor;
-        action.push("Interpretation: Poor - comment and probe.");
+        action.push("");
         if(parseInt(answers.Q19) > 0){
-            suggestion.push("Any amount of tobacco can make your BP higher. If you aren’t ready to quit, cutting back will also help your BP and overall health.");
-            probes.push("How much do you smoke?","Can you work on cutting that in half?");
+            suggestion.push("");
+            probes.push("");
         } if(parseInt(answers.Q20) > 0)
         {
-            suggestion.push("It’s important to stay away from other friends and family members who smoke. Even inhaling someone else’s smoke can be harmful to you.");
-            probes.push("Tell me about the other people you live with, do any of them smoke?","Do you ride to school or work with someone who smokes?","Do you have another form of transportation?");
+            suggestion.push("");
+            probes.push("");
         }
         var toAdd = {action: action, suggestion: suggestion, probes: probes};
         toReturn.push(toAdd);
@@ -180,17 +193,14 @@ function weightManagement(answers) {
     {
         color = colorObject.good;
         var toAdd1 = {action: "", suggestion: "", probes: ""};
-        toAdd1.action ="Interpretation: If individual has no significant weight issues: Excellent - Praise.";
-        toAdd1.suggestion= "It looks like you have some good habits to help you maintain your weight. It’s important to keep your weight stable.";
+        toAdd1.action ="";
+        toAdd1.suggestion= "";
 
         toReturn.push(toAdd1);
         var toAdd2 = {action: "", suggestion: "", probes: ""};
-        toAdd2.action ="Interpretation: Habits are good but individual has significant weight issues: Good - comment and probe.";
-        toAdd2.suggestion= "It looks like you are doing a lot of the right things to help control your weight but more effort is needed. It’s important to keep your weight stable so that you don’t increase your risk of health problems down the road.";
-        toAdd2.probes = ["If patient has gained weight or had weight issues in the past:",
-            "Discuss importance of keeping an even weight.",
-            "Discuss paying attention to how body feels, if clothes are getting tighter, etc.",
-            "Suggestions for weight maintenance: cut out sugary sodas, eat smaller portions, skip second helpings, log what and how much you are eating."];
+        toAdd2.action ="";
+        toAdd2.suggestion= "";
+        toAdd2.probes = [""];
 
         toReturn.push(toAdd2);
     }
@@ -198,13 +208,13 @@ function weightManagement(answers) {
     {
         color = colorObject.poor;
         var toAdd1 = {action: "", suggestion: "", probes: "", "score": score};
-        toAdd1.action ="Interpretation: If individual has no significant weight issues: Poor - Comment and recommend.";
-        toAdd1.suggestion= "It’s important to keep your weight stable so that you don’t increase your risk of health problems down the road.";
+        toAdd1.action ="";
+        toAdd1.suggestion= "";
 
         toReturn.push(toAdd1);
         var toAdd2 = {action: "", suggestion: "", probes: ""};
-        toAdd2.action ="Interpretation: Habits are poor AND individual has significant weight issues: Poor - comment and recommend.";
-        toAdd2.suggestion= "I want you to focus some effort on controlling your weight. It’s important to keep your weight stable so that you don’t increase your risk of health problems down the road.";
+        toAdd2.action ="";
+        toAdd2.suggestion= "";
 
         toReturn.push(toAdd2);
     }
@@ -228,20 +238,20 @@ function alcohol(answers,gender){
         case "MALE":
             if(score == 0)
             {
-                action.push("Interpretation: Good - Comment.");
-                suggestion.push("It looks like you don’t drink alcohol and that’s fine.");
+                action.push("");
+                suggestion.push("");
                 color = colorObject.good;
             }
             else if(score <= 14)
             {
-                action.push("Interpretation: Good - Comment.");
-                suggestion.push("It looks like your drinking is moderate.");
+                action.push("");
+                suggestion.push("");
                 color = colorObject.good;
             }
             else if(score > 14)
             {
-                action.push("Interpretation: Poor - Comment and recommend.");
-                suggestion.push("The recommended number of drinks per day for adult males is 2, and for adult females is 1. Cutting back on alcohol can help manage your BP.");
+                action.push("");
+                suggestion.push("");
                 color = colorObject.poor;
             }
             var toAdd ={ action: action, suggestion: suggestion, probes:probes};
@@ -249,20 +259,20 @@ function alcohol(answers,gender){
         case "FEMALE":
             if(score == 0)
             {
-                action.push("Interpretation: Good - Comment.");
-                suggestion.push("It looks like you don’t drink alcohol and that’s fine.");
+                action.push("");
+                suggestion.push("");
                 color = colorObject.good;
             }
             else if(score <= 7)
             {
-                action.push("Interpretation: Good - Comment.");
-                suggestion.push("It looks like your drinking is moderate.");
+                action.push("");
+                suggestion.push("");
                 color = colorObject.good;
             }
             else if(score > 7)
             {
-                action.push("Interpretation: Poor - Comment and recommend.");
-                suggestion.push("The recommended number of drinks per day for adult males is 2, and for adult females is 1. Cutting back on alcohol can help manage your BP.");
+                action.push("");
+                suggestion.push("");
                 color = colorObject.poor;
             }
             var toAdd ={ action: action, suggestion: suggestion, probes:probes};

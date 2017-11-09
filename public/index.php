@@ -89,7 +89,7 @@ require '../app/routes/dashboard.php';
 
 $app->get('/', function (Request $request, Response $response) {
 
-    return $this->view->render($response, 'public.home.twig.html', [
+    return $this->view->render($response, 'public.AdminHome.twig.html', [
     ]);
 })->setName('main')
     ->add($checkIfDontNeedAuth);

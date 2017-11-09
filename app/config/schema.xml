@@ -6,8 +6,7 @@
     <column name="hash" phpName="Hash" type="VARCHAR" size="255" required="true"/>
     <column name="fname" phpName="Fname" type="VARCHAR" size="255"/>
     <column name="lname" phpName="Lname" type="VARCHAR" size="255"/>
-    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
-    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <behavior name="timestampable" />
     <unique name="email_UNIQUE">
       <unique-column name="email"/>
     </unique>
@@ -48,8 +47,7 @@
     <column name="lname" phpName="Lname" type="VARCHAR" size="255"/>
     <column name="gender" phpName="Gender" type="CHAR" sqlType="enum('FEMALE','MALE')"/>
     <column name="role" phpName="Role" type="CHAR" sqlType="enum('ADMIN','PATIENT')" defaultValue="PATIENT"/>
-    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
-    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <behavior name="timestampable" />
     <unique name="email_UNIQUE">
       <unique-column name="email"/>
     </unique>
@@ -57,19 +55,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="Patient" idMethod="native" phpName="Patient">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="user_id" phpName="UserId" type="INTEGER" required="true"/>
-    <foreign-key foreignTable="NewUser" name="fkkuserid_participant" onDelete="CASCADE" onUpdate="CASCADE">
-      <reference local="user_id" foreign="id"/>
-    </foreign-key>
-    <index name="fkkuserid_participant_idx">
-      <index-column name="user_id"/>
-    </index>
-    <vendor type="mysql">
-      <parameter name="Engine" value="InnoDB"/>
-    </vendor>
-  </table>
+
   <table name="Results" idMethod="native" phpName="Results">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="discount" phpName="Discount" type="INTEGER"/>
@@ -117,8 +103,7 @@
     <column name="Q31" phpName="Q31" type="VARCHAR" size="255"/>
     <column name="Q32" phpName="Q32" type="VARCHAR" size="255"/>
     <column name="Q33" phpName="Q33" type="VARCHAR" size="255"/>
-    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
-    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <behavior name="timestampable" />
     <foreign-key foreignTable="NewUser" name="fk_User">
       <reference local="patient_id" foreign="id"/>
     </foreign-key>

@@ -48,16 +48,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildNewuserQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildNewuserQuery leftJoinPatient($relationAlias = null) Adds a LEFT JOIN clause to the query using the Patient relation
- * @method     ChildNewuserQuery rightJoinPatient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Patient relation
- * @method     ChildNewuserQuery innerJoinPatient($relationAlias = null) Adds a INNER JOIN clause to the query using the Patient relation
- *
- * @method     ChildNewuserQuery joinWithPatient($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Patient relation
- *
- * @method     ChildNewuserQuery leftJoinWithPatient() Adds a LEFT JOIN clause and with to the query using the Patient relation
- * @method     ChildNewuserQuery rightJoinWithPatient() Adds a RIGHT JOIN clause and with to the query using the Patient relation
- * @method     ChildNewuserQuery innerJoinWithPatient() Adds a INNER JOIN clause and with to the query using the Patient relation
- *
  * @method     ChildNewuserQuery leftJoinSurveylog($relationAlias = null) Adds a LEFT JOIN clause to the query using the Surveylog relation
  * @method     ChildNewuserQuery rightJoinSurveylog($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Surveylog relation
  * @method     ChildNewuserQuery innerJoinSurveylog($relationAlias = null) Adds a INNER JOIN clause to the query using the Surveylog relation
@@ -68,7 +58,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery rightJoinWithSurveylog() Adds a RIGHT JOIN clause and with to the query using the Surveylog relation
  * @method     ChildNewuserQuery innerJoinWithSurveylog() Adds a INNER JOIN clause and with to the query using the Surveylog relation
  *
- * @method     \PatientQuery|\SurveylogQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \SurveylogQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildNewuser findOne(ConnectionInterface $con = null) Return the first ChildNewuser matching the query
  * @method     ChildNewuser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildNewuser matching the query, or a new ChildNewuser object populated from the query conditions when no match is found
@@ -578,79 +568,6 @@ abstract class NewuserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Patient object
-     *
-     * @param \Patient|ObjectCollection $patient the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildNewuserQuery The current query, for fluid interface
-     */
-    public function filterByPatient($patient, $comparison = null)
-    {
-        if ($patient instanceof \Patient) {
-            return $this
-                ->addUsingAlias(NewuserTableMap::COL_ID, $patient->getUserId(), $comparison);
-        } elseif ($patient instanceof ObjectCollection) {
-            return $this
-                ->usePatientQuery()
-                ->filterByPrimaryKeys($patient->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByPatient() only accepts arguments of type \Patient or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Patient relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function joinPatient($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Patient');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Patient');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Patient relation Patient object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \PatientQuery A secondary query class using the current class as primary query
-     */
-    public function usePatientQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinPatient($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Patient', '\PatientQuery');
-    }
-
-    /**
      * Filter the query by a related \Surveylog object
      *
      * @param \Surveylog|ObjectCollection $surveylog the related object to use as filter
@@ -798,6 +715,72 @@ abstract class NewuserQuery extends ModelCriteria
 
             return $affectedRows;
         });
+    }
+
+    // timestampable behavior
+
+    /**
+     * Filter by the latest updated
+     *
+     * @param      int $nbDays Maximum age of the latest update in days
+     *
+     * @return     $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function recentlyUpdated($nbDays = 7)
+    {
+        return $this->addUsingAlias(NewuserTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by update date desc
+     *
+     * @return     $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function lastUpdatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(NewuserTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by update date asc
+     *
+     * @return     $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function firstUpdatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(NewuserTableMap::COL_UPDATED_AT);
+    }
+
+    /**
+     * Order by create date desc
+     *
+     * @return     $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function lastCreatedFirst()
+    {
+        return $this->addDescendingOrderByColumn(NewuserTableMap::COL_CREATED_AT);
+    }
+
+    /**
+     * Filter by the latest created
+     *
+     * @param      int $nbDays Maximum age of in days
+     *
+     * @return     $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function recentlyCreated($nbDays = 7)
+    {
+        return $this->addUsingAlias(NewuserTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
+    }
+
+    /**
+     * Order by create date asc
+     *
+     * @return     $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function firstCreatedFirst()
+    {
+        return $this->addAscendingOrderByColumn(NewuserTableMap::COL_CREATED_AT);
     }
 
 } // NewuserQuery

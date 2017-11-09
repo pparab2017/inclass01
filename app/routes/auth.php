@@ -12,6 +12,11 @@ use Utils\Utils;
 use Respect\Validation\Validator as v;
 
 
+$app->get('/MyAdmin/login', function($request, $response, $args){
+    return $this->view->render($response, 'public.myAdmin.login.twig.html', []);
+})->setName('MyAdminLogin')
+    ->add($checkIfDontNeedAuth);
+
 
 $app->get('/admin/login', function($request, $response, $args){
     return $this->view->render($response, 'public.admin.login.twig.html', []);
@@ -49,7 +54,7 @@ $app->post('/admin/login', function ($request, $response, $args){
 
     Utils::authenticateAs($user, Utils::USER_TYPE_ADMIN);
 
-    $path = $this->get('router')->pathFor('admin.dashboard');
+    $path = $this->get('router')->pathFor('myAdmin.dashboard');
     return $response->withRedirect($path);
 
 
@@ -61,3 +66,10 @@ $app->get('/logout', function ($request, $response, $args) {
     $path = $this->get('router')->pathFor('main');
     return $response->withRedirect($path);
 })->setName('logout');
+
+
+/// survey app
+///
+///
+
+

@@ -4,15 +4,12 @@ namespace Base;
 
 use \Newuser as ChildNewuser;
 use \NewuserQuery as ChildNewuserQuery;
-use \Patient as ChildPatient;
-use \PatientQuery as ChildPatientQuery;
 use \Surveylog as ChildSurveylog;
 use \SurveylogQuery as ChildSurveylogQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
 use Map\NewuserTableMap;
-use Map\PatientTableMap;
 use Map\SurveylogTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -134,12 +131,6 @@ abstract class Newuser implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ObjectCollection|ChildPatient[] Collection to store aggregation of ChildPatient objects.
-     */
-    protected $collPatients;
-    protected $collPatientsPartial;
-
-    /**
      * @var        ObjectCollection|ChildSurveylog[] Collection to store aggregation of ChildSurveylog objects.
      */
     protected $collSurveylogs;
@@ -152,12 +143,6 @@ abstract class Newuser implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildPatient[]
-     */
-    protected $patientsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -834,8 +819,6 @@ abstract class Newuser implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collPatients = null;
-
             $this->collSurveylogs = null;
 
         } // if (deep)
@@ -900,8 +883,20 @@ abstract class Newuser implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
+                // timestampable behavior
+
+                if (!$this->isColumnModified(NewuserTableMap::COL_CREATED_AT)) {
+                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
+                if (!$this->isColumnModified(NewuserTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
+                // timestampable behavior
+                if ($this->isModified() && !$this->isColumnModified(NewuserTableMap::COL_UPDATED_AT)) {
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
+                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -946,23 +941,6 @@ abstract class Newuser implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
-            }
-
-            if ($this->patientsScheduledForDeletion !== null) {
-                if (!$this->patientsScheduledForDeletion->isEmpty()) {
-                    \PatientQuery::create()
-                        ->filterByPrimaryKeys($this->patientsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->patientsScheduledForDeletion = null;
-                }
-            }
-
-            if ($this->collPatients !== null) {
-                foreach ($this->collPatients as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             if ($this->surveylogsScheduledForDeletion !== null) {
@@ -1216,21 +1194,6 @@ abstract class Newuser implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collPatients) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'patients';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'Patients';
-                        break;
-                    default:
-                        $key = 'Patients';
-                }
-
-                $result[$key] = $this->collPatients->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collSurveylogs) {
 
                 switch ($keyType) {
@@ -1528,12 +1491,6 @@ abstract class Newuser implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getPatients() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addPatient($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getSurveylogs() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addSurveylog($relObj->copy($deepCopy));
@@ -1581,237 +1538,9 @@ abstract class Newuser implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Patient' == $relationName) {
-            return $this->initPatients();
-        }
         if ('Surveylog' == $relationName) {
             return $this->initSurveylogs();
         }
-    }
-
-    /**
-     * Clears out the collPatients collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addPatients()
-     */
-    public function clearPatients()
-    {
-        $this->collPatients = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collPatients collection loaded partially.
-     */
-    public function resetPartialPatients($v = true)
-    {
-        $this->collPatientsPartial = $v;
-    }
-
-    /**
-     * Initializes the collPatients collection.
-     *
-     * By default this just sets the collPatients collection to an empty array (like clearcollPatients());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initPatients($overrideExisting = true)
-    {
-        if (null !== $this->collPatients && !$overrideExisting) {
-            return;
-        }
-
-        $collectionClassName = PatientTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collPatients = new $collectionClassName;
-        $this->collPatients->setModel('\Patient');
-    }
-
-    /**
-     * Gets an array of ChildPatient objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildNewuser is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildPatient[] List of ChildPatient objects
-     * @throws PropelException
-     */
-    public function getPatients(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collPatientsPartial && !$this->isNew();
-        if (null === $this->collPatients || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collPatients) {
-                // return empty collection
-                $this->initPatients();
-            } else {
-                $collPatients = ChildPatientQuery::create(null, $criteria)
-                    ->filterByNewuser($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collPatientsPartial && count($collPatients)) {
-                        $this->initPatients(false);
-
-                        foreach ($collPatients as $obj) {
-                            if (false == $this->collPatients->contains($obj)) {
-                                $this->collPatients->append($obj);
-                            }
-                        }
-
-                        $this->collPatientsPartial = true;
-                    }
-
-                    return $collPatients;
-                }
-
-                if ($partial && $this->collPatients) {
-                    foreach ($this->collPatients as $obj) {
-                        if ($obj->isNew()) {
-                            $collPatients[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collPatients = $collPatients;
-                $this->collPatientsPartial = false;
-            }
-        }
-
-        return $this->collPatients;
-    }
-
-    /**
-     * Sets a collection of ChildPatient objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $patients A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildNewuser The current object (for fluent API support)
-     */
-    public function setPatients(Collection $patients, ConnectionInterface $con = null)
-    {
-        /** @var ChildPatient[] $patientsToDelete */
-        $patientsToDelete = $this->getPatients(new Criteria(), $con)->diff($patients);
-
-
-        $this->patientsScheduledForDeletion = $patientsToDelete;
-
-        foreach ($patientsToDelete as $patientRemoved) {
-            $patientRemoved->setNewuser(null);
-        }
-
-        $this->collPatients = null;
-        foreach ($patients as $patient) {
-            $this->addPatient($patient);
-        }
-
-        $this->collPatients = $patients;
-        $this->collPatientsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related Patient objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related Patient objects.
-     * @throws PropelException
-     */
-    public function countPatients(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collPatientsPartial && !$this->isNew();
-        if (null === $this->collPatients || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collPatients) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getPatients());
-            }
-
-            $query = ChildPatientQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByNewuser($this)
-                ->count($con);
-        }
-
-        return count($this->collPatients);
-    }
-
-    /**
-     * Method called to associate a ChildPatient object to this object
-     * through the ChildPatient foreign key attribute.
-     *
-     * @param  ChildPatient $l ChildPatient
-     * @return $this|\Newuser The current object (for fluent API support)
-     */
-    public function addPatient(ChildPatient $l)
-    {
-        if ($this->collPatients === null) {
-            $this->initPatients();
-            $this->collPatientsPartial = true;
-        }
-
-        if (!$this->collPatients->contains($l)) {
-            $this->doAddPatient($l);
-
-            if ($this->patientsScheduledForDeletion and $this->patientsScheduledForDeletion->contains($l)) {
-                $this->patientsScheduledForDeletion->remove($this->patientsScheduledForDeletion->search($l));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ChildPatient $patient The ChildPatient object to add.
-     */
-    protected function doAddPatient(ChildPatient $patient)
-    {
-        $this->collPatients[]= $patient;
-        $patient->setNewuser($this);
-    }
-
-    /**
-     * @param  ChildPatient $patient The ChildPatient object to remove.
-     * @return $this|ChildNewuser The current object (for fluent API support)
-     */
-    public function removePatient(ChildPatient $patient)
-    {
-        if ($this->getPatients()->contains($patient)) {
-            $pos = $this->collPatients->search($patient);
-            $this->collPatients->remove($pos);
-            if (null === $this->patientsScheduledForDeletion) {
-                $this->patientsScheduledForDeletion = clone $this->collPatients;
-                $this->patientsScheduledForDeletion->clear();
-            }
-            $this->patientsScheduledForDeletion[]= clone $patient;
-            $patient->setNewuser(null);
-        }
-
-        return $this;
     }
 
     /**
@@ -2074,11 +1803,6 @@ abstract class Newuser implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collPatients) {
-                foreach ($this->collPatients as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collSurveylogs) {
                 foreach ($this->collSurveylogs as $o) {
                     $o->clearAllReferences($deep);
@@ -2086,7 +1810,6 @@ abstract class Newuser implements ActiveRecordInterface
             }
         } // if ($deep)
 
-        $this->collPatients = null;
         $this->collSurveylogs = null;
     }
 
@@ -2098,6 +1821,20 @@ abstract class Newuser implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(NewuserTableMap::DEFAULT_STRING_FORMAT);
+    }
+
+    // timestampable behavior
+
+    /**
+     * Mark the current object so that the update date doesn't get updated during next save
+     *
+     * @return     $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function keepUpdateDateUnchanged()
+    {
+        $this->modifiedColumns[NewuserTableMap::COL_UPDATED_AT] = true;
+
+        return $this;
     }
 
     /**

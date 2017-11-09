@@ -25,7 +25,7 @@ $checkAdminAuthMiddleware = function ($request, $response, $next) {
 
 $checkIfDontNeedAuth = function ($request, $response, $next) {
     if(Utils::isAuthenticatedAs(Utils::USER_TYPE_ADMIN)){
-        $path = $this->get('router')->pathFor('admin.dashboard');
+        $path = $this->get('router')->pathFor('myAdmin.dashboard');
         return $response->withRedirect($path);
     }
     elseif (Utils::isAuthenticatedAs(Utils::USER_TYPE_NURSE))

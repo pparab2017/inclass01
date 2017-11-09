@@ -33,7 +33,7 @@ $user->setLname("Vonderhied");
 $user->setHash(Utils::generateHash("test"));
 $user->setEmail("u1@test.com");
 $user->setGender("MALE");
-$user->setGender("PATIENT");
+$user->setRole("PATIENT");
 $user->save();
 
 
@@ -43,7 +43,7 @@ $user->setLname("Robert");
 $user->setHash(Utils::generateHash("test"));
 $user->setEmail("u2@test.com");
 $user->setGender("FEMALE");
-$user->setGender("PATIENT");
+$user->setRole("PATIENT");
 $user->save();
 
 echo "" . date_default_timezone_get() . PHP_EOL;
