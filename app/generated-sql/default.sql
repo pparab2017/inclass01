@@ -66,8 +66,55 @@ CREATE TABLE `NewUser`
     `role` enum('ADMIN','PATIENT') DEFAULT 'PATIENT',
     `created_at` DATETIME,
     `updated_at` DATETIME,
+    `Subscribed` enum('YES','NO') DEFAULT 'YES',
     PRIMARY KEY (`id`),
     UNIQUE INDEX `email_UNIQUE` (`email`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- Patient
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `Patient`;
+
+CREATE TABLE `Patient`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `fkkuserid_participant_idx` (`user_id`),
+    CONSTRAINT `fkkuserid_participant`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `NewUser` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- Questions
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `Questions`;
+
+CREATE TABLE `Questions`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `Text` VARCHAR(500),
+    `Choises` VARCHAR(45),
+    `Type` enum('H','O','T') DEFAULT 'H',
+    `Time` VARCHAR(45),
+    `Study_Id` INTEGER NOT NULL,
+    `User_id` INTEGER,
+    PRIMARY KEY (`id`),
+    INDEX `fk_userId_idx` (`User_id`),
+    INDEX `fk_q_userId_idx` (`User_id`),
+    INDEX `fk_q_studyId_idx` (`Study_Id`),
+    CONSTRAINT `fk_q_studyId`
+        FOREIGN KEY (`Study_Id`)
+        REFERENCES `Study` (`id`),
+    CONSTRAINT `fk_q_userId`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `NewUser` (`id`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -85,6 +132,43 @@ CREATE TABLE `Results`
     `price` DECIMAL(10,2),
     `region` VARCHAR(300),
     PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- Study
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `Study`;
+
+CREATE TABLE `Study`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `Name` VARCHAR(45),
+    `Description` VARCHAR(200),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- StudyResponse
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `StudyResponse`;
+
+CREATE TABLE `StudyResponse`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `User_id` INTEGER,
+    `Question_id` INTEGER,
+    `Response` VARCHAR(45),
+    PRIMARY KEY (`id`),
+    INDEX `fk_userId_idx` (`User_id`),
+    INDEX `fk_questionId_idx` (`Question_id`),
+    CONSTRAINT `fk_questionId`
+        FOREIGN KEY (`Question_id`)
+        REFERENCES `Questions` (`id`),
+    CONSTRAINT `fk_userId`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `NewUser` (`id`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

@@ -44,7 +44,7 @@ $app->get('/admin/user/ajax', function ($request, $response, $args) {
 $app->post('/admin/user/add', function ($request, $response, $args) {
 
     $con = Propel::getWriteConnection('default');// get the data base name connection
-    $returnJson = "OK";
+    $returnJson = "{status: OK}";
     try {
         $params = $request->getParsedBody();// get the form request
         $user = new User();
@@ -144,6 +144,76 @@ $app->get('/admin/user/delete/{id}', function ($request, $response, $args) {
 
 })->setName('admin.user.delete')
     ->add($checkAdminAuthMiddleware);
+
+
+
+$app->get('/admin/user/getAll', function ($request, $response, $args){
+
+    $returnJson = "OK";
+    try {
+        $returnJson = $request->getParsedBody();// get the form request
+        $returnJson =  NewuserQuery::create()
+            ->find()
+            ->toJSON();
+
+    }
+    catch (Exception $ex)
+    {
+        if(strpos($ex, '1062') !== false)
+        {
+            $returnJson =  "Action not completed, An error occurred!";
+        }
+        else
+        {
+            $returnJson = $ex->getMessage();
+        }
+        $returnJson = json_encode($returnJson);
+    }
+    finally
+    {
+        return ($returnJson);
+    }
+
+
+})->setName('myAdmin.user.getAll');
+
+
+
+
+$app->post('/admin/user/addMessage', function ($request, $response, $args){
+
+    $returnJson = "{status: OK}";;
+    try {
+        $params = $request->getParsedBody();// get the form request
+        $questions = new Questions();
+        $questions->setUserId($params['userId']);
+        $questions->setType($params['type']);
+        $questions->setTime($params['time']);
+        $questions->setChoises($params['choices']);
+        $questions->setText($params['questionText']);
+        $questions->setStudyId(1);
+        $questions->save();
+
+    }
+    catch (Exception $ex)
+    {
+        if(strpos($ex, '1062') !== false)
+        {
+            $returnJson =  "Action not completed, An error occurred!";
+        }
+        else
+        {
+            $returnJson = $ex->getMessage();
+        }
+    }
+    finally
+    {
+        return json_encode($returnJson);
+    }
+
+
+})->setName('myAdmin.user.addMessage');
+
 
 
 
@@ -274,6 +344,7 @@ $app->get('/myAdmin/user/{id}', function ($request, $response, $args) {
 //echo $patient;
 
 
+   // $patient->get
     return $this->view->render($response, 'public.patient.profile.twig.html', [
        'Patient' => $patient
     ]);

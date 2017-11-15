@@ -6,7 +6,8 @@
     <column name="hash" phpName="Hash" type="VARCHAR" size="255" required="true"/>
     <column name="fname" phpName="Fname" type="VARCHAR" size="255"/>
     <column name="lname" phpName="Lname" type="VARCHAR" size="255"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
     <unique name="email_UNIQUE">
       <unique-column name="email"/>
     </unique>
@@ -47,7 +48,9 @@
     <column name="lname" phpName="Lname" type="VARCHAR" size="255"/>
     <column name="gender" phpName="Gender" type="CHAR" sqlType="enum('FEMALE','MALE')"/>
     <column name="role" phpName="Role" type="CHAR" sqlType="enum('ADMIN','PATIENT')" defaultValue="PATIENT"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <column name="Subscribed" phpName="Subscribed" type="CHAR" sqlType="enum('YES','NO')" defaultValue="YES"/>
     <unique name="email_UNIQUE">
       <unique-column name="email"/>
     </unique>
@@ -55,7 +58,46 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-
+  <table name="Patient" idMethod="native" phpName="Patient">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="NewUser" name="fkkuserid_participant" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <index name="fkkuserid_participant_idx">
+      <index-column name="user_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="Questions" idMethod="native" phpName="Questions">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="Text" phpName="Text" type="VARCHAR" size="500"/>
+    <column name="Choises" phpName="Choises" type="VARCHAR" size="45"/>
+    <column name="Type" phpName="Type" type="CHAR" sqlType="enum('H','O','T')" defaultValue="H"/>
+    <column name="Time" phpName="Time" type="VARCHAR" size="45"/>
+    <column name="Study_Id" phpName="StudyId" type="INTEGER" required="true"/>
+    <column name="User_id" phpName="UserId" type="INTEGER"/>
+    <foreign-key foreignTable="Study" name="fk_q_studyId">
+      <reference local="Study_Id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="NewUser" name="fk_q_userId">
+      <reference local="User_id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_userId_idx">
+      <index-column name="User_id"/>
+    </index>
+    <index name="fk_q_userId_idx">
+      <index-column name="User_id"/>
+    </index>
+    <index name="fk_q_studyId_idx">
+      <index-column name="Study_Id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
   <table name="Results" idMethod="native" phpName="Results">
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="discount" phpName="Discount" type="INTEGER"/>
@@ -63,6 +105,35 @@
     <column name="photo" phpName="Photo" type="VARCHAR" size="300"/>
     <column name="price" phpName="Price" type="DECIMAL" size="10" scale="2"/>
     <column name="region" phpName="Region" type="VARCHAR" size="300"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="Study" idMethod="native" phpName="Study">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="Name" phpName="Name" type="VARCHAR" size="45"/>
+    <column name="Description" phpName="Description" type="VARCHAR" size="200"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="StudyResponse" idMethod="native" phpName="Studyresponse">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="User_id" phpName="UserId" type="INTEGER"/>
+    <column name="Question_id" phpName="QuestionId" type="INTEGER"/>
+    <column name="Response" phpName="Response" type="VARCHAR" size="45"/>
+    <foreign-key foreignTable="Questions" name="fk_questionId">
+      <reference local="Question_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="NewUser" name="fk_userId">
+      <reference local="User_id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_userId_idx">
+      <index-column name="User_id"/>
+    </index>
+    <index name="fk_questionId_idx">
+      <index-column name="Question_id"/>
+    </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
@@ -103,7 +174,8 @@
     <column name="Q31" phpName="Q31" type="VARCHAR" size="255"/>
     <column name="Q32" phpName="Q32" type="VARCHAR" size="255"/>
     <column name="Q33" phpName="Q33" type="VARCHAR" size="255"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
     <foreign-key foreignTable="NewUser" name="fk_User">
       <reference local="patient_id" foreign="id"/>
     </foreign-key>

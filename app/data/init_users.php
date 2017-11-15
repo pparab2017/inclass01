@@ -46,6 +46,12 @@ $user->setGender("FEMALE");
 $user->setRole("PATIENT");
 $user->save();
 
+$study = new Study();
+$study->setName("One");
+$study->setDescription("Test only one type of study");
+$study->save();
+
+
 echo "" . date_default_timezone_get() . PHP_EOL;
 
 /*

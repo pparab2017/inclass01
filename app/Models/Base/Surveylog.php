@@ -4,7 +4,6 @@ namespace Base;
 
 use \Newuser as ChildNewuser;
 use \NewuserQuery as ChildNewuserQuery;
-use \Surveylog as ChildSurveylog;
 use \SurveylogQuery as ChildSurveylogQuery;
 use \DateTime;
 use \Exception;
@@ -1982,20 +1981,8 @@ abstract class Surveylog implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-
-                if (!$this->isColumnModified(SurveylogTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
-                if (!$this->isColumnModified(SurveylogTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(SurveylogTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -3296,20 +3283,6 @@ abstract class Surveylog implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(SurveylogTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildSurveylog The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[SurveylogTableMap::COL_UPDATED_AT] = true;
-
-        return $this;
     }
 
     /**

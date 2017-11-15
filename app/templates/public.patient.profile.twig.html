@@ -357,6 +357,11 @@
         call:  "{{path_for('doctor.patients.surveyResults', { 'id' : '{id}' })}}"
     };
 
+   var Message =  {
+       add: "addurl",
+       update: "",
+       delete: ""
+    };
 
     function bindEvent()
     {
@@ -372,8 +377,15 @@
     }
 
 
+
+
+
+
     $(document).ready(function() {
 
+
+
+        //
         $("#DetailSurveyView").hide();
 
         if('{{Patient.getGender}}' == "FEMALE")
@@ -689,7 +701,7 @@
                     medication_msg.setAttribute("id","singleQuestions" + i);
                     var node = document.createElement("li");
                     var text = document.createTextNode(_object.feedBack[i].suggestion);
-                 //   node.appendChild(text);
+                  // node.appendChild(text);
                   //  medication_msg_ul.appendChild(node);
 //                    medication_msg.append("Messages");
 //                    medication_msg.appendChild(medication_msg_ul);

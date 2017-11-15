@@ -2,37 +2,44 @@
 
 namespace Base;
 
-use \AdminQuery as ChildAdminQuery;
-use \DateTime;
+use \Newuser as ChildNewuser;
+use \NewuserQuery as ChildNewuserQuery;
+use \Questions as ChildQuestions;
+use \QuestionsQuery as ChildQuestionsQuery;
+use \Study as ChildStudy;
+use \StudyQuery as ChildStudyQuery;
+use \Studyresponse as ChildStudyresponse;
+use \StudyresponseQuery as ChildStudyresponseQuery;
 use \Exception;
 use \PDO;
-use Map\AdminTableMap;
+use Map\QuestionsTableMap;
+use Map\StudyresponseTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'Admin' table.
+ * Base class that represents a row from the 'Questions' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class Admin implements ActiveRecordInterface
+abstract class Questions implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\AdminTableMap';
+    const TABLE_MAP = '\\Map\\QuestionsTableMap';
 
 
     /**
@@ -69,46 +76,63 @@ abstract class Admin implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the email field.
+     * The value for the text field.
      *
      * @var        string
      */
-    protected $email;
+    protected $text;
 
     /**
-     * The value for the hash field.
+     * The value for the choises field.
      *
      * @var        string
      */
-    protected $hash;
+    protected $choises;
 
     /**
-     * The value for the fname field.
+     * The value for the type field.
+     *
+     * Note: this column has a database default value of: 'H'
+     * @var        string
+     */
+    protected $type;
+
+    /**
+     * The value for the time field.
      *
      * @var        string
      */
-    protected $fname;
+    protected $time;
 
     /**
-     * The value for the lname field.
+     * The value for the study_id field.
      *
-     * @var        string
+     * @var        int
      */
-    protected $lname;
+    protected $study_id;
 
     /**
-     * The value for the created_at field.
+     * The value for the user_id field.
      *
-     * @var        DateTime
+     * @var        int
      */
-    protected $created_at;
+    protected $user_id;
 
     /**
-     * The value for the updated_at field.
-     *
-     * @var        DateTime
+     * @var        ChildStudy
      */
-    protected $updated_at;
+    protected $aStudy;
+
+    /**
+     * @var        ChildNewuser
+     */
+    protected $aNewuser;
+
+    /**
+     * @var        ObjectCollection|ChildStudyresponse[] Collection to store aggregation of ChildStudyresponse objects.
+     */
+    protected $collStudyresponses;
+    protected $collStudyresponsesPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -119,10 +143,29 @@ abstract class Admin implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Base\Admin object.
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildStudyresponse[]
+     */
+    protected $studyresponsesScheduledForDeletion = null;
+
+    /**
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->type = 'H';
+    }
+
+    /**
+     * Initializes internal state of Base\Questions object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -214,9 +257,9 @@ abstract class Admin implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Admin</code> instance.  If
-     * <code>obj</code> is an instance of <code>Admin</code>, delegates to
-     * <code>equals(Admin)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Questions</code> instance.  If
+     * <code>obj</code> is an instance of <code>Questions</code>, delegates to
+     * <code>equals(Questions)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -282,7 +325,7 @@ abstract class Admin implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Admin The current object, for fluid interface
+     * @return $this|Questions The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -354,90 +397,70 @@ abstract class Admin implements ActiveRecordInterface
     }
 
     /**
-     * Get the [email] column value.
+     * Get the [text] column value.
      *
      * @return string
      */
-    public function getEmail()
+    public function getText()
     {
-        return $this->email;
+        return $this->text;
     }
 
     /**
-     * Get the [hash] column value.
+     * Get the [choises] column value.
      *
      * @return string
      */
-    public function getHash()
+    public function getChoises()
     {
-        return $this->hash;
+        return $this->choises;
     }
 
     /**
-     * Get the [fname] column value.
+     * Get the [type] column value.
      *
      * @return string
      */
-    public function getFname()
+    public function getType()
     {
-        return $this->fname;
+        return $this->type;
     }
 
     /**
-     * Get the [lname] column value.
+     * Get the [time] column value.
      *
      * @return string
      */
-    public function getLname()
+    public function getTime()
     {
-        return $this->lname;
+        return $this->time;
     }
 
     /**
-     * Get the [optionally formatted] temporal [created_at] column value.
+     * Get the [study_id] column value.
      *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return int
      */
-    public function getCreatedAt($format = NULL)
+    public function getStudyId()
     {
-        if ($format === null) {
-            return $this->created_at;
-        } else {
-            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
-        }
+        return $this->study_id;
     }
 
     /**
-     * Get the [optionally formatted] temporal [updated_at] column value.
+     * Get the [user_id] column value.
      *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
+     * @return int
      */
-    public function getUpdatedAt($format = NULL)
+    public function getUserId()
     {
-        if ($format === null) {
-            return $this->updated_at;
-        } else {
-            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
-        }
+        return $this->user_id;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Admin The current object (for fluent API support)
+     * @return $this|\Questions The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -447,131 +470,139 @@ abstract class Admin implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[AdminTableMap::COL_ID] = true;
+            $this->modifiedColumns[QuestionsTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [email] column.
+     * Set the value of [text] column.
      *
      * @param string $v new value
-     * @return $this|\Admin The current object (for fluent API support)
+     * @return $this|\Questions The current object (for fluent API support)
      */
-    public function setEmail($v)
+    public function setText($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->email !== $v) {
-            $this->email = $v;
-            $this->modifiedColumns[AdminTableMap::COL_EMAIL] = true;
+        if ($this->text !== $v) {
+            $this->text = $v;
+            $this->modifiedColumns[QuestionsTableMap::COL_TEXT] = true;
         }
 
         return $this;
-    } // setEmail()
+    } // setText()
 
     /**
-     * Set the value of [hash] column.
+     * Set the value of [choises] column.
      *
      * @param string $v new value
-     * @return $this|\Admin The current object (for fluent API support)
+     * @return $this|\Questions The current object (for fluent API support)
      */
-    public function setHash($v)
+    public function setChoises($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->hash !== $v) {
-            $this->hash = $v;
-            $this->modifiedColumns[AdminTableMap::COL_HASH] = true;
+        if ($this->choises !== $v) {
+            $this->choises = $v;
+            $this->modifiedColumns[QuestionsTableMap::COL_CHOISES] = true;
         }
 
         return $this;
-    } // setHash()
+    } // setChoises()
 
     /**
-     * Set the value of [fname] column.
+     * Set the value of [type] column.
      *
      * @param string $v new value
-     * @return $this|\Admin The current object (for fluent API support)
+     * @return $this|\Questions The current object (for fluent API support)
      */
-    public function setFname($v)
+    public function setType($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->fname !== $v) {
-            $this->fname = $v;
-            $this->modifiedColumns[AdminTableMap::COL_FNAME] = true;
+        if ($this->type !== $v) {
+            $this->type = $v;
+            $this->modifiedColumns[QuestionsTableMap::COL_TYPE] = true;
         }
 
         return $this;
-    } // setFname()
+    } // setType()
 
     /**
-     * Set the value of [lname] column.
+     * Set the value of [time] column.
      *
      * @param string $v new value
-     * @return $this|\Admin The current object (for fluent API support)
+     * @return $this|\Questions The current object (for fluent API support)
      */
-    public function setLname($v)
+    public function setTime($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->lname !== $v) {
-            $this->lname = $v;
-            $this->modifiedColumns[AdminTableMap::COL_LNAME] = true;
+        if ($this->time !== $v) {
+            $this->time = $v;
+            $this->modifiedColumns[QuestionsTableMap::COL_TIME] = true;
         }
 
         return $this;
-    } // setLname()
+    } // setTime()
 
     /**
-     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
+     * Set the value of [study_id] column.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Admin The current object (for fluent API support)
+     * @param int $v new value
+     * @return $this|\Questions The current object (for fluent API support)
      */
-    public function setCreatedAt($v)
+    public function setStudyId($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
-                $this->created_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[AdminTableMap::COL_CREATED_AT] = true;
-            }
-        } // if either are not null
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->study_id !== $v) {
+            $this->study_id = $v;
+            $this->modifiedColumns[QuestionsTableMap::COL_STUDY_ID] = true;
+        }
+
+        if ($this->aStudy !== null && $this->aStudy->getId() !== $v) {
+            $this->aStudy = null;
+        }
 
         return $this;
-    } // setCreatedAt()
+    } // setStudyId()
 
     /**
-     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+     * Set the value of [user_id] column.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Admin The current object (for fluent API support)
+     * @param int $v new value
+     * @return $this|\Questions The current object (for fluent API support)
      */
-    public function setUpdatedAt($v)
+    public function setUserId($v)
     {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
-                $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[AdminTableMap::COL_UPDATED_AT] = true;
-            }
-        } // if either are not null
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[QuestionsTableMap::COL_USER_ID] = true;
+        }
+
+        if ($this->aNewuser !== null && $this->aNewuser->getId() !== $v) {
+            $this->aNewuser = null;
+        }
 
         return $this;
-    } // setUpdatedAt()
+    } // setUserId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -583,6 +614,10 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->type !== 'H') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -609,32 +644,26 @@ abstract class Admin implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : AdminTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : QuestionsTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : AdminTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->email = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : QuestionsTableMap::translateFieldName('Text', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->text = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : AdminTableMap::translateFieldName('Hash', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->hash = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : QuestionsTableMap::translateFieldName('Choises', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->choises = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : AdminTableMap::translateFieldName('Fname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->fname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : QuestionsTableMap::translateFieldName('Type', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->type = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : AdminTableMap::translateFieldName('Lname', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->lname = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : QuestionsTableMap::translateFieldName('Time', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->time = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : AdminTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : QuestionsTableMap::translateFieldName('StudyId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->study_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : AdminTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : QuestionsTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->user_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -643,10 +672,10 @@ abstract class Admin implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = AdminTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 7; // 7 = QuestionsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Admin'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Questions'), 0, $e);
         }
     }
 
@@ -665,6 +694,12 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aStudy !== null && $this->study_id !== $this->aStudy->getId()) {
+            $this->aStudy = null;
+        }
+        if ($this->aNewuser !== null && $this->user_id !== $this->aNewuser->getId()) {
+            $this->aNewuser = null;
+        }
     } // ensureConsistency
 
     /**
@@ -688,13 +723,13 @@ abstract class Admin implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(AdminTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(QuestionsTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildAdminQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildQuestionsQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -703,6 +738,10 @@ abstract class Admin implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->aStudy = null;
+            $this->aNewuser = null;
+            $this->collStudyresponses = null;
 
         } // if (deep)
     }
@@ -713,8 +752,8 @@ abstract class Admin implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Admin::setDeleted()
-     * @see Admin::isDeleted()
+     * @see Questions::setDeleted()
+     * @see Questions::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -723,11 +762,11 @@ abstract class Admin implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AdminTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionsTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildAdminQuery::create()
+            $deleteQuery = ChildQuestionsQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -758,7 +797,7 @@ abstract class Admin implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(AdminTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(QuestionsTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -777,7 +816,7 @@ abstract class Admin implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                AdminTableMap::addInstanceToPool($this);
+                QuestionsTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -803,6 +842,25 @@ abstract class Admin implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aStudy !== null) {
+                if ($this->aStudy->isModified() || $this->aStudy->isNew()) {
+                    $affectedRows += $this->aStudy->save($con);
+                }
+                $this->setStudy($this->aStudy);
+            }
+
+            if ($this->aNewuser !== null) {
+                if ($this->aNewuser->isModified() || $this->aNewuser->isNew()) {
+                    $affectedRows += $this->aNewuser->save($con);
+                }
+                $this->setNewuser($this->aNewuser);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -812,6 +870,24 @@ abstract class Admin implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->studyresponsesScheduledForDeletion !== null) {
+                if (!$this->studyresponsesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->studyresponsesScheduledForDeletion as $studyresponse) {
+                        // need to save related object because we set the relation to null
+                        $studyresponse->save($con);
+                    }
+                    $this->studyresponsesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collStudyresponses !== null) {
+                foreach ($this->collStudyresponses as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -834,36 +910,36 @@ abstract class Admin implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[AdminTableMap::COL_ID] = true;
+        $this->modifiedColumns[QuestionsTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . AdminTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . QuestionsTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(AdminTableMap::COL_ID)) {
+        if ($this->isColumnModified(QuestionsTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(AdminTableMap::COL_EMAIL)) {
-            $modifiedColumns[':p' . $index++]  = 'email';
+        if ($this->isColumnModified(QuestionsTableMap::COL_TEXT)) {
+            $modifiedColumns[':p' . $index++]  = 'Text';
         }
-        if ($this->isColumnModified(AdminTableMap::COL_HASH)) {
-            $modifiedColumns[':p' . $index++]  = 'hash';
+        if ($this->isColumnModified(QuestionsTableMap::COL_CHOISES)) {
+            $modifiedColumns[':p' . $index++]  = 'Choises';
         }
-        if ($this->isColumnModified(AdminTableMap::COL_FNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'fname';
+        if ($this->isColumnModified(QuestionsTableMap::COL_TYPE)) {
+            $modifiedColumns[':p' . $index++]  = 'Type';
         }
-        if ($this->isColumnModified(AdminTableMap::COL_LNAME)) {
-            $modifiedColumns[':p' . $index++]  = 'lname';
+        if ($this->isColumnModified(QuestionsTableMap::COL_TIME)) {
+            $modifiedColumns[':p' . $index++]  = 'Time';
         }
-        if ($this->isColumnModified(AdminTableMap::COL_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'created_at';
+        if ($this->isColumnModified(QuestionsTableMap::COL_STUDY_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'Study_Id';
         }
-        if ($this->isColumnModified(AdminTableMap::COL_UPDATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'updated_at';
+        if ($this->isColumnModified(QuestionsTableMap::COL_USER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'User_id';
         }
 
         $sql = sprintf(
-            'INSERT INTO Admin (%s) VALUES (%s)',
+            'INSERT INTO Questions (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -875,23 +951,23 @@ abstract class Admin implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'email':
-                        $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+                    case 'Text':
+                        $stmt->bindValue($identifier, $this->text, PDO::PARAM_STR);
                         break;
-                    case 'hash':
-                        $stmt->bindValue($identifier, $this->hash, PDO::PARAM_STR);
+                    case 'Choises':
+                        $stmt->bindValue($identifier, $this->choises, PDO::PARAM_STR);
                         break;
-                    case 'fname':
-                        $stmt->bindValue($identifier, $this->fname, PDO::PARAM_STR);
+                    case 'Type':
+                        $stmt->bindValue($identifier, $this->type, PDO::PARAM_STR);
                         break;
-                    case 'lname':
-                        $stmt->bindValue($identifier, $this->lname, PDO::PARAM_STR);
+                    case 'Time':
+                        $stmt->bindValue($identifier, $this->time, PDO::PARAM_STR);
                         break;
-                    case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'Study_Id':
+                        $stmt->bindValue($identifier, $this->study_id, PDO::PARAM_INT);
                         break;
-                    case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'User_id':
+                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -939,7 +1015,7 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = AdminTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = QuestionsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -959,22 +1035,22 @@ abstract class Admin implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getEmail();
+                return $this->getText();
                 break;
             case 2:
-                return $this->getHash();
+                return $this->getChoises();
                 break;
             case 3:
-                return $this->getFname();
+                return $this->getType();
                 break;
             case 4:
-                return $this->getLname();
+                return $this->getTime();
                 break;
             case 5:
-                return $this->getCreatedAt();
+                return $this->getStudyId();
                 break;
             case 6:
-                return $this->getUpdatedAt();
+                return $this->getUserId();
                 break;
             default:
                 return null;
@@ -993,39 +1069,79 @@ abstract class Admin implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Admin'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Questions'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Admin'][$this->hashCode()] = true;
-        $keys = AdminTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Questions'][$this->hashCode()] = true;
+        $keys = QuestionsTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getEmail(),
-            $keys[2] => $this->getHash(),
-            $keys[3] => $this->getFname(),
-            $keys[4] => $this->getLname(),
-            $keys[5] => $this->getCreatedAt(),
-            $keys[6] => $this->getUpdatedAt(),
+            $keys[1] => $this->getText(),
+            $keys[2] => $this->getChoises(),
+            $keys[3] => $this->getType(),
+            $keys[4] => $this->getTime(),
+            $keys[5] => $this->getStudyId(),
+            $keys[6] => $this->getUserId(),
         );
-        if ($result[$keys[5]] instanceof \DateTime) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
-        }
-
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->aStudy) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'study';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Study';
+                        break;
+                    default:
+                        $key = 'Study';
+                }
+
+                $result[$key] = $this->aStudy->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aNewuser) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'newuser';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'NewUser';
+                        break;
+                    default:
+                        $key = 'Newuser';
+                }
+
+                $result[$key] = $this->aNewuser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collStudyresponses) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'studyresponses';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'StudyResponses';
+                        break;
+                    default:
+                        $key = 'Studyresponses';
+                }
+
+                $result[$key] = $this->collStudyresponses->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+        }
 
         return $result;
     }
@@ -1039,11 +1155,11 @@ abstract class Admin implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Admin
+     * @return $this|\Questions
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = AdminTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = QuestionsTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1054,7 +1170,7 @@ abstract class Admin implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Admin
+     * @return $this|\Questions
      */
     public function setByPosition($pos, $value)
     {
@@ -1063,22 +1179,22 @@ abstract class Admin implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setEmail($value);
+                $this->setText($value);
                 break;
             case 2:
-                $this->setHash($value);
+                $this->setChoises($value);
                 break;
             case 3:
-                $this->setFname($value);
+                $this->setType($value);
                 break;
             case 4:
-                $this->setLname($value);
+                $this->setTime($value);
                 break;
             case 5:
-                $this->setCreatedAt($value);
+                $this->setStudyId($value);
                 break;
             case 6:
-                $this->setUpdatedAt($value);
+                $this->setUserId($value);
                 break;
         } // switch()
 
@@ -1104,28 +1220,28 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = AdminTableMap::getFieldNames($keyType);
+        $keys = QuestionsTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setEmail($arr[$keys[1]]);
+            $this->setText($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setHash($arr[$keys[2]]);
+            $this->setChoises($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setFname($arr[$keys[3]]);
+            $this->setType($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setLname($arr[$keys[4]]);
+            $this->setTime($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setCreatedAt($arr[$keys[5]]);
+            $this->setStudyId($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setUpdatedAt($arr[$keys[6]]);
+            $this->setUserId($arr[$keys[6]]);
         }
     }
 
@@ -1146,7 +1262,7 @@ abstract class Admin implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Admin The current object, for fluid interface
+     * @return $this|\Questions The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1166,28 +1282,28 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(AdminTableMap::DATABASE_NAME);
+        $criteria = new Criteria(QuestionsTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(AdminTableMap::COL_ID)) {
-            $criteria->add(AdminTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(QuestionsTableMap::COL_ID)) {
+            $criteria->add(QuestionsTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(AdminTableMap::COL_EMAIL)) {
-            $criteria->add(AdminTableMap::COL_EMAIL, $this->email);
+        if ($this->isColumnModified(QuestionsTableMap::COL_TEXT)) {
+            $criteria->add(QuestionsTableMap::COL_TEXT, $this->text);
         }
-        if ($this->isColumnModified(AdminTableMap::COL_HASH)) {
-            $criteria->add(AdminTableMap::COL_HASH, $this->hash);
+        if ($this->isColumnModified(QuestionsTableMap::COL_CHOISES)) {
+            $criteria->add(QuestionsTableMap::COL_CHOISES, $this->choises);
         }
-        if ($this->isColumnModified(AdminTableMap::COL_FNAME)) {
-            $criteria->add(AdminTableMap::COL_FNAME, $this->fname);
+        if ($this->isColumnModified(QuestionsTableMap::COL_TYPE)) {
+            $criteria->add(QuestionsTableMap::COL_TYPE, $this->type);
         }
-        if ($this->isColumnModified(AdminTableMap::COL_LNAME)) {
-            $criteria->add(AdminTableMap::COL_LNAME, $this->lname);
+        if ($this->isColumnModified(QuestionsTableMap::COL_TIME)) {
+            $criteria->add(QuestionsTableMap::COL_TIME, $this->time);
         }
-        if ($this->isColumnModified(AdminTableMap::COL_CREATED_AT)) {
-            $criteria->add(AdminTableMap::COL_CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(QuestionsTableMap::COL_STUDY_ID)) {
+            $criteria->add(QuestionsTableMap::COL_STUDY_ID, $this->study_id);
         }
-        if ($this->isColumnModified(AdminTableMap::COL_UPDATED_AT)) {
-            $criteria->add(AdminTableMap::COL_UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(QuestionsTableMap::COL_USER_ID)) {
+            $criteria->add(QuestionsTableMap::COL_USER_ID, $this->user_id);
         }
 
         return $criteria;
@@ -1205,8 +1321,8 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildAdminQuery::create();
-        $criteria->add(AdminTableMap::COL_ID, $this->id);
+        $criteria = ChildQuestionsQuery::create();
+        $criteria->add(QuestionsTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1268,19 +1384,33 @@ abstract class Admin implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Admin (or compatible) type.
+     * @param      object $copyObj An object of \Questions (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setEmail($this->getEmail());
-        $copyObj->setHash($this->getHash());
-        $copyObj->setFname($this->getFname());
-        $copyObj->setLname($this->getLname());
-        $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setText($this->getText());
+        $copyObj->setChoises($this->getChoises());
+        $copyObj->setType($this->getType());
+        $copyObj->setTime($this->getTime());
+        $copyObj->setStudyId($this->getStudyId());
+        $copyObj->setUserId($this->getUserId());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getStudyresponses() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addStudyresponse($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1296,7 +1426,7 @@ abstract class Admin implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Admin Clone of current object.
+     * @return \Questions Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1310,21 +1440,396 @@ abstract class Admin implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a ChildStudy object.
+     *
+     * @param  ChildStudy $v
+     * @return $this|\Questions The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setStudy(ChildStudy $v = null)
+    {
+        if ($v === null) {
+            $this->setStudyId(NULL);
+        } else {
+            $this->setStudyId($v->getId());
+        }
+
+        $this->aStudy = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildStudy object, it will not be re-added.
+        if ($v !== null) {
+            $v->addQuestions($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildStudy object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildStudy The associated ChildStudy object.
+     * @throws PropelException
+     */
+    public function getStudy(ConnectionInterface $con = null)
+    {
+        if ($this->aStudy === null && ($this->study_id !== null)) {
+            $this->aStudy = ChildStudyQuery::create()->findPk($this->study_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aStudy->addQuestionss($this);
+             */
+        }
+
+        return $this->aStudy;
+    }
+
+    /**
+     * Declares an association between this object and a ChildNewuser object.
+     *
+     * @param  ChildNewuser $v
+     * @return $this|\Questions The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setNewuser(ChildNewuser $v = null)
+    {
+        if ($v === null) {
+            $this->setUserId(NULL);
+        } else {
+            $this->setUserId($v->getId());
+        }
+
+        $this->aNewuser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildNewuser object, it will not be re-added.
+        if ($v !== null) {
+            $v->addQuestions($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildNewuser object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildNewuser The associated ChildNewuser object.
+     * @throws PropelException
+     */
+    public function getNewuser(ConnectionInterface $con = null)
+    {
+        if ($this->aNewuser === null && ($this->user_id !== null)) {
+            $this->aNewuser = ChildNewuserQuery::create()->findPk($this->user_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aNewuser->addQuestionss($this);
+             */
+        }
+
+        return $this->aNewuser;
+    }
+
+
+    /**
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
+     *
+     * @param      string $relationName The name of the relation to initialize
+     * @return void
+     */
+    public function initRelation($relationName)
+    {
+        if ('Studyresponse' == $relationName) {
+            return $this->initStudyresponses();
+        }
+    }
+
+    /**
+     * Clears out the collStudyresponses collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addStudyresponses()
+     */
+    public function clearStudyresponses()
+    {
+        $this->collStudyresponses = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collStudyresponses collection loaded partially.
+     */
+    public function resetPartialStudyresponses($v = true)
+    {
+        $this->collStudyresponsesPartial = $v;
+    }
+
+    /**
+     * Initializes the collStudyresponses collection.
+     *
+     * By default this just sets the collStudyresponses collection to an empty array (like clearcollStudyresponses());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initStudyresponses($overrideExisting = true)
+    {
+        if (null !== $this->collStudyresponses && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = StudyresponseTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collStudyresponses = new $collectionClassName;
+        $this->collStudyresponses->setModel('\Studyresponse');
+    }
+
+    /**
+     * Gets an array of ChildStudyresponse objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildQuestions is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildStudyresponse[] List of ChildStudyresponse objects
+     * @throws PropelException
+     */
+    public function getStudyresponses(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collStudyresponsesPartial && !$this->isNew();
+        if (null === $this->collStudyresponses || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collStudyresponses) {
+                // return empty collection
+                $this->initStudyresponses();
+            } else {
+                $collStudyresponses = ChildStudyresponseQuery::create(null, $criteria)
+                    ->filterByQuestions($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collStudyresponsesPartial && count($collStudyresponses)) {
+                        $this->initStudyresponses(false);
+
+                        foreach ($collStudyresponses as $obj) {
+                            if (false == $this->collStudyresponses->contains($obj)) {
+                                $this->collStudyresponses->append($obj);
+                            }
+                        }
+
+                        $this->collStudyresponsesPartial = true;
+                    }
+
+                    return $collStudyresponses;
+                }
+
+                if ($partial && $this->collStudyresponses) {
+                    foreach ($this->collStudyresponses as $obj) {
+                        if ($obj->isNew()) {
+                            $collStudyresponses[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collStudyresponses = $collStudyresponses;
+                $this->collStudyresponsesPartial = false;
+            }
+        }
+
+        return $this->collStudyresponses;
+    }
+
+    /**
+     * Sets a collection of ChildStudyresponse objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $studyresponses A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildQuestions The current object (for fluent API support)
+     */
+    public function setStudyresponses(Collection $studyresponses, ConnectionInterface $con = null)
+    {
+        /** @var ChildStudyresponse[] $studyresponsesToDelete */
+        $studyresponsesToDelete = $this->getStudyresponses(new Criteria(), $con)->diff($studyresponses);
+
+
+        $this->studyresponsesScheduledForDeletion = $studyresponsesToDelete;
+
+        foreach ($studyresponsesToDelete as $studyresponseRemoved) {
+            $studyresponseRemoved->setQuestions(null);
+        }
+
+        $this->collStudyresponses = null;
+        foreach ($studyresponses as $studyresponse) {
+            $this->addStudyresponse($studyresponse);
+        }
+
+        $this->collStudyresponses = $studyresponses;
+        $this->collStudyresponsesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Studyresponse objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Studyresponse objects.
+     * @throws PropelException
+     */
+    public function countStudyresponses(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collStudyresponsesPartial && !$this->isNew();
+        if (null === $this->collStudyresponses || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collStudyresponses) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getStudyresponses());
+            }
+
+            $query = ChildStudyresponseQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByQuestions($this)
+                ->count($con);
+        }
+
+        return count($this->collStudyresponses);
+    }
+
+    /**
+     * Method called to associate a ChildStudyresponse object to this object
+     * through the ChildStudyresponse foreign key attribute.
+     *
+     * @param  ChildStudyresponse $l ChildStudyresponse
+     * @return $this|\Questions The current object (for fluent API support)
+     */
+    public function addStudyresponse(ChildStudyresponse $l)
+    {
+        if ($this->collStudyresponses === null) {
+            $this->initStudyresponses();
+            $this->collStudyresponsesPartial = true;
+        }
+
+        if (!$this->collStudyresponses->contains($l)) {
+            $this->doAddStudyresponse($l);
+
+            if ($this->studyresponsesScheduledForDeletion and $this->studyresponsesScheduledForDeletion->contains($l)) {
+                $this->studyresponsesScheduledForDeletion->remove($this->studyresponsesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildStudyresponse $studyresponse The ChildStudyresponse object to add.
+     */
+    protected function doAddStudyresponse(ChildStudyresponse $studyresponse)
+    {
+        $this->collStudyresponses[]= $studyresponse;
+        $studyresponse->setQuestions($this);
+    }
+
+    /**
+     * @param  ChildStudyresponse $studyresponse The ChildStudyresponse object to remove.
+     * @return $this|ChildQuestions The current object (for fluent API support)
+     */
+    public function removeStudyresponse(ChildStudyresponse $studyresponse)
+    {
+        if ($this->getStudyresponses()->contains($studyresponse)) {
+            $pos = $this->collStudyresponses->search($studyresponse);
+            $this->collStudyresponses->remove($pos);
+            if (null === $this->studyresponsesScheduledForDeletion) {
+                $this->studyresponsesScheduledForDeletion = clone $this->collStudyresponses;
+                $this->studyresponsesScheduledForDeletion->clear();
+            }
+            $this->studyresponsesScheduledForDeletion[]= $studyresponse;
+            $studyresponse->setQuestions(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Questions is new, it will return
+     * an empty collection; or if this Questions has previously
+     * been saved, it will retrieve related Studyresponses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Questions.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildStudyresponse[] List of ChildStudyresponse objects
+     */
+    public function getStudyresponsesJoinNewuser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildStudyresponseQuery::create(null, $criteria);
+        $query->joinWith('Newuser', $joinBehavior);
+
+        return $this->getStudyresponses($query, $con);
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
+        if (null !== $this->aStudy) {
+            $this->aStudy->removeQuestions($this);
+        }
+        if (null !== $this->aNewuser) {
+            $this->aNewuser->removeQuestions($this);
+        }
         $this->id = null;
-        $this->email = null;
-        $this->hash = null;
-        $this->fname = null;
-        $this->lname = null;
-        $this->created_at = null;
-        $this->updated_at = null;
+        $this->text = null;
+        $this->choises = null;
+        $this->type = null;
+        $this->time = null;
+        $this->study_id = null;
+        $this->user_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1341,8 +1846,16 @@ abstract class Admin implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collStudyresponses) {
+                foreach ($this->collStudyresponses as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
+        $this->collStudyresponses = null;
+        $this->aStudy = null;
+        $this->aNewuser = null;
     }
 
     /**
@@ -1352,7 +1865,7 @@ abstract class Admin implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(AdminTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(QuestionsTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

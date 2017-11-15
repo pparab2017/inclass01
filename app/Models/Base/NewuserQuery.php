@@ -29,6 +29,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery orderByRole($order = Criteria::ASC) Order by the role column
  * @method     ChildNewuserQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildNewuserQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method     ChildNewuserQuery orderBySubscribed($order = Criteria::ASC) Order by the Subscribed column
  *
  * @method     ChildNewuserQuery groupById() Group by the id column
  * @method     ChildNewuserQuery groupByEmail() Group by the email column
@@ -39,6 +40,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery groupByRole() Group by the role column
  * @method     ChildNewuserQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildNewuserQuery groupByUpdatedAt() Group by the updated_at column
+ * @method     ChildNewuserQuery groupBySubscribed() Group by the Subscribed column
  *
  * @method     ChildNewuserQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildNewuserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -47,6 +49,36 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
  * @method     ChildNewuserQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildNewuserQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
+ * @method     ChildNewuserQuery leftJoinPatient($relationAlias = null) Adds a LEFT JOIN clause to the query using the Patient relation
+ * @method     ChildNewuserQuery rightJoinPatient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Patient relation
+ * @method     ChildNewuserQuery innerJoinPatient($relationAlias = null) Adds a INNER JOIN clause to the query using the Patient relation
+ *
+ * @method     ChildNewuserQuery joinWithPatient($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Patient relation
+ *
+ * @method     ChildNewuserQuery leftJoinWithPatient() Adds a LEFT JOIN clause and with to the query using the Patient relation
+ * @method     ChildNewuserQuery rightJoinWithPatient() Adds a RIGHT JOIN clause and with to the query using the Patient relation
+ * @method     ChildNewuserQuery innerJoinWithPatient() Adds a INNER JOIN clause and with to the query using the Patient relation
+ *
+ * @method     ChildNewuserQuery leftJoinQuestions($relationAlias = null) Adds a LEFT JOIN clause to the query using the Questions relation
+ * @method     ChildNewuserQuery rightJoinQuestions($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Questions relation
+ * @method     ChildNewuserQuery innerJoinQuestions($relationAlias = null) Adds a INNER JOIN clause to the query using the Questions relation
+ *
+ * @method     ChildNewuserQuery joinWithQuestions($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Questions relation
+ *
+ * @method     ChildNewuserQuery leftJoinWithQuestions() Adds a LEFT JOIN clause and with to the query using the Questions relation
+ * @method     ChildNewuserQuery rightJoinWithQuestions() Adds a RIGHT JOIN clause and with to the query using the Questions relation
+ * @method     ChildNewuserQuery innerJoinWithQuestions() Adds a INNER JOIN clause and with to the query using the Questions relation
+ *
+ * @method     ChildNewuserQuery leftJoinStudyresponse($relationAlias = null) Adds a LEFT JOIN clause to the query using the Studyresponse relation
+ * @method     ChildNewuserQuery rightJoinStudyresponse($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Studyresponse relation
+ * @method     ChildNewuserQuery innerJoinStudyresponse($relationAlias = null) Adds a INNER JOIN clause to the query using the Studyresponse relation
+ *
+ * @method     ChildNewuserQuery joinWithStudyresponse($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Studyresponse relation
+ *
+ * @method     ChildNewuserQuery leftJoinWithStudyresponse() Adds a LEFT JOIN clause and with to the query using the Studyresponse relation
+ * @method     ChildNewuserQuery rightJoinWithStudyresponse() Adds a RIGHT JOIN clause and with to the query using the Studyresponse relation
+ * @method     ChildNewuserQuery innerJoinWithStudyresponse() Adds a INNER JOIN clause and with to the query using the Studyresponse relation
  *
  * @method     ChildNewuserQuery leftJoinSurveylog($relationAlias = null) Adds a LEFT JOIN clause to the query using the Surveylog relation
  * @method     ChildNewuserQuery rightJoinSurveylog($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Surveylog relation
@@ -58,7 +90,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery rightJoinWithSurveylog() Adds a RIGHT JOIN clause and with to the query using the Surveylog relation
  * @method     ChildNewuserQuery innerJoinWithSurveylog() Adds a INNER JOIN clause and with to the query using the Surveylog relation
  *
- * @method     \SurveylogQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \PatientQuery|\QuestionsQuery|\StudyresponseQuery|\SurveylogQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildNewuser findOne(ConnectionInterface $con = null) Return the first ChildNewuser matching the query
  * @method     ChildNewuser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildNewuser matching the query, or a new ChildNewuser object populated from the query conditions when no match is found
@@ -71,7 +103,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuser findOneByGender(string $gender) Return the first ChildNewuser filtered by the gender column
  * @method     ChildNewuser findOneByRole(string $role) Return the first ChildNewuser filtered by the role column
  * @method     ChildNewuser findOneByCreatedAt(string $created_at) Return the first ChildNewuser filtered by the created_at column
- * @method     ChildNewuser findOneByUpdatedAt(string $updated_at) Return the first ChildNewuser filtered by the updated_at column *
+ * @method     ChildNewuser findOneByUpdatedAt(string $updated_at) Return the first ChildNewuser filtered by the updated_at column
+ * @method     ChildNewuser findOneBySubscribed(string $Subscribed) Return the first ChildNewuser filtered by the Subscribed column *
 
  * @method     ChildNewuser requirePk($key, ConnectionInterface $con = null) Return the ChildNewuser by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildNewuser requireOne(ConnectionInterface $con = null) Return the first ChildNewuser matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -85,6 +118,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuser requireOneByRole(string $role) Return the first ChildNewuser filtered by the role column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildNewuser requireOneByCreatedAt(string $created_at) Return the first ChildNewuser filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildNewuser requireOneByUpdatedAt(string $updated_at) Return the first ChildNewuser filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildNewuser requireOneBySubscribed(string $Subscribed) Return the first ChildNewuser filtered by the Subscribed column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildNewuser[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildNewuser objects based on current ModelCriteria
  * @method     ChildNewuser[]|ObjectCollection findById(int $id) Return ChildNewuser objects filtered by the id column
@@ -96,6 +130,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuser[]|ObjectCollection findByRole(string $role) Return ChildNewuser objects filtered by the role column
  * @method     ChildNewuser[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildNewuser objects filtered by the created_at column
  * @method     ChildNewuser[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildNewuser objects filtered by the updated_at column
+ * @method     ChildNewuser[]|ObjectCollection findBySubscribed(string $Subscribed) Return ChildNewuser objects filtered by the Subscribed column
  * @method     ChildNewuser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -194,7 +229,7 @@ abstract class NewuserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, email, hash, fname, lname, gender, role, created_at, updated_at FROM NewUser WHERE id = :p0';
+        $sql = 'SELECT id, email, hash, fname, lname, gender, role, created_at, updated_at, Subscribed FROM NewUser WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -568,6 +603,251 @@ abstract class NewuserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the Subscribed column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySubscribed('fooValue');   // WHERE Subscribed = 'fooValue'
+     * $query->filterBySubscribed('%fooValue%'); // WHERE Subscribed LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $subscribed The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function filterBySubscribed($subscribed = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($subscribed)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(NewuserTableMap::COL_SUBSCRIBED, $subscribed, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Patient object
+     *
+     * @param \Patient|ObjectCollection $patient the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildNewuserQuery The current query, for fluid interface
+     */
+    public function filterByPatient($patient, $comparison = null)
+    {
+        if ($patient instanceof \Patient) {
+            return $this
+                ->addUsingAlias(NewuserTableMap::COL_ID, $patient->getUserId(), $comparison);
+        } elseif ($patient instanceof ObjectCollection) {
+            return $this
+                ->usePatientQuery()
+                ->filterByPrimaryKeys($patient->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPatient() only accepts arguments of type \Patient or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Patient relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function joinPatient($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Patient');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Patient');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Patient relation Patient object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \PatientQuery A secondary query class using the current class as primary query
+     */
+    public function usePatientQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinPatient($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Patient', '\PatientQuery');
+    }
+
+    /**
+     * Filter the query by a related \Questions object
+     *
+     * @param \Questions|ObjectCollection $questions the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildNewuserQuery The current query, for fluid interface
+     */
+    public function filterByQuestions($questions, $comparison = null)
+    {
+        if ($questions instanceof \Questions) {
+            return $this
+                ->addUsingAlias(NewuserTableMap::COL_ID, $questions->getUserId(), $comparison);
+        } elseif ($questions instanceof ObjectCollection) {
+            return $this
+                ->useQuestionsQuery()
+                ->filterByPrimaryKeys($questions->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByQuestions() only accepts arguments of type \Questions or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Questions relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function joinQuestions($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Questions');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Questions');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Questions relation Questions object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \QuestionsQuery A secondary query class using the current class as primary query
+     */
+    public function useQuestionsQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinQuestions($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Questions', '\QuestionsQuery');
+    }
+
+    /**
+     * Filter the query by a related \Studyresponse object
+     *
+     * @param \Studyresponse|ObjectCollection $studyresponse the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildNewuserQuery The current query, for fluid interface
+     */
+    public function filterByStudyresponse($studyresponse, $comparison = null)
+    {
+        if ($studyresponse instanceof \Studyresponse) {
+            return $this
+                ->addUsingAlias(NewuserTableMap::COL_ID, $studyresponse->getUserId(), $comparison);
+        } elseif ($studyresponse instanceof ObjectCollection) {
+            return $this
+                ->useStudyresponseQuery()
+                ->filterByPrimaryKeys($studyresponse->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByStudyresponse() only accepts arguments of type \Studyresponse or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Studyresponse relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function joinStudyresponse($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Studyresponse');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Studyresponse');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Studyresponse relation Studyresponse object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \StudyresponseQuery A secondary query class using the current class as primary query
+     */
+    public function useStudyresponseQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinStudyresponse($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Studyresponse', '\StudyresponseQuery');
+    }
+
+    /**
      * Filter the query by a related \Surveylog object
      *
      * @param \Surveylog|ObjectCollection $surveylog the related object to use as filter
@@ -715,72 +995,6 @@ abstract class NewuserQuery extends ModelCriteria
 
             return $affectedRows;
         });
-    }
-
-    // timestampable behavior
-
-    /**
-     * Filter by the latest updated
-     *
-     * @param      int $nbDays Maximum age of the latest update in days
-     *
-     * @return     $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function recentlyUpdated($nbDays = 7)
-    {
-        return $this->addUsingAlias(NewuserTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by update date desc
-     *
-     * @return     $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function lastUpdatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(NewuserTableMap::COL_UPDATED_AT);
-    }
-
-    /**
-     * Order by update date asc
-     *
-     * @return     $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function firstUpdatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(NewuserTableMap::COL_UPDATED_AT);
-    }
-
-    /**
-     * Order by create date desc
-     *
-     * @return     $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function lastCreatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(NewuserTableMap::COL_CREATED_AT);
-    }
-
-    /**
-     * Filter by the latest created
-     *
-     * @param      int $nbDays Maximum age of in days
-     *
-     * @return     $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function recentlyCreated($nbDays = 7)
-    {
-        return $this->addUsingAlias(NewuserTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by create date asc
-     *
-     * @return     $this|ChildNewuserQuery The current query, for fluid interface
-     */
-    public function firstCreatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(NewuserTableMap::COL_CREATED_AT);
     }
 
 } // NewuserQuery

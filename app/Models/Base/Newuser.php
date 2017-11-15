@@ -4,12 +4,21 @@ namespace Base;
 
 use \Newuser as ChildNewuser;
 use \NewuserQuery as ChildNewuserQuery;
+use \Patient as ChildPatient;
+use \PatientQuery as ChildPatientQuery;
+use \Questions as ChildQuestions;
+use \QuestionsQuery as ChildQuestionsQuery;
+use \Studyresponse as ChildStudyresponse;
+use \StudyresponseQuery as ChildStudyresponseQuery;
 use \Surveylog as ChildSurveylog;
 use \SurveylogQuery as ChildSurveylogQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
 use Map\NewuserTableMap;
+use Map\PatientTableMap;
+use Map\QuestionsTableMap;
+use Map\StudyresponseTableMap;
 use Map\SurveylogTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -131,6 +140,32 @@ abstract class Newuser implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * The value for the subscribed field.
+     *
+     * Note: this column has a database default value of: 'YES'
+     * @var        string
+     */
+    protected $subscribed;
+
+    /**
+     * @var        ObjectCollection|ChildPatient[] Collection to store aggregation of ChildPatient objects.
+     */
+    protected $collPatients;
+    protected $collPatientsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildQuestions[] Collection to store aggregation of ChildQuestions objects.
+     */
+    protected $collQuestionss;
+    protected $collQuestionssPartial;
+
+    /**
+     * @var        ObjectCollection|ChildStudyresponse[] Collection to store aggregation of ChildStudyresponse objects.
+     */
+    protected $collStudyresponses;
+    protected $collStudyresponsesPartial;
+
+    /**
      * @var        ObjectCollection|ChildSurveylog[] Collection to store aggregation of ChildSurveylog objects.
      */
     protected $collSurveylogs;
@@ -143,6 +178,24 @@ abstract class Newuser implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildPatient[]
+     */
+    protected $patientsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildQuestions[]
+     */
+    protected $questionssScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildStudyresponse[]
+     */
+    protected $studyresponsesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -159,6 +212,7 @@ abstract class Newuser implements ActiveRecordInterface
     public function applyDefaultValues()
     {
         $this->role = 'PATIENT';
+        $this->subscribed = 'YES';
     }
 
     /**
@@ -499,6 +553,16 @@ abstract class Newuser implements ActiveRecordInterface
     }
 
     /**
+     * Get the [subscribed] column value.
+     *
+     * @return string
+     */
+    public function getSubscribed()
+    {
+        return $this->subscribed;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -679,6 +743,26 @@ abstract class Newuser implements ActiveRecordInterface
     } // setUpdatedAt()
 
     /**
+     * Set the value of [subscribed] column.
+     *
+     * @param string $v new value
+     * @return $this|\Newuser The current object (for fluent API support)
+     */
+    public function setSubscribed($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->subscribed !== $v) {
+            $this->subscribed = $v;
+            $this->modifiedColumns[NewuserTableMap::COL_SUBSCRIBED] = true;
+        }
+
+        return $this;
+    } // setSubscribed()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -689,6 +773,10 @@ abstract class Newuser implements ActiveRecordInterface
     public function hasOnlyDefaultValues()
     {
             if ($this->role !== 'PATIENT') {
+                return false;
+            }
+
+            if ($this->subscribed !== 'YES') {
                 return false;
             }
 
@@ -750,6 +838,9 @@ abstract class Newuser implements ActiveRecordInterface
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : NewuserTableMap::translateFieldName('Subscribed', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->subscribed = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -758,7 +849,7 @@ abstract class Newuser implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = NewuserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = NewuserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Newuser'), 0, $e);
@@ -818,6 +909,12 @@ abstract class Newuser implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->collPatients = null;
+
+            $this->collQuestionss = null;
+
+            $this->collStudyresponses = null;
 
             $this->collSurveylogs = null;
 
@@ -883,20 +980,8 @@ abstract class Newuser implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-
-                if (!$this->isColumnModified(NewuserTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
-                if (!$this->isColumnModified(NewuserTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(NewuserTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -941,6 +1026,59 @@ abstract class Newuser implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->patientsScheduledForDeletion !== null) {
+                if (!$this->patientsScheduledForDeletion->isEmpty()) {
+                    \PatientQuery::create()
+                        ->filterByPrimaryKeys($this->patientsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->patientsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collPatients !== null) {
+                foreach ($this->collPatients as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->questionssScheduledForDeletion !== null) {
+                if (!$this->questionssScheduledForDeletion->isEmpty()) {
+                    foreach ($this->questionssScheduledForDeletion as $questions) {
+                        // need to save related object because we set the relation to null
+                        $questions->save($con);
+                    }
+                    $this->questionssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collQuestionss !== null) {
+                foreach ($this->collQuestionss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->studyresponsesScheduledForDeletion !== null) {
+                if (!$this->studyresponsesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->studyresponsesScheduledForDeletion as $studyresponse) {
+                        // need to save related object because we set the relation to null
+                        $studyresponse->save($con);
+                    }
+                    $this->studyresponsesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collStudyresponses !== null) {
+                foreach ($this->collStudyresponses as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->surveylogsScheduledForDeletion !== null) {
@@ -1013,6 +1151,9 @@ abstract class Newuser implements ActiveRecordInterface
         if ($this->isColumnModified(NewuserTableMap::COL_UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
+        if ($this->isColumnModified(NewuserTableMap::COL_SUBSCRIBED)) {
+            $modifiedColumns[':p' . $index++]  = 'Subscribed';
+        }
 
         $sql = sprintf(
             'INSERT INTO NewUser (%s) VALUES (%s)',
@@ -1050,6 +1191,9 @@ abstract class Newuser implements ActiveRecordInterface
                         break;
                     case 'updated_at':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                        break;
+                    case 'Subscribed':
+                        $stmt->bindValue($identifier, $this->subscribed, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1140,6 +1284,9 @@ abstract class Newuser implements ActiveRecordInterface
             case 8:
                 return $this->getUpdatedAt();
                 break;
+            case 9:
+                return $this->getSubscribed();
+                break;
             default:
                 return null;
                 break;
@@ -1179,6 +1326,7 @@ abstract class Newuser implements ActiveRecordInterface
             $keys[6] => $this->getRole(),
             $keys[7] => $this->getCreatedAt(),
             $keys[8] => $this->getUpdatedAt(),
+            $keys[9] => $this->getSubscribed(),
         );
         if ($result[$keys[7]] instanceof \DateTime) {
             $result[$keys[7]] = $result[$keys[7]]->format('c');
@@ -1194,6 +1342,51 @@ abstract class Newuser implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collPatients) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'patients';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Patients';
+                        break;
+                    default:
+                        $key = 'Patients';
+                }
+
+                $result[$key] = $this->collPatients->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collQuestionss) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'questionss';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'Questionss';
+                        break;
+                    default:
+                        $key = 'Questionss';
+                }
+
+                $result[$key] = $this->collQuestionss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collStudyresponses) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'studyresponses';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'StudyResponses';
+                        break;
+                    default:
+                        $key = 'Studyresponses';
+                }
+
+                $result[$key] = $this->collStudyresponses->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collSurveylogs) {
 
                 switch ($keyType) {
@@ -1270,6 +1463,9 @@ abstract class Newuser implements ActiveRecordInterface
             case 8:
                 $this->setUpdatedAt($value);
                 break;
+            case 9:
+                $this->setSubscribed($value);
+                break;
         } // switch()
 
         return $this;
@@ -1322,6 +1518,9 @@ abstract class Newuser implements ActiveRecordInterface
         }
         if (array_key_exists($keys[8], $arr)) {
             $this->setUpdatedAt($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setSubscribed($arr[$keys[9]]);
         }
     }
 
@@ -1390,6 +1589,9 @@ abstract class Newuser implements ActiveRecordInterface
         }
         if ($this->isColumnModified(NewuserTableMap::COL_UPDATED_AT)) {
             $criteria->add(NewuserTableMap::COL_UPDATED_AT, $this->updated_at);
+        }
+        if ($this->isColumnModified(NewuserTableMap::COL_SUBSCRIBED)) {
+            $criteria->add(NewuserTableMap::COL_SUBSCRIBED, $this->subscribed);
         }
 
         return $criteria;
@@ -1485,11 +1687,30 @@ abstract class Newuser implements ActiveRecordInterface
         $copyObj->setRole($this->getRole());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setSubscribed($this->getSubscribed());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
+
+            foreach ($this->getPatients() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addPatient($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getQuestionss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addQuestions($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getStudyresponses() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addStudyresponse($relObj->copy($deepCopy));
+                }
+            }
 
             foreach ($this->getSurveylogs() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1538,9 +1759,743 @@ abstract class Newuser implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('Patient' == $relationName) {
+            return $this->initPatients();
+        }
+        if ('Questions' == $relationName) {
+            return $this->initQuestionss();
+        }
+        if ('Studyresponse' == $relationName) {
+            return $this->initStudyresponses();
+        }
         if ('Surveylog' == $relationName) {
             return $this->initSurveylogs();
         }
+    }
+
+    /**
+     * Clears out the collPatients collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addPatients()
+     */
+    public function clearPatients()
+    {
+        $this->collPatients = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collPatients collection loaded partially.
+     */
+    public function resetPartialPatients($v = true)
+    {
+        $this->collPatientsPartial = $v;
+    }
+
+    /**
+     * Initializes the collPatients collection.
+     *
+     * By default this just sets the collPatients collection to an empty array (like clearcollPatients());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initPatients($overrideExisting = true)
+    {
+        if (null !== $this->collPatients && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = PatientTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collPatients = new $collectionClassName;
+        $this->collPatients->setModel('\Patient');
+    }
+
+    /**
+     * Gets an array of ChildPatient objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildNewuser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildPatient[] List of ChildPatient objects
+     * @throws PropelException
+     */
+    public function getPatients(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPatientsPartial && !$this->isNew();
+        if (null === $this->collPatients || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collPatients) {
+                // return empty collection
+                $this->initPatients();
+            } else {
+                $collPatients = ChildPatientQuery::create(null, $criteria)
+                    ->filterByNewuser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collPatientsPartial && count($collPatients)) {
+                        $this->initPatients(false);
+
+                        foreach ($collPatients as $obj) {
+                            if (false == $this->collPatients->contains($obj)) {
+                                $this->collPatients->append($obj);
+                            }
+                        }
+
+                        $this->collPatientsPartial = true;
+                    }
+
+                    return $collPatients;
+                }
+
+                if ($partial && $this->collPatients) {
+                    foreach ($this->collPatients as $obj) {
+                        if ($obj->isNew()) {
+                            $collPatients[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collPatients = $collPatients;
+                $this->collPatientsPartial = false;
+            }
+        }
+
+        return $this->collPatients;
+    }
+
+    /**
+     * Sets a collection of ChildPatient objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $patients A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function setPatients(Collection $patients, ConnectionInterface $con = null)
+    {
+        /** @var ChildPatient[] $patientsToDelete */
+        $patientsToDelete = $this->getPatients(new Criteria(), $con)->diff($patients);
+
+
+        $this->patientsScheduledForDeletion = $patientsToDelete;
+
+        foreach ($patientsToDelete as $patientRemoved) {
+            $patientRemoved->setNewuser(null);
+        }
+
+        $this->collPatients = null;
+        foreach ($patients as $patient) {
+            $this->addPatient($patient);
+        }
+
+        $this->collPatients = $patients;
+        $this->collPatientsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Patient objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Patient objects.
+     * @throws PropelException
+     */
+    public function countPatients(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collPatientsPartial && !$this->isNew();
+        if (null === $this->collPatients || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collPatients) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getPatients());
+            }
+
+            $query = ChildPatientQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByNewuser($this)
+                ->count($con);
+        }
+
+        return count($this->collPatients);
+    }
+
+    /**
+     * Method called to associate a ChildPatient object to this object
+     * through the ChildPatient foreign key attribute.
+     *
+     * @param  ChildPatient $l ChildPatient
+     * @return $this|\Newuser The current object (for fluent API support)
+     */
+    public function addPatient(ChildPatient $l)
+    {
+        if ($this->collPatients === null) {
+            $this->initPatients();
+            $this->collPatientsPartial = true;
+        }
+
+        if (!$this->collPatients->contains($l)) {
+            $this->doAddPatient($l);
+
+            if ($this->patientsScheduledForDeletion and $this->patientsScheduledForDeletion->contains($l)) {
+                $this->patientsScheduledForDeletion->remove($this->patientsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildPatient $patient The ChildPatient object to add.
+     */
+    protected function doAddPatient(ChildPatient $patient)
+    {
+        $this->collPatients[]= $patient;
+        $patient->setNewuser($this);
+    }
+
+    /**
+     * @param  ChildPatient $patient The ChildPatient object to remove.
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function removePatient(ChildPatient $patient)
+    {
+        if ($this->getPatients()->contains($patient)) {
+            $pos = $this->collPatients->search($patient);
+            $this->collPatients->remove($pos);
+            if (null === $this->patientsScheduledForDeletion) {
+                $this->patientsScheduledForDeletion = clone $this->collPatients;
+                $this->patientsScheduledForDeletion->clear();
+            }
+            $this->patientsScheduledForDeletion[]= clone $patient;
+            $patient->setNewuser(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collQuestionss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addQuestionss()
+     */
+    public function clearQuestionss()
+    {
+        $this->collQuestionss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collQuestionss collection loaded partially.
+     */
+    public function resetPartialQuestionss($v = true)
+    {
+        $this->collQuestionssPartial = $v;
+    }
+
+    /**
+     * Initializes the collQuestionss collection.
+     *
+     * By default this just sets the collQuestionss collection to an empty array (like clearcollQuestionss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initQuestionss($overrideExisting = true)
+    {
+        if (null !== $this->collQuestionss && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = QuestionsTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collQuestionss = new $collectionClassName;
+        $this->collQuestionss->setModel('\Questions');
+    }
+
+    /**
+     * Gets an array of ChildQuestions objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildNewuser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildQuestions[] List of ChildQuestions objects
+     * @throws PropelException
+     */
+    public function getQuestionss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collQuestionssPartial && !$this->isNew();
+        if (null === $this->collQuestionss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collQuestionss) {
+                // return empty collection
+                $this->initQuestionss();
+            } else {
+                $collQuestionss = ChildQuestionsQuery::create(null, $criteria)
+                    ->filterByNewuser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collQuestionssPartial && count($collQuestionss)) {
+                        $this->initQuestionss(false);
+
+                        foreach ($collQuestionss as $obj) {
+                            if (false == $this->collQuestionss->contains($obj)) {
+                                $this->collQuestionss->append($obj);
+                            }
+                        }
+
+                        $this->collQuestionssPartial = true;
+                    }
+
+                    return $collQuestionss;
+                }
+
+                if ($partial && $this->collQuestionss) {
+                    foreach ($this->collQuestionss as $obj) {
+                        if ($obj->isNew()) {
+                            $collQuestionss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collQuestionss = $collQuestionss;
+                $this->collQuestionssPartial = false;
+            }
+        }
+
+        return $this->collQuestionss;
+    }
+
+    /**
+     * Sets a collection of ChildQuestions objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $questionss A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function setQuestionss(Collection $questionss, ConnectionInterface $con = null)
+    {
+        /** @var ChildQuestions[] $questionssToDelete */
+        $questionssToDelete = $this->getQuestionss(new Criteria(), $con)->diff($questionss);
+
+
+        $this->questionssScheduledForDeletion = $questionssToDelete;
+
+        foreach ($questionssToDelete as $questionsRemoved) {
+            $questionsRemoved->setNewuser(null);
+        }
+
+        $this->collQuestionss = null;
+        foreach ($questionss as $questions) {
+            $this->addQuestions($questions);
+        }
+
+        $this->collQuestionss = $questionss;
+        $this->collQuestionssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Questions objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Questions objects.
+     * @throws PropelException
+     */
+    public function countQuestionss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collQuestionssPartial && !$this->isNew();
+        if (null === $this->collQuestionss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collQuestionss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getQuestionss());
+            }
+
+            $query = ChildQuestionsQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByNewuser($this)
+                ->count($con);
+        }
+
+        return count($this->collQuestionss);
+    }
+
+    /**
+     * Method called to associate a ChildQuestions object to this object
+     * through the ChildQuestions foreign key attribute.
+     *
+     * @param  ChildQuestions $l ChildQuestions
+     * @return $this|\Newuser The current object (for fluent API support)
+     */
+    public function addQuestions(ChildQuestions $l)
+    {
+        if ($this->collQuestionss === null) {
+            $this->initQuestionss();
+            $this->collQuestionssPartial = true;
+        }
+
+        if (!$this->collQuestionss->contains($l)) {
+            $this->doAddQuestions($l);
+
+            if ($this->questionssScheduledForDeletion and $this->questionssScheduledForDeletion->contains($l)) {
+                $this->questionssScheduledForDeletion->remove($this->questionssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildQuestions $questions The ChildQuestions object to add.
+     */
+    protected function doAddQuestions(ChildQuestions $questions)
+    {
+        $this->collQuestionss[]= $questions;
+        $questions->setNewuser($this);
+    }
+
+    /**
+     * @param  ChildQuestions $questions The ChildQuestions object to remove.
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function removeQuestions(ChildQuestions $questions)
+    {
+        if ($this->getQuestionss()->contains($questions)) {
+            $pos = $this->collQuestionss->search($questions);
+            $this->collQuestionss->remove($pos);
+            if (null === $this->questionssScheduledForDeletion) {
+                $this->questionssScheduledForDeletion = clone $this->collQuestionss;
+                $this->questionssScheduledForDeletion->clear();
+            }
+            $this->questionssScheduledForDeletion[]= $questions;
+            $questions->setNewuser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Newuser is new, it will return
+     * an empty collection; or if this Newuser has previously
+     * been saved, it will retrieve related Questionss from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Newuser.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildQuestions[] List of ChildQuestions objects
+     */
+    public function getQuestionssJoinStudy(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildQuestionsQuery::create(null, $criteria);
+        $query->joinWith('Study', $joinBehavior);
+
+        return $this->getQuestionss($query, $con);
+    }
+
+    /**
+     * Clears out the collStudyresponses collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addStudyresponses()
+     */
+    public function clearStudyresponses()
+    {
+        $this->collStudyresponses = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collStudyresponses collection loaded partially.
+     */
+    public function resetPartialStudyresponses($v = true)
+    {
+        $this->collStudyresponsesPartial = $v;
+    }
+
+    /**
+     * Initializes the collStudyresponses collection.
+     *
+     * By default this just sets the collStudyresponses collection to an empty array (like clearcollStudyresponses());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initStudyresponses($overrideExisting = true)
+    {
+        if (null !== $this->collStudyresponses && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = StudyresponseTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collStudyresponses = new $collectionClassName;
+        $this->collStudyresponses->setModel('\Studyresponse');
+    }
+
+    /**
+     * Gets an array of ChildStudyresponse objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildNewuser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildStudyresponse[] List of ChildStudyresponse objects
+     * @throws PropelException
+     */
+    public function getStudyresponses(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collStudyresponsesPartial && !$this->isNew();
+        if (null === $this->collStudyresponses || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collStudyresponses) {
+                // return empty collection
+                $this->initStudyresponses();
+            } else {
+                $collStudyresponses = ChildStudyresponseQuery::create(null, $criteria)
+                    ->filterByNewuser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collStudyresponsesPartial && count($collStudyresponses)) {
+                        $this->initStudyresponses(false);
+
+                        foreach ($collStudyresponses as $obj) {
+                            if (false == $this->collStudyresponses->contains($obj)) {
+                                $this->collStudyresponses->append($obj);
+                            }
+                        }
+
+                        $this->collStudyresponsesPartial = true;
+                    }
+
+                    return $collStudyresponses;
+                }
+
+                if ($partial && $this->collStudyresponses) {
+                    foreach ($this->collStudyresponses as $obj) {
+                        if ($obj->isNew()) {
+                            $collStudyresponses[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collStudyresponses = $collStudyresponses;
+                $this->collStudyresponsesPartial = false;
+            }
+        }
+
+        return $this->collStudyresponses;
+    }
+
+    /**
+     * Sets a collection of ChildStudyresponse objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $studyresponses A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function setStudyresponses(Collection $studyresponses, ConnectionInterface $con = null)
+    {
+        /** @var ChildStudyresponse[] $studyresponsesToDelete */
+        $studyresponsesToDelete = $this->getStudyresponses(new Criteria(), $con)->diff($studyresponses);
+
+
+        $this->studyresponsesScheduledForDeletion = $studyresponsesToDelete;
+
+        foreach ($studyresponsesToDelete as $studyresponseRemoved) {
+            $studyresponseRemoved->setNewuser(null);
+        }
+
+        $this->collStudyresponses = null;
+        foreach ($studyresponses as $studyresponse) {
+            $this->addStudyresponse($studyresponse);
+        }
+
+        $this->collStudyresponses = $studyresponses;
+        $this->collStudyresponsesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Studyresponse objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Studyresponse objects.
+     * @throws PropelException
+     */
+    public function countStudyresponses(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collStudyresponsesPartial && !$this->isNew();
+        if (null === $this->collStudyresponses || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collStudyresponses) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getStudyresponses());
+            }
+
+            $query = ChildStudyresponseQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByNewuser($this)
+                ->count($con);
+        }
+
+        return count($this->collStudyresponses);
+    }
+
+    /**
+     * Method called to associate a ChildStudyresponse object to this object
+     * through the ChildStudyresponse foreign key attribute.
+     *
+     * @param  ChildStudyresponse $l ChildStudyresponse
+     * @return $this|\Newuser The current object (for fluent API support)
+     */
+    public function addStudyresponse(ChildStudyresponse $l)
+    {
+        if ($this->collStudyresponses === null) {
+            $this->initStudyresponses();
+            $this->collStudyresponsesPartial = true;
+        }
+
+        if (!$this->collStudyresponses->contains($l)) {
+            $this->doAddStudyresponse($l);
+
+            if ($this->studyresponsesScheduledForDeletion and $this->studyresponsesScheduledForDeletion->contains($l)) {
+                $this->studyresponsesScheduledForDeletion->remove($this->studyresponsesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildStudyresponse $studyresponse The ChildStudyresponse object to add.
+     */
+    protected function doAddStudyresponse(ChildStudyresponse $studyresponse)
+    {
+        $this->collStudyresponses[]= $studyresponse;
+        $studyresponse->setNewuser($this);
+    }
+
+    /**
+     * @param  ChildStudyresponse $studyresponse The ChildStudyresponse object to remove.
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function removeStudyresponse(ChildStudyresponse $studyresponse)
+    {
+        if ($this->getStudyresponses()->contains($studyresponse)) {
+            $pos = $this->collStudyresponses->search($studyresponse);
+            $this->collStudyresponses->remove($pos);
+            if (null === $this->studyresponsesScheduledForDeletion) {
+                $this->studyresponsesScheduledForDeletion = clone $this->collStudyresponses;
+                $this->studyresponsesScheduledForDeletion->clear();
+            }
+            $this->studyresponsesScheduledForDeletion[]= $studyresponse;
+            $studyresponse->setNewuser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Newuser is new, it will return
+     * an empty collection; or if this Newuser has previously
+     * been saved, it will retrieve related Studyresponses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Newuser.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildStudyresponse[] List of ChildStudyresponse objects
+     */
+    public function getStudyresponsesJoinQuestions(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildStudyresponseQuery::create(null, $criteria);
+        $query->joinWith('Questions', $joinBehavior);
+
+        return $this->getStudyresponses($query, $con);
     }
 
     /**
@@ -1784,6 +2739,7 @@ abstract class Newuser implements ActiveRecordInterface
         $this->role = null;
         $this->created_at = null;
         $this->updated_at = null;
+        $this->subscribed = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1803,6 +2759,21 @@ abstract class Newuser implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collPatients) {
+                foreach ($this->collPatients as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collQuestionss) {
+                foreach ($this->collQuestionss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collStudyresponses) {
+                foreach ($this->collStudyresponses as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collSurveylogs) {
                 foreach ($this->collSurveylogs as $o) {
                     $o->clearAllReferences($deep);
@@ -1810,6 +2781,9 @@ abstract class Newuser implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collPatients = null;
+        $this->collQuestionss = null;
+        $this->collStudyresponses = null;
         $this->collSurveylogs = null;
     }
 
@@ -1821,20 +2795,6 @@ abstract class Newuser implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(NewuserTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildNewuser The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[NewuserTableMap::COL_UPDATED_AT] = true;
-
-        return $this;
     }
 
     /**
