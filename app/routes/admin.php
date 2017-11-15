@@ -179,6 +179,38 @@ $app->get('/admin/user/getAll', function ($request, $response, $args){
 
 
 
+$app->get('/admin/user/getAllQuestions', function ($request, $response, $args){
+
+    $returnJson = "OK";
+    try {
+        $returnJson = $request->getParsedBody();// get the form request
+        $returnJson =  QuestionsQuery::create()
+            ->find()
+            ->toJSON();
+
+    }
+    catch (Exception $ex)
+    {
+        if(strpos($ex, '1062') !== false)
+        {
+            $returnJson =  "Action not completed, An error occurred!";
+        }
+        else
+        {
+            $returnJson = $ex->getMessage();
+        }
+        $returnJson = json_encode($returnJson);
+    }
+    finally
+    {
+        return ($returnJson);
+    }
+
+
+})->setName('myAdmin.user.getAllQuestions');
+
+
+
 
 $app->post('/admin/user/addMessage', function ($request, $response, $args){
 
