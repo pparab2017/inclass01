@@ -632,7 +632,8 @@ $app->post('/api/survey/submit', function ($request, $response, $args) {
             $survey = new Surveylog();
             $survey->setPatientId($patient_id);
             $datetime = new DateTime();
-            $survey->setQ1($datetime);
+            $result = $datetime->format('Y-m-d H:i:s');
+            $survey->setQ1($result);
             for($i=2; $i<=33; $i++){
                 $qid = "Q".$i;
                 $foo = "set".$qid;
