@@ -632,7 +632,8 @@ $app->post('/api/survey/submit', function ($request, $response, $args) {
             $survey = new Surveylog();
             $survey->setPatientId($patient_id);
 
-            for($i=1; $i<=33; $i++){
+            $survey->setQ1(date());
+            for($i=2; $i<=33; $i++){
                 $qid = "Q".$i;
                 $foo = "set".$qid;
                 if(isset($params[$qid]) && Utils::checkIfNotEmpty($params[$qid])){
