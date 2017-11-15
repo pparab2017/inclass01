@@ -174,8 +174,7 @@
     <column name="Q31" phpName="Q31" type="VARCHAR" size="255"/>
     <column name="Q32" phpName="Q32" type="VARCHAR" size="255"/>
     <column name="Q33" phpName="Q33" type="VARCHAR" size="255"/>
-    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
-    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
+    <behavior name="timestampable" />
     <foreign-key foreignTable="NewUser" name="fk_User">
       <reference local="patient_id" foreign="id"/>
     </foreign-key>
