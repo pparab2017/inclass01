@@ -52,7 +52,7 @@ $study->setDescription("Test only one type of study");
 $study->save();
 
 
-echo "" . date_default_timezone_get() . PHP_EOL;
+echo "" . date_default_timezone_get() .  date('Y-m-d H:i:s') .  PHP_EOL;
 
 /*
 echo \Propel\Runtime\Util\PropelDateTime::createHighPrecision()->format('Y-m-d H:i:s') . PHP_EOL;
