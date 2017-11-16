@@ -210,12 +210,75 @@ $app->get('/admin/user/getAllQuestions', function ($request, $response, $args){
 })->setName('myAdmin.user.getAllQuestions');
 
 
+$app->get('/admin/message/delete/{id}', function ($request, $response, $args) {
+
+    $returnJson = "OK";
+
+    try{
+        QuestionsQuery::create()
+            ->findOneById( $args['id'])
+            ->delete();
+    }
+    catch (Exception $ex)
+    {
+        $returnJson = $ex->getMessage();
+    }
+    finally
+    {
+        return json_encode($returnJson);
+    }
+
+})->setName('admin.message.delete');
+
+
+
+
+
+$app->post('/admin/user/updateMessage', function ($request, $response, $args){
+
+    $returnJson = "{status: OK}";;
+    try {
+
+        $params = $request->getParsedBody();// get the form request
+        $questions = QuestionsQuery::create()->findOneById($params['questionId']);
+
+        $questions->setUserId($params['userId']);
+        $questions->setType($params['type']);
+        $questions->setTime($params['time']);
+        $questions->setChoises($params['choices']);
+        $questions->setText($params['questionText']);
+        $questions->setStudyId(1);
+        $questions->save();
+
+    }
+    catch (Exception $ex)
+    {
+        if(strpos($ex, '1062') !== false)
+        {
+            $returnJson =  "Action not completed, An error occurred!";
+        }
+        else
+        {
+            $returnJson = $ex->getMessage();
+        }
+    }
+    finally
+    {
+        return json_encode($returnJson);
+    }
+
+
+})->setName('myAdmin.user.UpdateMessage');
+
+
+
 
 
 $app->post('/admin/user/addMessage', function ($request, $response, $args){
 
     $returnJson = "{status: OK}";;
     try {
+
         $params = $request->getParsedBody();// get the form request
         $questions = new Questions();
         $questions->setUserId($params['userId']);
@@ -289,6 +352,7 @@ $app->post('/myAdmin/user/add', function ($request, $response, $args) {
 
 })->setName('myAdmin.user.add')
     ->add($checkAdminAuthMiddleware);
+
 
 
 
