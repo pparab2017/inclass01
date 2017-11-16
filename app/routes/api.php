@@ -567,7 +567,43 @@ $app->get('/api/getAllProducts', function ($request, $response, $args) {
 })->setName('api.getAllProducts');
 
 
+$app->get ('/api/getMyMessages', function ($request, $response, $args) {
 
+    $patient_id = $this->jwt->user;
+    if(Utils::checkIfNotEmpty($patient_id)) {
+
+        $p = NewuserQuery::create()->filterById($patient_id,NewuserQuery::EQUAL)->findOne();
+        if($p != NULL) {
+            $sql = "select R.id As ResponseId, R.Response,
+Q.id As questionID, Text, choises, type, time, Q.user_id 
+from StudyResponse R join Questions Q
+on R.Question_id = Q.id
+WHERE Q.User_id = {USER_ID}";
+
+            $sql = str_replace("{USER_ID}", $patient_id, $sql);
+            $conn = Propel::getConnection();
+            $reader = $conn->prepare($sql);
+            $reader->execute();
+            $results = $reader->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+            if($results != NULL){
+                $data = array("results"=>$results, "status"=>"ok");
+                return $response->withJson($data);
+            }
+            //json_encode($_GET['recordsTotal']); this is how we access the server side params, if in case
+            //return json_encode($results);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
+
+})->setName('api.getMyMessages');
 
 
 // New App API  --- >  SurveyAPP APIS
@@ -576,8 +612,25 @@ $app->post ('/api/deviceRegister', function ($request, $response, $args){
 
     $params = $request->getParsedBody();
     $patient_id = $this->jwt->user;
+    if(Utils::checkIfNotEmpty($patient_id)) {
+        $p = NewuserQuery::create()->filterById($patient_id,NewuserQuery::EQUAL)->findOne();
+        if($p != NULL) {
 
-})->setName('api.SurveyApp.login');
+            $reg = new Devicetokens();
+                $reg->setUserId($patient_id);
+                $reg->setToken($params["token"]);
+                $reg->save();
+            return $response->withJson(['status'=>'ok']);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
+
+})->setName('api.deviceRegister');
 
 
 $app->post('/api/SurveyAppLogin', function ($request, $response, $args) {

@@ -2,6 +2,8 @@
 
 namespace Base;
 
+use \Devicetokens as ChildDevicetokens;
+use \DevicetokensQuery as ChildDevicetokensQuery;
 use \Newuser as ChildNewuser;
 use \NewuserQuery as ChildNewuserQuery;
 use \Patient as ChildPatient;
@@ -15,6 +17,7 @@ use \SurveylogQuery as ChildSurveylogQuery;
 use \DateTime;
 use \Exception;
 use \PDO;
+use Map\DevicetokensTableMap;
 use Map\NewuserTableMap;
 use Map\PatientTableMap;
 use Map\QuestionsTableMap;
@@ -148,6 +151,12 @@ abstract class Newuser implements ActiveRecordInterface
     protected $subscribed;
 
     /**
+     * @var        ObjectCollection|ChildDevicetokens[] Collection to store aggregation of ChildDevicetokens objects.
+     */
+    protected $collDevicetokenss;
+    protected $collDevicetokenssPartial;
+
+    /**
      * @var        ObjectCollection|ChildPatient[] Collection to store aggregation of ChildPatient objects.
      */
     protected $collPatients;
@@ -178,6 +187,12 @@ abstract class Newuser implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildDevicetokens[]
+     */
+    protected $devicetokenssScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -910,6 +925,8 @@ abstract class Newuser implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collDevicetokenss = null;
+
             $this->collPatients = null;
 
             $this->collQuestionss = null;
@@ -1026,6 +1043,24 @@ abstract class Newuser implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->devicetokenssScheduledForDeletion !== null) {
+                if (!$this->devicetokenssScheduledForDeletion->isEmpty()) {
+                    foreach ($this->devicetokenssScheduledForDeletion as $devicetokens) {
+                        // need to save related object because we set the relation to null
+                        $devicetokens->save($con);
+                    }
+                    $this->devicetokenssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDevicetokenss !== null) {
+                foreach ($this->collDevicetokenss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             if ($this->patientsScheduledForDeletion !== null) {
@@ -1342,6 +1377,21 @@ abstract class Newuser implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collDevicetokenss) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'devicetokenss';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'DeviceTokenss';
+                        break;
+                    default:
+                        $key = 'Devicetokenss';
+                }
+
+                $result[$key] = $this->collDevicetokenss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collPatients) {
 
                 switch ($keyType) {
@@ -1694,6 +1744,12 @@ abstract class Newuser implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
+            foreach ($this->getDevicetokenss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDevicetokens($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getPatients() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addPatient($relObj->copy($deepCopy));
@@ -1759,6 +1815,9 @@ abstract class Newuser implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('Devicetokens' == $relationName) {
+            return $this->initDevicetokenss();
+        }
         if ('Patient' == $relationName) {
             return $this->initPatients();
         }
@@ -1771,6 +1830,231 @@ abstract class Newuser implements ActiveRecordInterface
         if ('Surveylog' == $relationName) {
             return $this->initSurveylogs();
         }
+    }
+
+    /**
+     * Clears out the collDevicetokenss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addDevicetokenss()
+     */
+    public function clearDevicetokenss()
+    {
+        $this->collDevicetokenss = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collDevicetokenss collection loaded partially.
+     */
+    public function resetPartialDevicetokenss($v = true)
+    {
+        $this->collDevicetokenssPartial = $v;
+    }
+
+    /**
+     * Initializes the collDevicetokenss collection.
+     *
+     * By default this just sets the collDevicetokenss collection to an empty array (like clearcollDevicetokenss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDevicetokenss($overrideExisting = true)
+    {
+        if (null !== $this->collDevicetokenss && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = DevicetokensTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collDevicetokenss = new $collectionClassName;
+        $this->collDevicetokenss->setModel('\Devicetokens');
+    }
+
+    /**
+     * Gets an array of ChildDevicetokens objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildNewuser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildDevicetokens[] List of ChildDevicetokens objects
+     * @throws PropelException
+     */
+    public function getDevicetokenss(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDevicetokenssPartial && !$this->isNew();
+        if (null === $this->collDevicetokenss || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDevicetokenss) {
+                // return empty collection
+                $this->initDevicetokenss();
+            } else {
+                $collDevicetokenss = ChildDevicetokensQuery::create(null, $criteria)
+                    ->filterByNewuser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collDevicetokenssPartial && count($collDevicetokenss)) {
+                        $this->initDevicetokenss(false);
+
+                        foreach ($collDevicetokenss as $obj) {
+                            if (false == $this->collDevicetokenss->contains($obj)) {
+                                $this->collDevicetokenss->append($obj);
+                            }
+                        }
+
+                        $this->collDevicetokenssPartial = true;
+                    }
+
+                    return $collDevicetokenss;
+                }
+
+                if ($partial && $this->collDevicetokenss) {
+                    foreach ($this->collDevicetokenss as $obj) {
+                        if ($obj->isNew()) {
+                            $collDevicetokenss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDevicetokenss = $collDevicetokenss;
+                $this->collDevicetokenssPartial = false;
+            }
+        }
+
+        return $this->collDevicetokenss;
+    }
+
+    /**
+     * Sets a collection of ChildDevicetokens objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $devicetokenss A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function setDevicetokenss(Collection $devicetokenss, ConnectionInterface $con = null)
+    {
+        /** @var ChildDevicetokens[] $devicetokenssToDelete */
+        $devicetokenssToDelete = $this->getDevicetokenss(new Criteria(), $con)->diff($devicetokenss);
+
+
+        $this->devicetokenssScheduledForDeletion = $devicetokenssToDelete;
+
+        foreach ($devicetokenssToDelete as $devicetokensRemoved) {
+            $devicetokensRemoved->setNewuser(null);
+        }
+
+        $this->collDevicetokenss = null;
+        foreach ($devicetokenss as $devicetokens) {
+            $this->addDevicetokens($devicetokens);
+        }
+
+        $this->collDevicetokenss = $devicetokenss;
+        $this->collDevicetokenssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Devicetokens objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Devicetokens objects.
+     * @throws PropelException
+     */
+    public function countDevicetokenss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDevicetokenssPartial && !$this->isNew();
+        if (null === $this->collDevicetokenss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDevicetokenss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDevicetokenss());
+            }
+
+            $query = ChildDevicetokensQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByNewuser($this)
+                ->count($con);
+        }
+
+        return count($this->collDevicetokenss);
+    }
+
+    /**
+     * Method called to associate a ChildDevicetokens object to this object
+     * through the ChildDevicetokens foreign key attribute.
+     *
+     * @param  ChildDevicetokens $l ChildDevicetokens
+     * @return $this|\Newuser The current object (for fluent API support)
+     */
+    public function addDevicetokens(ChildDevicetokens $l)
+    {
+        if ($this->collDevicetokenss === null) {
+            $this->initDevicetokenss();
+            $this->collDevicetokenssPartial = true;
+        }
+
+        if (!$this->collDevicetokenss->contains($l)) {
+            $this->doAddDevicetokens($l);
+
+            if ($this->devicetokenssScheduledForDeletion and $this->devicetokenssScheduledForDeletion->contains($l)) {
+                $this->devicetokenssScheduledForDeletion->remove($this->devicetokenssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildDevicetokens $devicetokens The ChildDevicetokens object to add.
+     */
+    protected function doAddDevicetokens(ChildDevicetokens $devicetokens)
+    {
+        $this->collDevicetokenss[]= $devicetokens;
+        $devicetokens->setNewuser($this);
+    }
+
+    /**
+     * @param  ChildDevicetokens $devicetokens The ChildDevicetokens object to remove.
+     * @return $this|ChildNewuser The current object (for fluent API support)
+     */
+    public function removeDevicetokens(ChildDevicetokens $devicetokens)
+    {
+        if ($this->getDevicetokenss()->contains($devicetokens)) {
+            $pos = $this->collDevicetokenss->search($devicetokens);
+            $this->collDevicetokenss->remove($pos);
+            if (null === $this->devicetokenssScheduledForDeletion) {
+                $this->devicetokenssScheduledForDeletion = clone $this->collDevicetokenss;
+                $this->devicetokenssScheduledForDeletion->clear();
+            }
+            $this->devicetokenssScheduledForDeletion[]= $devicetokens;
+            $devicetokens->setNewuser(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -2759,6 +3043,11 @@ abstract class Newuser implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collDevicetokenss) {
+                foreach ($this->collDevicetokenss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collPatients) {
                 foreach ($this->collPatients as $o) {
                     $o->clearAllReferences($deep);
@@ -2781,6 +3070,7 @@ abstract class Newuser implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collDevicetokenss = null;
         $this->collPatients = null;
         $this->collQuestionss = null;
         $this->collStudyresponses = null;

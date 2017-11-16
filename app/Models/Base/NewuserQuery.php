@@ -50,6 +50,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildNewuserQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildNewuserQuery leftJoinDevicetokens($relationAlias = null) Adds a LEFT JOIN clause to the query using the Devicetokens relation
+ * @method     ChildNewuserQuery rightJoinDevicetokens($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Devicetokens relation
+ * @method     ChildNewuserQuery innerJoinDevicetokens($relationAlias = null) Adds a INNER JOIN clause to the query using the Devicetokens relation
+ *
+ * @method     ChildNewuserQuery joinWithDevicetokens($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Devicetokens relation
+ *
+ * @method     ChildNewuserQuery leftJoinWithDevicetokens() Adds a LEFT JOIN clause and with to the query using the Devicetokens relation
+ * @method     ChildNewuserQuery rightJoinWithDevicetokens() Adds a RIGHT JOIN clause and with to the query using the Devicetokens relation
+ * @method     ChildNewuserQuery innerJoinWithDevicetokens() Adds a INNER JOIN clause and with to the query using the Devicetokens relation
+ *
  * @method     ChildNewuserQuery leftJoinPatient($relationAlias = null) Adds a LEFT JOIN clause to the query using the Patient relation
  * @method     ChildNewuserQuery rightJoinPatient($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Patient relation
  * @method     ChildNewuserQuery innerJoinPatient($relationAlias = null) Adds a INNER JOIN clause to the query using the Patient relation
@@ -90,7 +100,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNewuserQuery rightJoinWithSurveylog() Adds a RIGHT JOIN clause and with to the query using the Surveylog relation
  * @method     ChildNewuserQuery innerJoinWithSurveylog() Adds a INNER JOIN clause and with to the query using the Surveylog relation
  *
- * @method     \PatientQuery|\QuestionsQuery|\StudyresponseQuery|\SurveylogQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \DevicetokensQuery|\PatientQuery|\QuestionsQuery|\StudyresponseQuery|\SurveylogQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildNewuser findOne(ConnectionInterface $con = null) Return the first ChildNewuser matching the query
  * @method     ChildNewuser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildNewuser matching the query, or a new ChildNewuser object populated from the query conditions when no match is found
@@ -626,6 +636,79 @@ abstract class NewuserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(NewuserTableMap::COL_SUBSCRIBED, $subscribed, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Devicetokens object
+     *
+     * @param \Devicetokens|ObjectCollection $devicetokens the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildNewuserQuery The current query, for fluid interface
+     */
+    public function filterByDevicetokens($devicetokens, $comparison = null)
+    {
+        if ($devicetokens instanceof \Devicetokens) {
+            return $this
+                ->addUsingAlias(NewuserTableMap::COL_ID, $devicetokens->getUserId(), $comparison);
+        } elseif ($devicetokens instanceof ObjectCollection) {
+            return $this
+                ->useDevicetokensQuery()
+                ->filterByPrimaryKeys($devicetokens->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDevicetokens() only accepts arguments of type \Devicetokens or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Devicetokens relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildNewuserQuery The current query, for fluid interface
+     */
+    public function joinDevicetokens($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Devicetokens');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Devicetokens');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Devicetokens relation Devicetokens object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \DevicetokensQuery A secondary query class using the current class as primary query
+     */
+    public function useDevicetokensQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinDevicetokens($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Devicetokens', '\DevicetokensQuery');
     }
 
     /**

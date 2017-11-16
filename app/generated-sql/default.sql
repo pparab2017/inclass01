@@ -23,6 +23,24 @@ CREATE TABLE `Admin`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- DeviceTokens
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `DeviceTokens`;
+
+CREATE TABLE `DeviceTokens`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER,
+    `token` VARCHAR(1000),
+    PRIMARY KEY (`id`),
+    INDEX `fk_token_user_idx` (`user_id`),
+    CONSTRAINT `fk_token_user`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `NewUser` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- Messages
 -- ---------------------------------------------------------------------
 
