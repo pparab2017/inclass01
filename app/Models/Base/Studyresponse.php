@@ -7,6 +7,7 @@ use \NewuserQuery as ChildNewuserQuery;
 use \Questions as ChildQuestions;
 use \QuestionsQuery as ChildQuestionsQuery;
 use \StudyresponseQuery as ChildStudyresponseQuery;
+use \DateTime;
 use \Exception;
 use \PDO;
 use Map\StudyresponseTableMap;
@@ -21,6 +22,7 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'StudyResponse' table.
@@ -90,6 +92,13 @@ abstract class Studyresponse implements ActiveRecordInterface
      * @var        string
      */
     protected $response;
+
+    /**
+     * The value for the lastsenttime field.
+     *
+     * @var        DateTime
+     */
+    protected $lastsenttime;
 
     /**
      * @var        ChildQuestions
@@ -375,6 +384,26 @@ abstract class Studyresponse implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [lastsenttime] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getLastsenttime($format = NULL)
+    {
+        if ($format === null) {
+            return $this->lastsenttime;
+        } else {
+            return $this->lastsenttime instanceof \DateTimeInterface ? $this->lastsenttime->format($format) : null;
+        }
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -463,6 +492,26 @@ abstract class Studyresponse implements ActiveRecordInterface
     } // setResponse()
 
     /**
+     * Sets the value of [lastsenttime] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Studyresponse The current object (for fluent API support)
+     */
+    public function setLastsenttime($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->lastsenttime !== null || $dt !== null) {
+            if ($this->lastsenttime === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->lastsenttime->format("Y-m-d H:i:s.u")) {
+                $this->lastsenttime = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[StudyresponseTableMap::COL_LASTSENTTIME] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setLastsenttime()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -509,6 +558,12 @@ abstract class Studyresponse implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : StudyresponseTableMap::translateFieldName('Response', TableMap::TYPE_PHPNAME, $indexType)];
             $this->response = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : StudyresponseTableMap::translateFieldName('Lastsenttime', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->lastsenttime = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -517,7 +572,7 @@ abstract class Studyresponse implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = StudyresponseTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = StudyresponseTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Studyresponse'), 0, $e);
@@ -753,6 +808,9 @@ abstract class Studyresponse implements ActiveRecordInterface
         if ($this->isColumnModified(StudyresponseTableMap::COL_RESPONSE)) {
             $modifiedColumns[':p' . $index++]  = 'Response';
         }
+        if ($this->isColumnModified(StudyresponseTableMap::COL_LASTSENTTIME)) {
+            $modifiedColumns[':p' . $index++]  = 'LastSentTime';
+        }
 
         $sql = sprintf(
             'INSERT INTO StudyResponse (%s) VALUES (%s)',
@@ -775,6 +833,9 @@ abstract class Studyresponse implements ActiveRecordInterface
                         break;
                     case 'Response':
                         $stmt->bindValue($identifier, $this->response, PDO::PARAM_STR);
+                        break;
+                    case 'LastSentTime':
+                        $stmt->bindValue($identifier, $this->lastsenttime ? $this->lastsenttime->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -850,6 +911,9 @@ abstract class Studyresponse implements ActiveRecordInterface
             case 3:
                 return $this->getResponse();
                 break;
+            case 4:
+                return $this->getLastsenttime();
+                break;
             default:
                 return null;
                 break;
@@ -884,7 +948,12 @@ abstract class Studyresponse implements ActiveRecordInterface
             $keys[1] => $this->getUserId(),
             $keys[2] => $this->getQuestionId(),
             $keys[3] => $this->getResponse(),
+            $keys[4] => $this->getLastsenttime(),
         );
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -967,6 +1036,9 @@ abstract class Studyresponse implements ActiveRecordInterface
             case 3:
                 $this->setResponse($value);
                 break;
+            case 4:
+                $this->setLastsenttime($value);
+                break;
         } // switch()
 
         return $this;
@@ -1004,6 +1076,9 @@ abstract class Studyresponse implements ActiveRecordInterface
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setResponse($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setLastsenttime($arr[$keys[4]]);
         }
     }
 
@@ -1057,6 +1132,9 @@ abstract class Studyresponse implements ActiveRecordInterface
         }
         if ($this->isColumnModified(StudyresponseTableMap::COL_RESPONSE)) {
             $criteria->add(StudyresponseTableMap::COL_RESPONSE, $this->response);
+        }
+        if ($this->isColumnModified(StudyresponseTableMap::COL_LASTSENTTIME)) {
+            $criteria->add(StudyresponseTableMap::COL_LASTSENTTIME, $this->lastsenttime);
         }
 
         return $criteria;
@@ -1147,6 +1225,7 @@ abstract class Studyresponse implements ActiveRecordInterface
         $copyObj->setUserId($this->getUserId());
         $copyObj->setQuestionId($this->getQuestionId());
         $copyObj->setResponse($this->getResponse());
+        $copyObj->setLastsenttime($this->getLastsenttime());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1294,6 +1373,7 @@ abstract class Studyresponse implements ActiveRecordInterface
         $this->user_id = null;
         $this->question_id = null;
         $this->response = null;
+        $this->lastsenttime = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

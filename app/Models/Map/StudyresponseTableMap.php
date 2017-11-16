@@ -59,7 +59,7 @@ class StudyresponseTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class StudyresponseTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -92,6 +92,11 @@ class StudyresponseTableMap extends TableMap
     const COL_RESPONSE = 'StudyResponse.Response';
 
     /**
+     * the column name for the LastSentTime field
+     */
+    const COL_LASTSENTTIME = 'StudyResponse.LastSentTime';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -103,11 +108,11 @@ class StudyresponseTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'QuestionId', 'Response', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'questionId', 'response', ),
-        self::TYPE_COLNAME       => array(StudyresponseTableMap::COL_ID, StudyresponseTableMap::COL_USER_ID, StudyresponseTableMap::COL_QUESTION_ID, StudyresponseTableMap::COL_RESPONSE, ),
-        self::TYPE_FIELDNAME     => array('id', 'User_id', 'Question_id', 'Response', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'QuestionId', 'Response', 'Lastsenttime', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'questionId', 'response', 'lastsenttime', ),
+        self::TYPE_COLNAME       => array(StudyresponseTableMap::COL_ID, StudyresponseTableMap::COL_USER_ID, StudyresponseTableMap::COL_QUESTION_ID, StudyresponseTableMap::COL_RESPONSE, StudyresponseTableMap::COL_LASTSENTTIME, ),
+        self::TYPE_FIELDNAME     => array('id', 'User_id', 'Question_id', 'Response', 'LastSentTime', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -117,11 +122,11 @@ class StudyresponseTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'QuestionId' => 2, 'Response' => 3, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'questionId' => 2, 'response' => 3, ),
-        self::TYPE_COLNAME       => array(StudyresponseTableMap::COL_ID => 0, StudyresponseTableMap::COL_USER_ID => 1, StudyresponseTableMap::COL_QUESTION_ID => 2, StudyresponseTableMap::COL_RESPONSE => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'User_id' => 1, 'Question_id' => 2, 'Response' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'QuestionId' => 2, 'Response' => 3, 'Lastsenttime' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'questionId' => 2, 'response' => 3, 'lastsenttime' => 4, ),
+        self::TYPE_COLNAME       => array(StudyresponseTableMap::COL_ID => 0, StudyresponseTableMap::COL_USER_ID => 1, StudyresponseTableMap::COL_QUESTION_ID => 2, StudyresponseTableMap::COL_RESPONSE => 3, StudyresponseTableMap::COL_LASTSENTTIME => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'User_id' => 1, 'Question_id' => 2, 'Response' => 3, 'LastSentTime' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -145,6 +150,7 @@ class StudyresponseTableMap extends TableMap
         $this->addForeignKey('User_id', 'UserId', 'INTEGER', 'NewUser', 'id', false, null, null);
         $this->addForeignKey('Question_id', 'QuestionId', 'INTEGER', 'Questions', 'id', false, null, null);
         $this->addColumn('Response', 'Response', 'VARCHAR', false, 45, null);
+        $this->addColumn('LastSentTime', 'Lastsenttime', 'TIMESTAMP', true, null, null);
     } // initialize()
 
     /**
@@ -313,11 +319,13 @@ class StudyresponseTableMap extends TableMap
             $criteria->addSelectColumn(StudyresponseTableMap::COL_USER_ID);
             $criteria->addSelectColumn(StudyresponseTableMap::COL_QUESTION_ID);
             $criteria->addSelectColumn(StudyresponseTableMap::COL_RESPONSE);
+            $criteria->addSelectColumn(StudyresponseTableMap::COL_LASTSENTTIME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.User_id');
             $criteria->addSelectColumn($alias . '.Question_id');
             $criteria->addSelectColumn($alias . '.Response');
+            $criteria->addSelectColumn($alias . '.LastSentTime');
         }
     }
 

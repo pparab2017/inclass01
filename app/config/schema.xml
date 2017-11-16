@@ -136,6 +136,7 @@
     <column name="User_id" phpName="UserId" type="INTEGER"/>
     <column name="Question_id" phpName="QuestionId" type="INTEGER"/>
     <column name="Response" phpName="Response" type="VARCHAR" size="45"/>
+    <column name="LastSentTime" phpName="Lastsenttime" type="TIMESTAMP" required="true"/>
     <foreign-key foreignTable="Questions" name="fk_questionId">
       <reference local="Question_id" foreign="id"/>
     </foreign-key>

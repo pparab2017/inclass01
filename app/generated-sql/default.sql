@@ -178,6 +178,7 @@ CREATE TABLE `StudyResponse`
     `User_id` INTEGER,
     `Question_id` INTEGER,
     `Response` VARCHAR(45),
+    `LastSentTime` DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `fk_userId_idx` (`User_id`),
     INDEX `fk_questionId_idx` (`Question_id`),

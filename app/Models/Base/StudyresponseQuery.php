@@ -24,11 +24,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStudyresponseQuery orderByUserId($order = Criteria::ASC) Order by the User_id column
  * @method     ChildStudyresponseQuery orderByQuestionId($order = Criteria::ASC) Order by the Question_id column
  * @method     ChildStudyresponseQuery orderByResponse($order = Criteria::ASC) Order by the Response column
+ * @method     ChildStudyresponseQuery orderByLastsenttime($order = Criteria::ASC) Order by the LastSentTime column
  *
  * @method     ChildStudyresponseQuery groupById() Group by the id column
  * @method     ChildStudyresponseQuery groupByUserId() Group by the User_id column
  * @method     ChildStudyresponseQuery groupByQuestionId() Group by the Question_id column
  * @method     ChildStudyresponseQuery groupByResponse() Group by the Response column
+ * @method     ChildStudyresponseQuery groupByLastsenttime() Group by the LastSentTime column
  *
  * @method     ChildStudyresponseQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildStudyresponseQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -66,7 +68,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStudyresponse findOneById(int $id) Return the first ChildStudyresponse filtered by the id column
  * @method     ChildStudyresponse findOneByUserId(int $User_id) Return the first ChildStudyresponse filtered by the User_id column
  * @method     ChildStudyresponse findOneByQuestionId(int $Question_id) Return the first ChildStudyresponse filtered by the Question_id column
- * @method     ChildStudyresponse findOneByResponse(string $Response) Return the first ChildStudyresponse filtered by the Response column *
+ * @method     ChildStudyresponse findOneByResponse(string $Response) Return the first ChildStudyresponse filtered by the Response column
+ * @method     ChildStudyresponse findOneByLastsenttime(string $LastSentTime) Return the first ChildStudyresponse filtered by the LastSentTime column *
 
  * @method     ChildStudyresponse requirePk($key, ConnectionInterface $con = null) Return the ChildStudyresponse by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStudyresponse requireOne(ConnectionInterface $con = null) Return the first ChildStudyresponse matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -75,12 +78,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildStudyresponse requireOneByUserId(int $User_id) Return the first ChildStudyresponse filtered by the User_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStudyresponse requireOneByQuestionId(int $Question_id) Return the first ChildStudyresponse filtered by the Question_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildStudyresponse requireOneByResponse(string $Response) Return the first ChildStudyresponse filtered by the Response column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildStudyresponse requireOneByLastsenttime(string $LastSentTime) Return the first ChildStudyresponse filtered by the LastSentTime column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildStudyresponse[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildStudyresponse objects based on current ModelCriteria
  * @method     ChildStudyresponse[]|ObjectCollection findById(int $id) Return ChildStudyresponse objects filtered by the id column
  * @method     ChildStudyresponse[]|ObjectCollection findByUserId(int $User_id) Return ChildStudyresponse objects filtered by the User_id column
  * @method     ChildStudyresponse[]|ObjectCollection findByQuestionId(int $Question_id) Return ChildStudyresponse objects filtered by the Question_id column
  * @method     ChildStudyresponse[]|ObjectCollection findByResponse(string $Response) Return ChildStudyresponse objects filtered by the Response column
+ * @method     ChildStudyresponse[]|ObjectCollection findByLastsenttime(string $LastSentTime) Return ChildStudyresponse objects filtered by the LastSentTime column
  * @method     ChildStudyresponse[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -179,7 +184,7 @@ abstract class StudyresponseQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, User_id, Question_id, Response FROM StudyResponse WHERE id = :p0';
+        $sql = 'SELECT id, User_id, Question_id, Response, LastSentTime FROM StudyResponse WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -420,6 +425,49 @@ abstract class StudyresponseQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(StudyresponseTableMap::COL_RESPONSE, $response, $comparison);
+    }
+
+    /**
+     * Filter the query on the LastSentTime column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLastsenttime('2011-03-14'); // WHERE LastSentTime = '2011-03-14'
+     * $query->filterByLastsenttime('now'); // WHERE LastSentTime = '2011-03-14'
+     * $query->filterByLastsenttime(array('max' => 'yesterday')); // WHERE LastSentTime > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $lastsenttime The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildStudyresponseQuery The current query, for fluid interface
+     */
+    public function filterByLastsenttime($lastsenttime = null, $comparison = null)
+    {
+        if (is_array($lastsenttime)) {
+            $useMinMax = false;
+            if (isset($lastsenttime['min'])) {
+                $this->addUsingAlias(StudyresponseTableMap::COL_LASTSENTTIME, $lastsenttime['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($lastsenttime['max'])) {
+                $this->addUsingAlias(StudyresponseTableMap::COL_LASTSENTTIME, $lastsenttime['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(StudyresponseTableMap::COL_LASTSENTTIME, $lastsenttime, $comparison);
     }
 
     /**

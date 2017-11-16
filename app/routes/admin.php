@@ -41,6 +41,26 @@ $app->get('/admin/user/ajax', function ($request, $response, $args) {
     ->add($checkAdminAuthMiddleware);
 
 
+$app->get('/admin/messageLog', function ($request, $response, $args){
+
+    $sql = "select R.id As ResponseId, R.Response,N.Fname, N.Lname,R.LastSentTime,
+Q.id As questionID, Text, choises, type, time, Q.user_id 
+from StudyResponse R join Questions Q
+on R.Question_id = Q.id
+join NewUser N on Q.user_id = N.id;";
+
+    //$sql = str_replace("{DOCTOR_ID}",$doctor->getId(),$sql);
+    $conn = Propel::getConnection();
+    $reader = $conn->prepare($sql);
+    $reader->execute();
+    $results = $reader->fetchAll(PDO::FETCH_ASSOC);
+
+
+    //json_encode($_GET['recordsTotal']); this is how we access the server side params, if in case
+    return json_encode($results);
+
+})->setName('admin.messageLog');
+
 $app->post('/admin/user/add', function ($request, $response, $args) {
 
     $con = Propel::getWriteConnection('default');// get the data base name connection
@@ -244,14 +264,15 @@ $app->post('/admin/user/updateMessage', function ($request, $response, $args){
 
         $params = $request->getParsedBody();// get the form request
         $questions = QuestionsQuery::create()->findOneById($params['questionId']);
-
-        $questions->setUserId($params['userId']);
-        $questions->setType($params['type']);
-        $questions->setTime($params['time']);
-        $questions->setChoises($params['choices']);
-        $questions->setText($params['questionText']);
-        $questions->setStudyId(1);
-        $questions->save();
+if($questions!=null) {
+    $questions->setUserId($params['userId']);
+    $questions->setType($params['type']);
+    $questions->setTime($params['time']);
+    $questions->setChoises($params['choices']);
+    $questions->setText($params['questionText']);
+    $questions->setStudyId(1);
+    $questions->save();
+}
 
     }
     catch (Exception $ex)
