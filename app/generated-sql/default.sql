@@ -123,6 +123,7 @@ CREATE TABLE `Questions`
     `Time` VARCHAR(45),
     `Study_Id` INTEGER NOT NULL,
     `User_id` INTEGER,
+    `LastSent` DATETIME,
     PRIMARY KEY (`id`),
     INDEX `fk_userId_idx` (`User_id`),
     INDEX `fk_q_userId_idx` (`User_id`),

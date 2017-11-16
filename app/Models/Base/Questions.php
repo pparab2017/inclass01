@@ -10,6 +10,7 @@ use \Study as ChildStudy;
 use \StudyQuery as ChildStudyQuery;
 use \Studyresponse as ChildStudyresponse;
 use \StudyresponseQuery as ChildStudyresponseQuery;
+use \DateTime;
 use \Exception;
 use \PDO;
 use Map\QuestionsTableMap;
@@ -26,6 +27,7 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
+use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'Questions' table.
@@ -117,6 +119,13 @@ abstract class Questions implements ActiveRecordInterface
      * @var        int
      */
     protected $user_id;
+
+    /**
+     * The value for the lastsent field.
+     *
+     * @var        DateTime
+     */
+    protected $lastsent;
 
     /**
      * @var        ChildStudy
@@ -457,6 +466,26 @@ abstract class Questions implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [lastsent] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getLastsent($format = NULL)
+    {
+        if ($format === null) {
+            return $this->lastsent;
+        } else {
+            return $this->lastsent instanceof \DateTimeInterface ? $this->lastsent->format($format) : null;
+        }
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -605,6 +634,26 @@ abstract class Questions implements ActiveRecordInterface
     } // setUserId()
 
     /**
+     * Sets the value of [lastsent] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\Questions The current object (for fluent API support)
+     */
+    public function setLastsent($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->lastsent !== null || $dt !== null) {
+            if ($this->lastsent === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->lastsent->format("Y-m-d H:i:s.u")) {
+                $this->lastsent = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[QuestionsTableMap::COL_LASTSENT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setLastsent()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -664,6 +713,12 @@ abstract class Questions implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : QuestionsTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : QuestionsTableMap::translateFieldName('Lastsent', TableMap::TYPE_PHPNAME, $indexType)];
+            if ($col === '0000-00-00 00:00:00') {
+                $col = null;
+            }
+            $this->lastsent = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -672,7 +727,7 @@ abstract class Questions implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = QuestionsTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = QuestionsTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Questions'), 0, $e);
@@ -937,6 +992,9 @@ abstract class Questions implements ActiveRecordInterface
         if ($this->isColumnModified(QuestionsTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'User_id';
         }
+        if ($this->isColumnModified(QuestionsTableMap::COL_LASTSENT)) {
+            $modifiedColumns[':p' . $index++]  = 'LastSent';
+        }
 
         $sql = sprintf(
             'INSERT INTO Questions (%s) VALUES (%s)',
@@ -968,6 +1026,9 @@ abstract class Questions implements ActiveRecordInterface
                         break;
                     case 'User_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
+                        break;
+                    case 'LastSent':
+                        $stmt->bindValue($identifier, $this->lastsent ? $this->lastsent->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1052,6 +1113,9 @@ abstract class Questions implements ActiveRecordInterface
             case 6:
                 return $this->getUserId();
                 break;
+            case 7:
+                return $this->getLastsent();
+                break;
             default:
                 return null;
                 break;
@@ -1089,7 +1153,12 @@ abstract class Questions implements ActiveRecordInterface
             $keys[4] => $this->getTime(),
             $keys[5] => $this->getStudyId(),
             $keys[6] => $this->getUserId(),
+            $keys[7] => $this->getLastsent(),
         );
+        if ($result[$keys[7]] instanceof \DateTime) {
+            $result[$keys[7]] = $result[$keys[7]]->format('c');
+        }
+
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
@@ -1196,6 +1265,9 @@ abstract class Questions implements ActiveRecordInterface
             case 6:
                 $this->setUserId($value);
                 break;
+            case 7:
+                $this->setLastsent($value);
+                break;
         } // switch()
 
         return $this;
@@ -1242,6 +1314,9 @@ abstract class Questions implements ActiveRecordInterface
         }
         if (array_key_exists($keys[6], $arr)) {
             $this->setUserId($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setLastsent($arr[$keys[7]]);
         }
     }
 
@@ -1304,6 +1379,9 @@ abstract class Questions implements ActiveRecordInterface
         }
         if ($this->isColumnModified(QuestionsTableMap::COL_USER_ID)) {
             $criteria->add(QuestionsTableMap::COL_USER_ID, $this->user_id);
+        }
+        if ($this->isColumnModified(QuestionsTableMap::COL_LASTSENT)) {
+            $criteria->add(QuestionsTableMap::COL_LASTSENT, $this->lastsent);
         }
 
         return $criteria;
@@ -1397,6 +1475,7 @@ abstract class Questions implements ActiveRecordInterface
         $copyObj->setTime($this->getTime());
         $copyObj->setStudyId($this->getStudyId());
         $copyObj->setUserId($this->getUserId());
+        $copyObj->setLastsent($this->getLastsent());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1827,6 +1906,7 @@ abstract class Questions implements ActiveRecordInterface
         $this->time = null;
         $this->study_id = null;
         $this->user_id = null;
+        $this->lastsent = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

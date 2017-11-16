@@ -27,6 +27,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionsQuery orderByTime($order = Criteria::ASC) Order by the Time column
  * @method     ChildQuestionsQuery orderByStudyId($order = Criteria::ASC) Order by the Study_Id column
  * @method     ChildQuestionsQuery orderByUserId($order = Criteria::ASC) Order by the User_id column
+ * @method     ChildQuestionsQuery orderByLastsent($order = Criteria::ASC) Order by the LastSent column
  *
  * @method     ChildQuestionsQuery groupById() Group by the id column
  * @method     ChildQuestionsQuery groupByText() Group by the Text column
@@ -35,6 +36,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestionsQuery groupByTime() Group by the Time column
  * @method     ChildQuestionsQuery groupByStudyId() Group by the Study_Id column
  * @method     ChildQuestionsQuery groupByUserId() Group by the User_id column
+ * @method     ChildQuestionsQuery groupByLastsent() Group by the LastSent column
  *
  * @method     ChildQuestionsQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildQuestionsQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -85,7 +87,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestions findOneByType(string $Type) Return the first ChildQuestions filtered by the Type column
  * @method     ChildQuestions findOneByTime(string $Time) Return the first ChildQuestions filtered by the Time column
  * @method     ChildQuestions findOneByStudyId(int $Study_Id) Return the first ChildQuestions filtered by the Study_Id column
- * @method     ChildQuestions findOneByUserId(int $User_id) Return the first ChildQuestions filtered by the User_id column *
+ * @method     ChildQuestions findOneByUserId(int $User_id) Return the first ChildQuestions filtered by the User_id column
+ * @method     ChildQuestions findOneByLastsent(string $LastSent) Return the first ChildQuestions filtered by the LastSent column *
 
  * @method     ChildQuestions requirePk($key, ConnectionInterface $con = null) Return the ChildQuestions by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestions requireOne(ConnectionInterface $con = null) Return the first ChildQuestions matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -97,6 +100,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestions requireOneByTime(string $Time) Return the first ChildQuestions filtered by the Time column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestions requireOneByStudyId(int $Study_Id) Return the first ChildQuestions filtered by the Study_Id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildQuestions requireOneByUserId(int $User_id) Return the first ChildQuestions filtered by the User_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildQuestions requireOneByLastsent(string $LastSent) Return the first ChildQuestions filtered by the LastSent column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildQuestions[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildQuestions objects based on current ModelCriteria
  * @method     ChildQuestions[]|ObjectCollection findById(int $id) Return ChildQuestions objects filtered by the id column
@@ -106,6 +110,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildQuestions[]|ObjectCollection findByTime(string $Time) Return ChildQuestions objects filtered by the Time column
  * @method     ChildQuestions[]|ObjectCollection findByStudyId(int $Study_Id) Return ChildQuestions objects filtered by the Study_Id column
  * @method     ChildQuestions[]|ObjectCollection findByUserId(int $User_id) Return ChildQuestions objects filtered by the User_id column
+ * @method     ChildQuestions[]|ObjectCollection findByLastsent(string $LastSent) Return ChildQuestions objects filtered by the LastSent column
  * @method     ChildQuestions[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -204,7 +209,7 @@ abstract class QuestionsQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, Text, Choises, Type, Time, Study_Id, User_id FROM Questions WHERE id = :p0';
+        $sql = 'SELECT id, Text, Choises, Type, Time, Study_Id, User_id, LastSent FROM Questions WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -523,6 +528,49 @@ abstract class QuestionsQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(QuestionsTableMap::COL_USER_ID, $userId, $comparison);
+    }
+
+    /**
+     * Filter the query on the LastSent column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLastsent('2011-03-14'); // WHERE LastSent = '2011-03-14'
+     * $query->filterByLastsent('now'); // WHERE LastSent = '2011-03-14'
+     * $query->filterByLastsent(array('max' => 'yesterday')); // WHERE LastSent > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $lastsent The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildQuestionsQuery The current query, for fluid interface
+     */
+    public function filterByLastsent($lastsent = null, $comparison = null)
+    {
+        if (is_array($lastsent)) {
+            $useMinMax = false;
+            if (isset($lastsent['min'])) {
+                $this->addUsingAlias(QuestionsTableMap::COL_LASTSENT, $lastsent['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($lastsent['max'])) {
+                $this->addUsingAlias(QuestionsTableMap::COL_LASTSENT, $lastsent['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(QuestionsTableMap::COL_LASTSENT, $lastsent, $comparison);
     }
 
     /**

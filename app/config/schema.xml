@@ -93,6 +93,7 @@
     <column name="Time" phpName="Time" type="VARCHAR" size="45"/>
     <column name="Study_Id" phpName="StudyId" type="INTEGER" required="true"/>
     <column name="User_id" phpName="UserId" type="INTEGER"/>
+    <column name="LastSent" phpName="Lastsent" type="TIMESTAMP"/>
     <foreign-key foreignTable="Study" name="fk_q_studyId">
       <reference local="Study_Id" foreign="id"/>
     </foreign-key>

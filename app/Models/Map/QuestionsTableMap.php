@@ -59,7 +59,7 @@ class QuestionsTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class QuestionsTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the id field
@@ -107,6 +107,11 @@ class QuestionsTableMap extends TableMap
     const COL_USER_ID = 'Questions.User_id';
 
     /**
+     * the column name for the LastSent field
+     */
+    const COL_LASTSENT = 'Questions.LastSent';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -118,11 +123,11 @@ class QuestionsTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Text', 'Choises', 'Type', 'Time', 'StudyId', 'UserId', ),
-        self::TYPE_CAMELNAME     => array('id', 'text', 'choises', 'type', 'time', 'studyId', 'userId', ),
-        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_ID, QuestionsTableMap::COL_TEXT, QuestionsTableMap::COL_CHOISES, QuestionsTableMap::COL_TYPE, QuestionsTableMap::COL_TIME, QuestionsTableMap::COL_STUDY_ID, QuestionsTableMap::COL_USER_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'Text', 'Choises', 'Type', 'Time', 'Study_Id', 'User_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id', 'Text', 'Choises', 'Type', 'Time', 'StudyId', 'UserId', 'Lastsent', ),
+        self::TYPE_CAMELNAME     => array('id', 'text', 'choises', 'type', 'time', 'studyId', 'userId', 'lastsent', ),
+        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_ID, QuestionsTableMap::COL_TEXT, QuestionsTableMap::COL_CHOISES, QuestionsTableMap::COL_TYPE, QuestionsTableMap::COL_TIME, QuestionsTableMap::COL_STUDY_ID, QuestionsTableMap::COL_USER_ID, QuestionsTableMap::COL_LASTSENT, ),
+        self::TYPE_FIELDNAME     => array('id', 'Text', 'Choises', 'Type', 'Time', 'Study_Id', 'User_id', 'LastSent', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -132,11 +137,11 @@ class QuestionsTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Text' => 1, 'Choises' => 2, 'Type' => 3, 'Time' => 4, 'StudyId' => 5, 'UserId' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'text' => 1, 'choises' => 2, 'type' => 3, 'time' => 4, 'studyId' => 5, 'userId' => 6, ),
-        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_ID => 0, QuestionsTableMap::COL_TEXT => 1, QuestionsTableMap::COL_CHOISES => 2, QuestionsTableMap::COL_TYPE => 3, QuestionsTableMap::COL_TIME => 4, QuestionsTableMap::COL_STUDY_ID => 5, QuestionsTableMap::COL_USER_ID => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'Text' => 1, 'Choises' => 2, 'Type' => 3, 'Time' => 4, 'Study_Id' => 5, 'User_id' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Text' => 1, 'Choises' => 2, 'Type' => 3, 'Time' => 4, 'StudyId' => 5, 'UserId' => 6, 'Lastsent' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'text' => 1, 'choises' => 2, 'type' => 3, 'time' => 4, 'studyId' => 5, 'userId' => 6, 'lastsent' => 7, ),
+        self::TYPE_COLNAME       => array(QuestionsTableMap::COL_ID => 0, QuestionsTableMap::COL_TEXT => 1, QuestionsTableMap::COL_CHOISES => 2, QuestionsTableMap::COL_TYPE => 3, QuestionsTableMap::COL_TIME => 4, QuestionsTableMap::COL_STUDY_ID => 5, QuestionsTableMap::COL_USER_ID => 6, QuestionsTableMap::COL_LASTSENT => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'Text' => 1, 'Choises' => 2, 'Type' => 3, 'Time' => 4, 'Study_Id' => 5, 'User_id' => 6, 'LastSent' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -163,6 +168,7 @@ class QuestionsTableMap extends TableMap
         $this->addColumn('Time', 'Time', 'VARCHAR', false, 45, null);
         $this->addForeignKey('Study_Id', 'StudyId', 'INTEGER', 'Study', 'id', true, null, null);
         $this->addForeignKey('User_id', 'UserId', 'INTEGER', 'NewUser', 'id', false, null, null);
+        $this->addColumn('LastSent', 'Lastsent', 'TIMESTAMP', false, null, null);
     } // initialize()
 
     /**
@@ -341,6 +347,7 @@ class QuestionsTableMap extends TableMap
             $criteria->addSelectColumn(QuestionsTableMap::COL_TIME);
             $criteria->addSelectColumn(QuestionsTableMap::COL_STUDY_ID);
             $criteria->addSelectColumn(QuestionsTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(QuestionsTableMap::COL_LASTSENT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.Text');
@@ -349,6 +356,7 @@ class QuestionsTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.Time');
             $criteria->addSelectColumn($alias . '.Study_Id');
             $criteria->addSelectColumn($alias . '.User_id');
+            $criteria->addSelectColumn($alias . '.LastSent');
         }
     }
 
