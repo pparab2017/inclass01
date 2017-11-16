@@ -611,7 +611,8 @@ $app->get ('/api/getMyMessages', function ($request, $response, $args) {
 Q.id As questionID, Text, choises, type, time, Q.user_id 
 from StudyResponse R join Questions Q
 on R.Question_id = Q.id
-WHERE Q.User_id = {USER_ID}";
+WHERE Q.User_id = {USER_ID}
+ORDER BY R.id DESC";
 
             $sql = str_replace("{USER_ID}", $patient_id, $sql);
             $conn = Propel::getConnection();

@@ -222,18 +222,23 @@ function sendMsg($arrObj)
     }
     finally {
         $con->commit();
-        sendpush($arrObj["token"],"Cloud Messaging",$arrObj["Text"]);
+        sendpush($arrObj["token"],$arrObj["Text"],"Cloud Messaging",$newMsg->getId(),
+            $question->getId(),$question->getText(),$question->getChoises());
     }
 
 }
 
-function sendpush($token, $message, $title)
+function sendpush($token, $message, $title, $rID,$qID,$text,$ch)
 {
     define('API_ACCESS_KEY', 'AIzaSyCJZyKv7k9rzzmfQxz_N_6Xog822-fmIHA');
     $registrationIds = array($token);
 // prep the bundle
     $msg = array
     (
+        'responseID' => "",
+        'questionID' => "",
+        'Text' => "",
+        'choises' => "",
         'message' => $message,
         'title' => $title,
         'subtitle' => 'Click to open in app!',
