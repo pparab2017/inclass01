@@ -235,10 +235,10 @@ function sendpush($token, $message, $title, $rID,$qID,$text,$ch)
 // prep the bundle
     $msg = array
     (
-        'responseID' => "",
-        'questionID' => "",
-        'Text' => "",
-        'choises' => "",
+        'responseID' => $rID,
+        'questionID' => $qID,
+        'Text' => $text,
+        'choises' => $ch,
         'message' => $message,
         'title' => $title,
         'subtitle' => 'Click to open in app!',
