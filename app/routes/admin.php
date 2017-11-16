@@ -185,7 +185,10 @@ $app->get('/admin/user/getAllQuestions', function ($request, $response, $args){
     try {
         $returnJson = $request->getParsedBody();// get the form request
         $returnJson =  QuestionsQuery::create()
+            ->joinWithNewuser()
+             ->select(array('Id', 'Text', 'Choises', 'Type', 'Time','StudyId','UserId', 'Newuser.Fname', 'Newuser.Lname' ))
             ->find()
+
             ->toJSON();
 
     }

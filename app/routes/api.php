@@ -572,6 +572,12 @@ $app->get('/api/getAllProducts', function ($request, $response, $args) {
 
 // New App API  --- >  SurveyAPP APIS
 
+$app->post ('/api/deviceRegister', function ($request, $response, $args){
+
+    $params = $request->getParsedBody();
+    $patient_id = $this->jwt->user;
+
+})->setName('api.SurveyApp.login');
 
 
 $app->post('/api/SurveyAppLogin', function ($request, $response, $args) {
