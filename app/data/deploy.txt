@@ -119,3 +119,5 @@ ZONE="America/New_York"
 
 sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 sudo reboot
+
+*/5 * * * * /var/www/inclass01/app/scripts/hourly.sh
