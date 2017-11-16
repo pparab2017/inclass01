@@ -227,10 +227,10 @@ function sendMsg($arrObj)
     }
 
 }
-
+define('API_ACCESS_KEY', 'AIzaSyCJZyKv7k9rzzmfQxz_N_6Xog822-fmIHA');
 function sendpush($token, $message, $title, $rID,$qID,$text,$ch)
 {
-    define('API_ACCESS_KEY', 'AIzaSyCJZyKv7k9rzzmfQxz_N_6Xog822-fmIHA');
+
     $registrationIds = array($token);
 // prep the bundle
     $msg = array
