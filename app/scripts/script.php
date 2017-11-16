@@ -227,7 +227,7 @@ function sendMsg($arrObj)
     }
 
 }
-define('API_ACCESS_KEY', 'AIzaSyCJZyKv7k9rzzmfQxz_N_6Xog822-fmIHA');
+
 function sendpush($token, $message, $title, $rID,$qID,$text,$ch)
 {
 
@@ -257,7 +257,7 @@ function sendpush($token, $message, $title, $rID,$qID,$text,$ch)
 
     $headers = array
     (
-        'Authorization: key=' . API_ACCESS_KEY,
+        'Authorization: key=' . 'AIzaSyCJZyKv7k9rzzmfQxz_N_6Xog822-fmIHA',
         'Content-Type: application/json'
     );
 
