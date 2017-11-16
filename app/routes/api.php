@@ -355,7 +355,36 @@ $app->get('/api/getAllUsers', function ($request, $response, $args) {
 })->setName('api.getAllUsers');
 
 
+$app->post('/api/submitResponse', function ($request, $response, $args) {
 
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+    if(Utils::checkIfNotEmpty($userId)) {
+        $p = NewuserQuery::create()->filterById($userId,NewuserQuery::EQUAL)->findOne();
+        if($p != NULL) {
+
+            $res = StudyresponseQuery::create()
+                ->findOneById($params["ResponseID"]);
+
+            if($res != null){
+                $res->setResponse($params["Response"]);
+                $res->save();
+                return $response->withJson(['status'=>'ok']);
+            }
+            return $response
+                ->withStatus(400)
+                ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+})->setName("submitResponse");
 
 
 $app->get('/api/getAllMessages', function ($request, $response, $args) {
@@ -539,7 +568,11 @@ $app->get('/api/setMessageAsRead/{id}', function ($request, $response, $args) {
 
 
 
+$app->get ('/api/getUserInfo', function ($request, $response, $args) {
 
+    // wirte this api to display the user info on the main page
+
+})->setName('api.getUserInfo');
 
 
 
