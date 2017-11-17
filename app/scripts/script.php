@@ -42,7 +42,7 @@ $results = $reader->fetchAll(PDO::FETCH_ASSOC);
 
 //print_r ($results);
 
-for($i =0 ; $i < sizeof($results); $i++ ){
+for($i = 0 ; $i < sizeof($results); $i++ ){
     //echo $results[$i]["Text"];
     $timeString = explode(",",  $results[$i]["Time"]);
     //print_r ($time);

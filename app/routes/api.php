@@ -15,6 +15,8 @@ use Tuupola\Base62;
 use Propel\Runtime\Propel;
 
 
+
+
 //Authentication "/api/signup", "/api/login", "/api/forgotPassword" exempted from token requirements
 $app->post('/api/signup', function ($request, $response, $args) {
     //email – email ID of the user
@@ -387,6 +389,41 @@ $app->post('/api/submitResponse', function ($request, $response, $args) {
 })->setName("submitResponse");
 
 
+$app->get('/api/logout', function ($request, $response, $args){
+    $userId = $this->jwt->user;
+    $device = DevicetokensQuery::create()
+        ->findOneByUserId($userId);
+    $device->delete();
+    return json_encode("okay");
+})->setName("api.logout");
+
+
+$app->post('/api/subscribe', function ($request, $response, $args){
+    $userId = $this->jwt->user;
+    $params = $request->getParsedBody();
+    $user = NewuserQuery::create()
+        ->findOneById($userId);
+
+    $user->setSubscribed($params["val"]);
+    $user->save();
+
+    return json_encode($user->getSubscribed());
+})->setName("api.subscribe");
+
+
+
+$app->get('/api/getSubscrition', function ($request, $response, $args){
+
+
+    $userId = $this->jwt->user;
+
+    $user = NewuserQuery::create()
+        ->findOneById($userId);
+
+    return json_encode($user->getSubscribed());
+})->setName("api.getSubscrition");
+
+
 $app->get('/api/getAllMessages', function ($request, $response, $args) {
     $params = $request->getParsedBody();
     $userId = $this->jwt->user;
@@ -749,3 +786,46 @@ $app->post('/api/survey/submit', function ($request, $response, $args) {
         ->withStatus(400)
         ->withJson(['status'=>'error', "message"=>"Invalid Patient ID"]);
 })->setName('api.survey.submit');
+
+
+
+
+/// creating a message
+///
+///
+//require _DIR_ . '/twilio-php-master/Twilio/autoload.php';
+
+// Use the REST API Client to make requests to the Twilio REST API
+use Twilio\Rest\Client;
+
+
+$app->get('/api/respondSMS', function ($request, $response, $args) {
+
+
+    echo $request;
+
+})->setName('api.respondSMS');
+
+
+$app->get('/api/createSMS', function ($request, $response, $args) {
+// No token required ..
+// Your Account SID and Auth Token from twilio.com/console
+    $sid = 'ACf0c5f9827e815f452d35137890e48237';
+    $token = 'fb1241ed5b01b7da0f333cb296b1971d';
+    $client = new Client($sid, $token);
+
+// Use the client to do fun stuff like send text messages!
+    $client->messages->create(
+// the number you'd like to send the message to
+        '+17047568896',
+        array(
+            // A Twilio phone number you purchased at twilio.com/console
+            'from' => '+17044904061',
+            // the body of the text message you'd like to send
+            'body' => "Hey Jenny! Good luck on the bar exam!"
+        )
+    );
+
+})->setName('api.createSMS');
+
+

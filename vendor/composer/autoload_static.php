@@ -4,20 +4,22 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
+class ComposerStaticInitdbfa81cce80b84609a474aca0f45ee71
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
-        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'T' => 
         array (
+            'Twilio\\' => 7,
+            'Twig\\' => 5,
             'Tuupola\\' => 8,
         ),
         'S' => 
@@ -28,6 +30,7 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
             'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\Finder\\' => 25,
             'Symfony\\Component\\Filesystem\\' => 29,
+            'Symfony\\Component\\Debug\\' => 24,
             'Symfony\\Component\\Console\\' => 26,
             'Symfony\\Component\\Config\\' => 25,
             'Slim\\Views\\' => 11,
@@ -42,7 +45,9 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
         ),
         'P' => 
         array (
+            'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
+            'Psr\\Container\\' => 14,
         ),
         'M' => 
         array (
@@ -70,6 +75,14 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
     );
 
     public static $prefixDirsPsr4 = array (
+        'Twilio\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twilio/sdk/Twilio',
+        ),
+        'Twig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twig/twig/src',
+        ),
         'Tuupola\\' => 
         array (
             0 => __DIR__ . '/..' . '/tuupola/base62/src',
@@ -97,6 +110,10 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
         'Symfony\\Component\\Filesystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/filesystem',
+        ),
+        'Symfony\\Component\\Debug\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/debug',
         ),
         'Symfony\\Component\\Console\\' => 
         array (
@@ -130,9 +147,17 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
         ),
+        'Psr\\Log\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
         ),
         'Monolog\\' => 
         array (
@@ -178,10 +203,6 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
         ),
         'P' => 
         array (
-            'Psr\\Log\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/psr/log',
-            ),
             'Propel' => 
             array (
                 0 => __DIR__ . '/..' . '/propel/propel/src',
@@ -256,10 +277,10 @@ class ComposerStaticInitb0053e42d247d648cac4dc53e19e9387
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb0053e42d247d648cac4dc53e19e9387::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb0053e42d247d648cac4dc53e19e9387::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitb0053e42d247d648cac4dc53e19e9387::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitb0053e42d247d648cac4dc53e19e9387::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitdbfa81cce80b84609a474aca0f45ee71::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitdbfa81cce80b84609a474aca0f45ee71::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitdbfa81cce80b84609a474aca0f45ee71::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitdbfa81cce80b84609a474aca0f45ee71::$classMap;
 
         }, null, ClassLoader::class);
     }
