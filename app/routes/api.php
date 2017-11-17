@@ -797,19 +797,16 @@ $app->post('/api/survey/submit', function ($request, $response, $args) {
 
 // Use the REST API Client to make requests to the Twilio REST API
 use Twilio\Rest\Client;
-
+use Twilio\Twiml;
 
 $app->post('/api/respondSMS', function ($request, $response, $args) {
 
 
-    $response = $response->withHeader('Content-type', 'application/xml');
-    $message = 'test hello';
+    $response = new Twiml();
+    $message = $response->message();
+    $message->body('Hello World!');
 
-
-
-    $response->getBody()->write('<?xml version="1.0" encoding="UTF-8"?>'.
-        '<Response>'. $message .'</Response>');
-    return $response;
+    echo $response;
 
 
 })->setName('api.respondSMS');
