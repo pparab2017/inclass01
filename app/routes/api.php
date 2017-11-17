@@ -802,7 +802,15 @@ use Twilio\Rest\Client;
 $app->get('/api/respondSMS', function ($request, $response, $args) {
 
 
-    echo $request;
+    $response = $response->withHeader('Content-type', 'application/xml');
+    $message = 'test hello';
+
+
+
+    $response->getBody()->write('<?xml version="1.0" encoding="UTF-8"?>'.
+        '<Response>'. $message .'</Response>');
+    return $response;
+
 
 })->setName('api.respondSMS');
 
