@@ -1032,6 +1032,8 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
 
             $message = $response->message();
             $message->body('Welcome to the Study!');
+            echo $response;
+
             $question = "Please indicate your symptom (1)Headache, (2)Dizziness, (3)Nausea, (4)Fatigue, (5)Sadness, (0)None";
             $choices = "1,2,3,4,5,0";
             startSurveyFirstMY($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
@@ -1040,6 +1042,7 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
 
             $message = $response->message();
             $message->body('You have already registered!');
+            echo $response;
         }
 
     }else if( $last->getPrevQuestion() == "Q1"){
@@ -1190,7 +1193,7 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
     }
 
 
-    echo $response;
+
 
 
 })->setName('api.MyrespondSMS');
@@ -1266,17 +1269,17 @@ if(!$msgOnly) {
 $app->get('/api/createSMS', function ($request, $response, $args) {
 // No token required ..
 // Your Account SID and Auth Token from twilio.com/console
-    $sid = 'ACf0c5f9827e815f452d35137890e48237';
-    $token = 'fb1241ed5b01b7da0f333cb296b1971d';
+    $sid = 'AC4e733e7be2b0a9068cbd1e18f091e6f9';
+    $token = '4703a69a7bf68552def8d6dbee51443b';
     $client = new Client($sid, $token);
 
 // Use the client to do fun stuff like send text messages!
     $client->messages->create(
 // the number you'd like to send the message to
-        '+17047568896',
+        '+19802671801',
         array(
             // A Twilio phone number you purchased at twilio.com/console
-            'from' => '+17044904061',
+            'from' => '+14434291169',
             // the body of the text message you'd like to send
             'body' => "Hey Jenny! Good luck on the bar exam!"
         )
