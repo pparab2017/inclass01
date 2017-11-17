@@ -799,7 +799,7 @@ $app->post('/api/survey/submit', function ($request, $response, $args) {
 use Twilio\Rest\Client;
 
 
-$app->get('/api/respondSMS', function ($request, $response, $args) {
+$app->post('/api/respondSMS', function ($request, $response, $args) {
 
 
     $response = $response->withHeader('Content-type', 'application/xml');
