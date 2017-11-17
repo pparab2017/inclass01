@@ -1034,7 +1034,7 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
             $message->body('Welcome to the Study!');
             $question = "Please indicate your symptom (1)Headache, (2)Dizziness, (3)Nausea, (4)Fatigue, (5)Sadness, (0)None";
             $choices = "1,2,3,4,5,0";
-            startSurveyFirst($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
+            startSurveyFirstMY($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
 
         }catch (exception $e){
 
@@ -1064,7 +1064,7 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
                 $responseAns = "0";
 
 
-                startSurveyFirst($sms_user->getNumber(), "", $question, $choices,"","",false);
+                startSurveyFirstMY($sms_user->getNumber(), "", $question, $choices,"","",false);
                 return 0;
 
 
@@ -1114,7 +1114,7 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
         $last->setResponse($responseAns);
         $last->save();
 
-        startSurveyFirst($sms_user->getNumber(), "Q2", $question, $choices,$topic,"",$default);
+        startSurveyFirstMY($sms_user->getNumber(), "Q2", $question, $choices,$topic,"",$default);
     }
     else if($last->getPrevQuestion() == "Q2"){
         $default = false;
@@ -1165,7 +1165,7 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
         $last->setTopicSelected($last->getTopicSelected());
         $last->setResponse($responseAns);
         $last->save();
-        startSurveyFirst($sms_user->getNumber(), "Q3", $question, $choices,$last->getTopicSelected(), "",$default);
+        startSurveyFirstMY($sms_user->getNumber(), "Q3", $question, $choices,$last->getTopicSelected(), "",$default);
 
 
         if(!$default){
@@ -1176,12 +1176,12 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
             if(intval($count + 1) == 3){
                 $question = "Thank you and see you soon";
                 $choices = "0";
-                startSurveyFirst($sms_user->getNumber(), "", $question, $choices,"","",false);
+                startSurveyFirstMY($sms_user->getNumber(), "", $question, $choices,"","",false);
 
             }else{
                 $question = "Please indicate your symptom (1)Headache, (2)Dizziness, (3)Nausea, (4)Fatigue, (5)Sadness, (0)None";
                 $choices = "1,2,3,4,5,0";
-                startSurveyFirst($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
+                startSurveyFirstMY($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
 
             }
         }
@@ -1195,6 +1195,40 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
 
 })->setName('api.MyrespondSMS');
 
+
+
+
+
+function startSurveyFirstMY($user_id, $prev_response, $qText, $cText, $topic, $response,$msgOnly){
+
+    $sid = 'AC4e733e7be2b0a9068cbd1e18f091e6f9';
+    $token = '4703a69a7bf68552def8d6dbee51443b';
+    $client = new Client($sid, $token);
+
+// Use the client to do fun stuff like send text messages!
+    $client->messages->create(
+// the number you'd like to send the message to
+        '+19802671801',
+        array(
+            // A Twilio phone number you purchased at twilio.com/console
+            'from' => '+14434291169',
+            // the body of the text message you'd like to send
+            'body' => $qText
+        )
+    );
+
+    if(!$msgOnly) {
+        $new_sms = new SmsMessages();
+        $new_sms->setUserNumber($user_id);
+        $new_sms->setPrevQuestion($prev_response);
+        $new_sms->setQuestion($qText);
+        $new_sms->setChoises($cText);
+        $new_sms->setTopicSelected($topic);
+        $new_sms->setResponse($response);
+        $new_sms->save();
+    }
+
+}
 
 
 function startSurveyFirst($user_id, $prev_response, $qText, $cText, $topic, $response,$msgOnly){

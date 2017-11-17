@@ -71,7 +71,7 @@ $app->add(new \Slim\Middleware\JwtAuthentication([
     "secure" => false,
     "secret" => getenv("JWT_SECRET"),
     "path" => ["/api"],
-    "passthrough" => ["/api/signup", "/api/login", "/api/forgotPassword","/api/getAllProducts","/api/getProductsByType/","/api/SurveyAppLogin","/api/respondSMS"],
+    "passthrough" => ["/api/signup", "/api/login", "/api/forgotPassword","/api/getAllProducts","/api/getProductsByType/","/api/SurveyAppLogin","/api/respondSMS","{{URL}}/api/MyrespondSMS"],
     "attribute" => "jwt",
     "error" => function ($request, $response, $arguments) {
         $data["status"] = "error";
