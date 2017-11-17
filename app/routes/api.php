@@ -1032,7 +1032,9 @@ $app->post('/api/MyrespondSMS', function ($request, $response, $args) {
 
             $message = $response->message();
             $message->body('Welcome to the Study!');
-            echo $response;
+            startSurveyFirstMY($sms_user->getNumber(), "Q1", 'Welcome to the Study!', "0","","",true);
+
+            //echo $response;
 
             $question = "Please indicate your symptom (1)Headache, (2)Dizziness, (3)Nausea, (4)Fatigue, (5)Sadness, (0)None";
             $choices = "1,2,3,4,5,0";
