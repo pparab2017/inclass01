@@ -221,4 +221,32 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
+  <table name="sms_messages" idMethod="native" phpName="SmsMessages">
+    <column name="user_number" phpName="UserNumber" type="VARCHAR" size="100"/>
+    <column name="question" phpName="Question" type="VARCHAR" size="500"/>
+    <column name="choises" phpName="Choises" type="VARCHAR" size="45"/>
+    <column name="prev_question" phpName="PrevQuestion" type="VARCHAR" size="45"/>
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="topic_Selected" phpName="TopicSelected" type="VARCHAR" size="45"/>
+    <column name="response" phpName="Response" type="VARCHAR" size="45"/>
+    <foreign-key foreignTable="sms_user" name="number">
+      <reference local="user_number" foreign="number"/>
+    </foreign-key>
+    <index name="number_idx">
+      <index-column name="user_number"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="sms_user" idMethod="native" phpName="SmsUser">
+    <column name="number" phpName="Number" type="VARCHAR" size="100" primaryKey="true" required="true"/>
+    <column name="count" phpName="Count" type="VARCHAR" size="45" defaultValue="0"/>
+    <unique name="number_UNIQUE">
+      <unique-column name="number"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
 </database>

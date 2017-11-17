@@ -344,11 +344,10 @@ abstract class DevicetokensQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByToken('fooValue');   // WHERE token = 'fooValue'
-     * $query->filterByToken('%fooValue%'); // WHERE token LIKE '%fooValue%'
+     * $query->filterByToken('%fooValue%', Criteria::LIKE); // WHERE token LIKE '%fooValue%'
      * </code>
      *
      * @param     string $token The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildDevicetokensQuery The current query, for fluid interface

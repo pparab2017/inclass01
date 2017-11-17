@@ -800,16 +800,230 @@ use Twilio\Rest\Client;
 use Twilio\Twiml;
 
 $app->post('/api/respondSMS', function ($request, $response, $args) {
-
+    $params = $request->getParsedBody();
 
     $response = new Twiml();
-    $message = $response->message();
-    $message->body('Hello World!');
+    $last = SmsMessagesQuery::create()
+        ->joinSmsUser()
+        ->orderById("DESC")
+        ->filterByUserNumber($params["From"])
+        ->findOne();
+
+    $sms_user = new SmsUser();
+    if( trim(strtoupper($params["Body"])) != 'START'){
+        $sms_user = SmsUserQuery::create()
+            ->findOneByNumber($params["From"]);
+        if($sms_user == null){
+            $message = $response->message();
+            $message->body('You have not registered yet, please message START to register!');
+            echo $response;
+            return 0;
+        }
+
+
+    }
+
+
+    if( trim(strtoupper($params["Body"])) == 'START'){
+
+        try {
+
+            $sms_user->setNumber($params["From"]);
+            $sms_user->save();
+
+
+            $message = $response->message();
+            $message->body('Welcome to the Study!');
+            $question = "Please indicate your symptom (1)Headache, (2)Dizziness, (3)Nausea, (4)Fatigue, (5)Sadness, (0)None";
+            $choices = "1,2,3,4,5,0";
+            startSurveyFirst($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
+
+        }catch (exception $e){
+
+            $message = $response->message();
+            $message->body('You have already registered!');
+        }
+
+    }else if( $last->getPrevQuestion() == "Q1"){
+
+        $default = false;
+        $sms_user = SmsUserQuery::create()
+            ->findOneByNumber($params["From"]);
+
+           $message = $response->message();
+
+           $question = "";
+           $choices = "0,1,2,3,4";
+           $topic ="";
+           $responseAns="";
+
+        switch (trim(strtoupper($params["Body"]))) {
+            case "0":
+                $question = "Thank you! We will check with you later.";
+                $message->body($question);
+                $topic ="None";
+                $responseAns = "0";
+
+                break;
+            case "1":
+                $question = "On a scale from 0 (none) to 4 (severe), how would you rate your Headache in the last 24 hours?";
+                $message->body($question);
+                $topic ="Headache";
+                $responseAns = "1";
+                break;
+            case "2":
+                $question = "On a scale from 0 (none) to 4 (severe), how would you rate your Dizziness in the last 24 hours?";
+                $message->body($question);
+                $topic ="Dizziness";
+                $responseAns = "2";
+
+                break;
+            case "3":
+                $question = "On a scale from 0 (none) to 4 (severe), how would you rate your Nausea in the last 24 hours?";
+                $message->body($question);
+                $topic ="Nausea";
+                $responseAns = "3";
+
+                break;
+            case "4":
+                $question = "On a scale from 0 (none) to 4 (severe), how would you rate your Fatigue in the last 24 hours?";
+                $message->body($question);
+                $topic ="Fatigue";
+                $responseAns = "4";
+
+                break;
+            case "5":
+                $question = 'On a scale from 0 (none) to 4 (severe), how would you rate your Sadness in the last 24 hours?';
+                $message->body($question);
+                $topic ="Sadness";
+                $responseAns = "5";
+
+                break;
+            default:
+                $default = true;
+                $question = 'Please enter a number from 0 to 5';
+                $message->body($question);
+
+                break;
+        }
+        $last->setTopicSelected($topic);
+        $last->setResponse($responseAns);
+        $last->save();
+
+        startSurveyFirst($sms_user->getNumber(), "Q2", $question, $choices,$topic,"",$default);
+        }
+    else if($last->getPrevQuestion() == "Q2"){
+        $default = false;
+        $sms_user = SmsUserQuery::create()
+            ->findOneByNumber($params["From"]);
+        $message = $response->message();
+
+        $question = "";
+        $choices = "0,1,2,3,4";
+        $responseAns = "";
+
+        switch (trim(strtoupper($params["Body"]))) {
+            case "0":
+                $question = "You do not have a " .$last->getTopicSelected() ;
+                $message->body($question);
+                $responseAns= "0";
+
+                break;
+            case "1":
+                $question = "You have a mild ". $last->getTopicSelected() ;
+                $message->body($question);
+                $responseAns= "1";
+
+                break;
+            case "2":
+                $question = "You have a mild " . $last->getTopicSelected() ;
+                $message->body($question);
+                $responseAns= "2";
+
+                break;
+            case "3":
+                $question = "You have a moderate ". $last->getTopicSelected() ;
+                $message->body($question);
+                $responseAns= "3";
+                break;
+            case "4":
+                $question = "You have a severe ". $last->getTopicSelected() ;
+                $message->body($question);
+                $responseAns= "4";
+                break;
+            default:
+                $question = 'Please enter a number from 0 to 4';
+                $message->body($question);
+                $default = true;
+                break;
+        }
+
+        $last->setTopicSelected($last->getTopicSelected());
+        $last->setResponse($responseAns);
+        $last->save();
+        startSurveyFirst($sms_user->getNumber(), "Q3", $question, $choices,$last->getTopicSelected(), "",$default);
+
+
+        if(!$default){
+        $count = intval($sms_user->getCount());
+        $sms_user->setCount($count + 1);
+        $sms_user->save();
+
+        if(intval($count + 1) == 3){
+            $question = "Thank you and see you soon";
+            $choices = "0";
+            startSurveyFirst($sms_user->getNumber(), "", $question, $choices,"","",false);
+
+        }else{
+            $question = "Please indicate your symptom (1)Headache, (2)Dizziness, (3)Nausea, (4)Fatigue, (5)Sadness, (0)None";
+            $choices = "1,2,3,4,5,0";
+            startSurveyFirst($sms_user->getNumber(), "Q1", $question, $choices,"","",false);
+
+        }
+        }
+
+
+    }
+
 
     echo $response;
 
 
 })->setName('api.respondSMS');
+
+
+
+
+function startSurveyFirst($user_id, $prev_response, $qText, $cText, $topic, $response,$msgOnly){
+
+    $sid = 'ACf0c5f9827e815f452d35137890e48237';
+    $token = 'fb1241ed5b01b7da0f333cb296b1971d';
+    $client = new Client($sid, $token);
+
+// Use the client to do fun stuff like send text messages!
+    $client->messages->create(
+// the number you'd like to send the message to
+        '+17047568896',
+        array(
+            // A Twilio phone number you purchased at twilio.com/console
+            'from' => '+17044904061',
+            // the body of the text message you'd like to send
+            'body' => $qText
+        )
+    );
+
+if(!$msgOnly) {
+    $new_sms = new SmsMessages();
+    $new_sms->setUserNumber($user_id);
+    $new_sms->setPrevQuestion($prev_response);
+    $new_sms->setQuestion($qText);
+    $new_sms->setChoises($cText);
+    $new_sms->setTopicSelected($topic);
+    $new_sms->setResponse($response);
+    $new_sms->save();
+}
+
+}
 
 
 $app->get('/api/createSMS', function ($request, $response, $args) {

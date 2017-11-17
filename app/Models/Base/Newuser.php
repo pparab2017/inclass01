@@ -988,6 +988,10 @@ abstract class Newuser implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(NewuserTableMap::DATABASE_NAME);
         }
@@ -1363,11 +1367,11 @@ abstract class Newuser implements ActiveRecordInterface
             $keys[8] => $this->getUpdatedAt(),
             $keys[9] => $this->getSubscribed(),
         );
-        if ($result[$keys[7]] instanceof \DateTime) {
+        if ($result[$keys[7]] instanceof \DateTimeInterface) {
             $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
-        if ($result[$keys[8]] instanceof \DateTime) {
+        if ($result[$keys[8]] instanceof \DateTimeInterface) {
             $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
@@ -1816,19 +1820,24 @@ abstract class Newuser implements ActiveRecordInterface
     public function initRelation($relationName)
     {
         if ('Devicetokens' == $relationName) {
-            return $this->initDevicetokenss();
+            $this->initDevicetokenss();
+            return;
         }
         if ('Patient' == $relationName) {
-            return $this->initPatients();
+            $this->initPatients();
+            return;
         }
         if ('Questions' == $relationName) {
-            return $this->initQuestionss();
+            $this->initQuestionss();
+            return;
         }
         if ('Studyresponse' == $relationName) {
-            return $this->initStudyresponses();
+            $this->initStudyresponses();
+            return;
         }
         if ('Surveylog' == $relationName) {
-            return $this->initSurveylogs();
+            $this->initSurveylogs();
+            return;
         }
     }
 

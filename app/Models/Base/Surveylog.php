@@ -1972,6 +1972,10 @@ abstract class Surveylog implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(SurveylogTableMap::DATABASE_NAME);
         }
@@ -2541,11 +2545,11 @@ abstract class Surveylog implements ActiveRecordInterface
             $keys[35] => $this->getCreatedAt(),
             $keys[36] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[35]] instanceof \DateTime) {
+        if ($result[$keys[35]] instanceof \DateTimeInterface) {
             $result[$keys[35]] = $result[$keys[35]]->format('c');
         }
 
-        if ($result[$keys[36]] instanceof \DateTime) {
+        if ($result[$keys[36]] instanceof \DateTimeInterface) {
             $result[$keys[36]] = $result[$keys[36]]->format('c');
         }
 
@@ -3191,7 +3195,7 @@ abstract class Surveylog implements ActiveRecordInterface
      */
     public function getNewuser(ConnectionInterface $con = null)
     {
-        if ($this->aNewuser === null && ($this->patient_id !== null)) {
+        if ($this->aNewuser === null && ($this->patient_id != 0)) {
             $this->aNewuser = ChildNewuserQuery::create()->findPk($this->patient_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference

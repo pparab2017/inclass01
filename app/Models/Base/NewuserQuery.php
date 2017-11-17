@@ -376,11 +376,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByEmail('fooValue');   // WHERE email = 'fooValue'
-     * $query->filterByEmail('%fooValue%'); // WHERE email LIKE '%fooValue%'
+     * $query->filterByEmail('%fooValue%', Criteria::LIKE); // WHERE email LIKE '%fooValue%'
      * </code>
      *
      * @param     string $email The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface
@@ -402,11 +401,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByHash('fooValue');   // WHERE hash = 'fooValue'
-     * $query->filterByHash('%fooValue%'); // WHERE hash LIKE '%fooValue%'
+     * $query->filterByHash('%fooValue%', Criteria::LIKE); // WHERE hash LIKE '%fooValue%'
      * </code>
      *
      * @param     string $hash The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface
@@ -428,11 +426,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByFname('fooValue');   // WHERE fname = 'fooValue'
-     * $query->filterByFname('%fooValue%'); // WHERE fname LIKE '%fooValue%'
+     * $query->filterByFname('%fooValue%', Criteria::LIKE); // WHERE fname LIKE '%fooValue%'
      * </code>
      *
      * @param     string $fname The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface
@@ -454,11 +451,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByLname('fooValue');   // WHERE lname = 'fooValue'
-     * $query->filterByLname('%fooValue%'); // WHERE lname LIKE '%fooValue%'
+     * $query->filterByLname('%fooValue%', Criteria::LIKE); // WHERE lname LIKE '%fooValue%'
      * </code>
      *
      * @param     string $lname The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface
@@ -480,11 +476,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByGender('fooValue');   // WHERE gender = 'fooValue'
-     * $query->filterByGender('%fooValue%'); // WHERE gender LIKE '%fooValue%'
+     * $query->filterByGender('%fooValue%', Criteria::LIKE); // WHERE gender LIKE '%fooValue%'
      * </code>
      *
      * @param     string $gender The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface
@@ -506,11 +501,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByRole('fooValue');   // WHERE role = 'fooValue'
-     * $query->filterByRole('%fooValue%'); // WHERE role LIKE '%fooValue%'
+     * $query->filterByRole('%fooValue%', Criteria::LIKE); // WHERE role LIKE '%fooValue%'
      * </code>
      *
      * @param     string $role The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface
@@ -618,11 +612,10 @@ abstract class NewuserQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterBySubscribed('fooValue');   // WHERE Subscribed = 'fooValue'
-     * $query->filterBySubscribed('%fooValue%'); // WHERE Subscribed LIKE '%fooValue%'
+     * $query->filterBySubscribed('%fooValue%', Criteria::LIKE); // WHERE Subscribed LIKE '%fooValue%'
      * </code>
      *
      * @param     string $subscribed The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNewuserQuery The current query, for fluid interface

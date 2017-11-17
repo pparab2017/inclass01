@@ -544,6 +544,10 @@ abstract class Patient implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(PatientTableMap::DATABASE_NAME);
         }
@@ -1055,7 +1059,7 @@ abstract class Patient implements ActiveRecordInterface
      */
     public function getNewuser(ConnectionInterface $con = null)
     {
-        if ($this->aNewuser === null && ($this->user_id !== null)) {
+        if ($this->aNewuser === null && ($this->user_id != 0)) {
             $this->aNewuser = ChildNewuserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference

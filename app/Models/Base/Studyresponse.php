@@ -694,6 +694,10 @@ abstract class Studyresponse implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(StudyresponseTableMap::DATABASE_NAME);
         }
@@ -950,7 +954,7 @@ abstract class Studyresponse implements ActiveRecordInterface
             $keys[3] => $this->getResponse(),
             $keys[4] => $this->getLastsenttime(),
         );
-        if ($result[$keys[4]] instanceof \DateTime) {
+        if ($result[$keys[4]] instanceof \DateTimeInterface) {
             $result[$keys[4]] = $result[$keys[4]]->format('c');
         }
 
@@ -1291,7 +1295,7 @@ abstract class Studyresponse implements ActiveRecordInterface
      */
     public function getQuestions(ConnectionInterface $con = null)
     {
-        if ($this->aQuestions === null && ($this->question_id !== null)) {
+        if ($this->aQuestions === null && ($this->question_id != 0)) {
             $this->aQuestions = ChildQuestionsQuery::create()->findPk($this->question_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1342,7 +1346,7 @@ abstract class Studyresponse implements ActiveRecordInterface
      */
     public function getNewuser(ConnectionInterface $con = null)
     {
-        if ($this->aNewuser === null && ($this->user_id !== null)) {
+        if ($this->aNewuser === null && ($this->user_id != 0)) {
             $this->aNewuser = ChildNewuserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference

@@ -836,6 +836,10 @@ abstract class Messages implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(MessagesTableMap::DATABASE_NAME);
         }
@@ -1122,7 +1126,7 @@ abstract class Messages implements ActiveRecordInterface
             $keys[6] => $this->getMsgread(),
             $keys[7] => $this->getMsglock(),
         );
-        if ($result[$keys[3]] instanceof \DateTime) {
+        if ($result[$keys[3]] instanceof \DateTimeInterface) {
             $result[$keys[3]] = $result[$keys[3]]->format('c');
         }
 
@@ -1493,7 +1497,7 @@ abstract class Messages implements ActiveRecordInterface
      */
     public function getUserRelatedByFromid(ConnectionInterface $con = null)
     {
-        if ($this->aUserRelatedByFromid === null && ($this->fromid !== null)) {
+        if ($this->aUserRelatedByFromid === null && ($this->fromid != 0)) {
             $this->aUserRelatedByFromid = ChildUserQuery::create()->findPk($this->fromid, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1544,7 +1548,7 @@ abstract class Messages implements ActiveRecordInterface
      */
     public function getUserRelatedByToid(ConnectionInterface $con = null)
     {
-        if ($this->aUserRelatedByToid === null && ($this->toid !== null)) {
+        if ($this->aUserRelatedByToid === null && ($this->toid != 0)) {
             $this->aUserRelatedByToid = ChildUserQuery::create()->findPk($this->toid, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference

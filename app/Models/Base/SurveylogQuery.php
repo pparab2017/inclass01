@@ -514,11 +514,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ1('fooValue');   // WHERE Q1 = 'fooValue'
-     * $query->filterByQ1('%fooValue%'); // WHERE Q1 LIKE '%fooValue%'
+     * $query->filterByQ1('%fooValue%', Criteria::LIKE); // WHERE Q1 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q1 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -540,11 +539,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ2('fooValue');   // WHERE Q2 = 'fooValue'
-     * $query->filterByQ2('%fooValue%'); // WHERE Q2 LIKE '%fooValue%'
+     * $query->filterByQ2('%fooValue%', Criteria::LIKE); // WHERE Q2 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q2 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -566,11 +564,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ3('fooValue');   // WHERE Q3 = 'fooValue'
-     * $query->filterByQ3('%fooValue%'); // WHERE Q3 LIKE '%fooValue%'
+     * $query->filterByQ3('%fooValue%', Criteria::LIKE); // WHERE Q3 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q3 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -592,11 +589,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ4('fooValue');   // WHERE Q4 = 'fooValue'
-     * $query->filterByQ4('%fooValue%'); // WHERE Q4 LIKE '%fooValue%'
+     * $query->filterByQ4('%fooValue%', Criteria::LIKE); // WHERE Q4 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q4 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -618,11 +614,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ5('fooValue');   // WHERE Q5 = 'fooValue'
-     * $query->filterByQ5('%fooValue%'); // WHERE Q5 LIKE '%fooValue%'
+     * $query->filterByQ5('%fooValue%', Criteria::LIKE); // WHERE Q5 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q5 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -644,11 +639,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ6('fooValue');   // WHERE Q6 = 'fooValue'
-     * $query->filterByQ6('%fooValue%'); // WHERE Q6 LIKE '%fooValue%'
+     * $query->filterByQ6('%fooValue%', Criteria::LIKE); // WHERE Q6 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q6 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -670,11 +664,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ7('fooValue');   // WHERE Q7 = 'fooValue'
-     * $query->filterByQ7('%fooValue%'); // WHERE Q7 LIKE '%fooValue%'
+     * $query->filterByQ7('%fooValue%', Criteria::LIKE); // WHERE Q7 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q7 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -696,11 +689,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ8('fooValue');   // WHERE Q8 = 'fooValue'
-     * $query->filterByQ8('%fooValue%'); // WHERE Q8 LIKE '%fooValue%'
+     * $query->filterByQ8('%fooValue%', Criteria::LIKE); // WHERE Q8 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q8 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -722,11 +714,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ9('fooValue');   // WHERE Q9 = 'fooValue'
-     * $query->filterByQ9('%fooValue%'); // WHERE Q9 LIKE '%fooValue%'
+     * $query->filterByQ9('%fooValue%', Criteria::LIKE); // WHERE Q9 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q9 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -748,11 +739,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ10('fooValue');   // WHERE Q10 = 'fooValue'
-     * $query->filterByQ10('%fooValue%'); // WHERE Q10 LIKE '%fooValue%'
+     * $query->filterByQ10('%fooValue%', Criteria::LIKE); // WHERE Q10 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q10 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -774,11 +764,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ11('fooValue');   // WHERE Q11 = 'fooValue'
-     * $query->filterByQ11('%fooValue%'); // WHERE Q11 LIKE '%fooValue%'
+     * $query->filterByQ11('%fooValue%', Criteria::LIKE); // WHERE Q11 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q11 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -800,11 +789,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ12('fooValue');   // WHERE Q12 = 'fooValue'
-     * $query->filterByQ12('%fooValue%'); // WHERE Q12 LIKE '%fooValue%'
+     * $query->filterByQ12('%fooValue%', Criteria::LIKE); // WHERE Q12 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q12 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -826,11 +814,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ13('fooValue');   // WHERE Q13 = 'fooValue'
-     * $query->filterByQ13('%fooValue%'); // WHERE Q13 LIKE '%fooValue%'
+     * $query->filterByQ13('%fooValue%', Criteria::LIKE); // WHERE Q13 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q13 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -852,11 +839,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ14('fooValue');   // WHERE Q14 = 'fooValue'
-     * $query->filterByQ14('%fooValue%'); // WHERE Q14 LIKE '%fooValue%'
+     * $query->filterByQ14('%fooValue%', Criteria::LIKE); // WHERE Q14 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q14 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -878,11 +864,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ15('fooValue');   // WHERE Q15 = 'fooValue'
-     * $query->filterByQ15('%fooValue%'); // WHERE Q15 LIKE '%fooValue%'
+     * $query->filterByQ15('%fooValue%', Criteria::LIKE); // WHERE Q15 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q15 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -904,11 +889,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ16('fooValue');   // WHERE Q16 = 'fooValue'
-     * $query->filterByQ16('%fooValue%'); // WHERE Q16 LIKE '%fooValue%'
+     * $query->filterByQ16('%fooValue%', Criteria::LIKE); // WHERE Q16 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q16 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -930,11 +914,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ17('fooValue');   // WHERE Q17 = 'fooValue'
-     * $query->filterByQ17('%fooValue%'); // WHERE Q17 LIKE '%fooValue%'
+     * $query->filterByQ17('%fooValue%', Criteria::LIKE); // WHERE Q17 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q17 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -956,11 +939,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ18('fooValue');   // WHERE Q18 = 'fooValue'
-     * $query->filterByQ18('%fooValue%'); // WHERE Q18 LIKE '%fooValue%'
+     * $query->filterByQ18('%fooValue%', Criteria::LIKE); // WHERE Q18 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q18 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -982,11 +964,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ19('fooValue');   // WHERE Q19 = 'fooValue'
-     * $query->filterByQ19('%fooValue%'); // WHERE Q19 LIKE '%fooValue%'
+     * $query->filterByQ19('%fooValue%', Criteria::LIKE); // WHERE Q19 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q19 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1008,11 +989,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ20('fooValue');   // WHERE Q20 = 'fooValue'
-     * $query->filterByQ20('%fooValue%'); // WHERE Q20 LIKE '%fooValue%'
+     * $query->filterByQ20('%fooValue%', Criteria::LIKE); // WHERE Q20 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q20 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1034,11 +1014,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ21('fooValue');   // WHERE Q21 = 'fooValue'
-     * $query->filterByQ21('%fooValue%'); // WHERE Q21 LIKE '%fooValue%'
+     * $query->filterByQ21('%fooValue%', Criteria::LIKE); // WHERE Q21 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q21 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1060,11 +1039,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ22('fooValue');   // WHERE Q22 = 'fooValue'
-     * $query->filterByQ22('%fooValue%'); // WHERE Q22 LIKE '%fooValue%'
+     * $query->filterByQ22('%fooValue%', Criteria::LIKE); // WHERE Q22 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q22 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1086,11 +1064,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ23('fooValue');   // WHERE Q23 = 'fooValue'
-     * $query->filterByQ23('%fooValue%'); // WHERE Q23 LIKE '%fooValue%'
+     * $query->filterByQ23('%fooValue%', Criteria::LIKE); // WHERE Q23 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q23 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1112,11 +1089,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ24('fooValue');   // WHERE Q24 = 'fooValue'
-     * $query->filterByQ24('%fooValue%'); // WHERE Q24 LIKE '%fooValue%'
+     * $query->filterByQ24('%fooValue%', Criteria::LIKE); // WHERE Q24 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q24 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1138,11 +1114,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ25('fooValue');   // WHERE Q25 = 'fooValue'
-     * $query->filterByQ25('%fooValue%'); // WHERE Q25 LIKE '%fooValue%'
+     * $query->filterByQ25('%fooValue%', Criteria::LIKE); // WHERE Q25 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q25 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1164,11 +1139,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ26('fooValue');   // WHERE Q26 = 'fooValue'
-     * $query->filterByQ26('%fooValue%'); // WHERE Q26 LIKE '%fooValue%'
+     * $query->filterByQ26('%fooValue%', Criteria::LIKE); // WHERE Q26 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q26 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1190,11 +1164,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ27('fooValue');   // WHERE Q27 = 'fooValue'
-     * $query->filterByQ27('%fooValue%'); // WHERE Q27 LIKE '%fooValue%'
+     * $query->filterByQ27('%fooValue%', Criteria::LIKE); // WHERE Q27 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q27 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1216,11 +1189,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ28('fooValue');   // WHERE Q28 = 'fooValue'
-     * $query->filterByQ28('%fooValue%'); // WHERE Q28 LIKE '%fooValue%'
+     * $query->filterByQ28('%fooValue%', Criteria::LIKE); // WHERE Q28 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q28 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1242,11 +1214,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ29('fooValue');   // WHERE Q29 = 'fooValue'
-     * $query->filterByQ29('%fooValue%'); // WHERE Q29 LIKE '%fooValue%'
+     * $query->filterByQ29('%fooValue%', Criteria::LIKE); // WHERE Q29 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q29 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1268,11 +1239,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ30('fooValue');   // WHERE Q30 = 'fooValue'
-     * $query->filterByQ30('%fooValue%'); // WHERE Q30 LIKE '%fooValue%'
+     * $query->filterByQ30('%fooValue%', Criteria::LIKE); // WHERE Q30 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q30 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1294,11 +1264,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ31('fooValue');   // WHERE Q31 = 'fooValue'
-     * $query->filterByQ31('%fooValue%'); // WHERE Q31 LIKE '%fooValue%'
+     * $query->filterByQ31('%fooValue%', Criteria::LIKE); // WHERE Q31 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q31 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1320,11 +1289,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ32('fooValue');   // WHERE Q32 = 'fooValue'
-     * $query->filterByQ32('%fooValue%'); // WHERE Q32 LIKE '%fooValue%'
+     * $query->filterByQ32('%fooValue%', Criteria::LIKE); // WHERE Q32 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q32 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface
@@ -1346,11 +1314,10 @@ abstract class SurveylogQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQ33('fooValue');   // WHERE Q33 = 'fooValue'
-     * $query->filterByQ33('%fooValue%'); // WHERE Q33 LIKE '%fooValue%'
+     * $query->filterByQ33('%fooValue%', Criteria::LIKE); // WHERE Q33 LIKE '%fooValue%'
      * </code>
      *
      * @param     string $q33 The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSurveylogQuery The current query, for fluid interface

@@ -266,5 +266,41 @@ CREATE TABLE `User`
     UNIQUE INDEX `email_UNIQUE` (`email`)
 ) ENGINE=InnoDB;
 
+-- ---------------------------------------------------------------------
+-- sms_messages
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sms_messages`;
+
+CREATE TABLE `sms_messages`
+(
+    `user_number` VARCHAR(100),
+    `question` VARCHAR(500),
+    `choises` VARCHAR(45),
+    `prev_question` VARCHAR(45),
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `topic_Selected` VARCHAR(45),
+    `response` VARCHAR(45),
+    PRIMARY KEY (`id`),
+    INDEX `number_idx` (`user_number`),
+    CONSTRAINT `number`
+        FOREIGN KEY (`user_number`)
+        REFERENCES `sms_user` (`number`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- sms_user
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `sms_user`;
+
+CREATE TABLE `sms_user`
+(
+    `number` VARCHAR(100) NOT NULL,
+    `count` VARCHAR(45) DEFAULT '0',
+    PRIMARY KEY (`number`),
+    UNIQUE INDEX `number_UNIQUE` (`number`)
+) ENGINE=InnoDB;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

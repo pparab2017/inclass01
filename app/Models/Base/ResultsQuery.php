@@ -344,11 +344,10 @@ abstract class ResultsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildResultsQuery The current query, for fluid interface
@@ -370,11 +369,10 @@ abstract class ResultsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByPhoto('fooValue');   // WHERE photo = 'fooValue'
-     * $query->filterByPhoto('%fooValue%'); // WHERE photo LIKE '%fooValue%'
+     * $query->filterByPhoto('%fooValue%', Criteria::LIKE); // WHERE photo LIKE '%fooValue%'
      * </code>
      *
      * @param     string $photo The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildResultsQuery The current query, for fluid interface
@@ -437,11 +435,10 @@ abstract class ResultsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByRegion('fooValue');   // WHERE region = 'fooValue'
-     * $query->filterByRegion('%fooValue%'); // WHERE region LIKE '%fooValue%'
+     * $query->filterByRegion('%fooValue%', Criteria::LIKE); // WHERE region LIKE '%fooValue%'
      * </code>
      *
      * @param     string $region The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildResultsQuery The current query, for fluid interface

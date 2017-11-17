@@ -308,11 +308,10 @@ abstract class AdminQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByEmail('fooValue');   // WHERE email = 'fooValue'
-     * $query->filterByEmail('%fooValue%'); // WHERE email LIKE '%fooValue%'
+     * $query->filterByEmail('%fooValue%', Criteria::LIKE); // WHERE email LIKE '%fooValue%'
      * </code>
      *
      * @param     string $email The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildAdminQuery The current query, for fluid interface
@@ -334,11 +333,10 @@ abstract class AdminQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByHash('fooValue');   // WHERE hash = 'fooValue'
-     * $query->filterByHash('%fooValue%'); // WHERE hash LIKE '%fooValue%'
+     * $query->filterByHash('%fooValue%', Criteria::LIKE); // WHERE hash LIKE '%fooValue%'
      * </code>
      *
      * @param     string $hash The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildAdminQuery The current query, for fluid interface
@@ -360,11 +358,10 @@ abstract class AdminQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByFname('fooValue');   // WHERE fname = 'fooValue'
-     * $query->filterByFname('%fooValue%'); // WHERE fname LIKE '%fooValue%'
+     * $query->filterByFname('%fooValue%', Criteria::LIKE); // WHERE fname LIKE '%fooValue%'
      * </code>
      *
      * @param     string $fname The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildAdminQuery The current query, for fluid interface
@@ -386,11 +383,10 @@ abstract class AdminQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByLname('fooValue');   // WHERE lname = 'fooValue'
-     * $query->filterByLname('%fooValue%'); // WHERE lname LIKE '%fooValue%'
+     * $query->filterByLname('%fooValue%', Criteria::LIKE); // WHERE lname LIKE '%fooValue%'
      * </code>
      *
      * @param     string $lname The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildAdminQuery The current query, for fluid interface

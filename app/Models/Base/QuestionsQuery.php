@@ -346,11 +346,10 @@ abstract class QuestionsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByText('fooValue');   // WHERE Text = 'fooValue'
-     * $query->filterByText('%fooValue%'); // WHERE Text LIKE '%fooValue%'
+     * $query->filterByText('%fooValue%', Criteria::LIKE); // WHERE Text LIKE '%fooValue%'
      * </code>
      *
      * @param     string $text The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionsQuery The current query, for fluid interface
@@ -372,11 +371,10 @@ abstract class QuestionsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByChoises('fooValue');   // WHERE Choises = 'fooValue'
-     * $query->filterByChoises('%fooValue%'); // WHERE Choises LIKE '%fooValue%'
+     * $query->filterByChoises('%fooValue%', Criteria::LIKE); // WHERE Choises LIKE '%fooValue%'
      * </code>
      *
      * @param     string $choises The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionsQuery The current query, for fluid interface
@@ -398,11 +396,10 @@ abstract class QuestionsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByType('fooValue');   // WHERE Type = 'fooValue'
-     * $query->filterByType('%fooValue%'); // WHERE Type LIKE '%fooValue%'
+     * $query->filterByType('%fooValue%', Criteria::LIKE); // WHERE Type LIKE '%fooValue%'
      * </code>
      *
      * @param     string $type The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionsQuery The current query, for fluid interface
@@ -424,11 +421,10 @@ abstract class QuestionsQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByTime('fooValue');   // WHERE Time = 'fooValue'
-     * $query->filterByTime('%fooValue%'); // WHERE Time LIKE '%fooValue%'
+     * $query->filterByTime('%fooValue%', Criteria::LIKE); // WHERE Time LIKE '%fooValue%'
      * </code>
      *
      * @param     string $time The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildQuestionsQuery The current query, for fluid interface

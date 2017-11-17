@@ -851,6 +851,10 @@ abstract class Questions implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(QuestionsTableMap::DATABASE_NAME);
         }
@@ -1155,7 +1159,7 @@ abstract class Questions implements ActiveRecordInterface
             $keys[6] => $this->getUserId(),
             $keys[7] => $this->getLastsent(),
         );
-        if ($result[$keys[7]] instanceof \DateTime) {
+        if ($result[$keys[7]] instanceof \DateTimeInterface) {
             $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
@@ -1555,7 +1559,7 @@ abstract class Questions implements ActiveRecordInterface
      */
     public function getStudy(ConnectionInterface $con = null)
     {
-        if ($this->aStudy === null && ($this->study_id !== null)) {
+        if ($this->aStudy === null && ($this->study_id != 0)) {
             $this->aStudy = ChildStudyQuery::create()->findPk($this->study_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1606,7 +1610,7 @@ abstract class Questions implements ActiveRecordInterface
      */
     public function getNewuser(ConnectionInterface $con = null)
     {
-        if ($this->aNewuser === null && ($this->user_id !== null)) {
+        if ($this->aNewuser === null && ($this->user_id != 0)) {
             $this->aNewuser = ChildNewuserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
@@ -1632,7 +1636,8 @@ abstract class Questions implements ActiveRecordInterface
     public function initRelation($relationName)
     {
         if ('Studyresponse' == $relationName) {
-            return $this->initStudyresponses();
+            $this->initStudyresponses();
+            return;
         }
     }
 

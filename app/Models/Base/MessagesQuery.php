@@ -465,11 +465,10 @@ abstract class MessagesQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByRegion('fooValue');   // WHERE region = 'fooValue'
-     * $query->filterByRegion('%fooValue%'); // WHERE region LIKE '%fooValue%'
+     * $query->filterByRegion('%fooValue%', Criteria::LIKE); // WHERE region LIKE '%fooValue%'
      * </code>
      *
      * @param     string $region The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildMessagesQuery The current query, for fluid interface
@@ -491,11 +490,10 @@ abstract class MessagesQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByContent('fooValue');   // WHERE Content = 'fooValue'
-     * $query->filterByContent('%fooValue%'); // WHERE Content LIKE '%fooValue%'
+     * $query->filterByContent('%fooValue%', Criteria::LIKE); // WHERE Content LIKE '%fooValue%'
      * </code>
      *
      * @param     string $content The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildMessagesQuery The current query, for fluid interface
@@ -517,11 +515,10 @@ abstract class MessagesQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByMsgread('fooValue');   // WHERE msgRead = 'fooValue'
-     * $query->filterByMsgread('%fooValue%'); // WHERE msgRead LIKE '%fooValue%'
+     * $query->filterByMsgread('%fooValue%', Criteria::LIKE); // WHERE msgRead LIKE '%fooValue%'
      * </code>
      *
      * @param     string $msgread The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildMessagesQuery The current query, for fluid interface
@@ -543,11 +540,10 @@ abstract class MessagesQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByMsglock('fooValue');   // WHERE msgLock = 'fooValue'
-     * $query->filterByMsglock('%fooValue%'); // WHERE msgLock LIKE '%fooValue%'
+     * $query->filterByMsglock('%fooValue%', Criteria::LIKE); // WHERE msgLock LIKE '%fooValue%'
      * </code>
      *
      * @param     string $msglock The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildMessagesQuery The current query, for fluid interface

@@ -407,11 +407,10 @@ abstract class StudyresponseQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByResponse('fooValue');   // WHERE Response = 'fooValue'
-     * $query->filterByResponse('%fooValue%'); // WHERE Response LIKE '%fooValue%'
+     * $query->filterByResponse('%fooValue%', Criteria::LIKE); // WHERE Response LIKE '%fooValue%'
      * </code>
      *
      * @param     string $response The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildStudyresponseQuery The current query, for fluid interface

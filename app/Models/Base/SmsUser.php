@@ -2,14 +2,14 @@
 
 namespace Base;
 
-use \Questions as ChildQuestions;
-use \QuestionsQuery as ChildQuestionsQuery;
-use \Study as ChildStudy;
-use \StudyQuery as ChildStudyQuery;
+use \SmsMessages as ChildSmsMessages;
+use \SmsMessagesQuery as ChildSmsMessagesQuery;
+use \SmsUser as ChildSmsUser;
+use \SmsUserQuery as ChildSmsUserQuery;
 use \Exception;
 use \PDO;
-use Map\QuestionsTableMap;
-use Map\StudyTableMap;
+use Map\SmsMessagesTableMap;
+use Map\SmsUserTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -24,18 +24,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'Study' table.
+ * Base class that represents a row from the 'sms_user' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class Study implements ActiveRecordInterface
+abstract class SmsUser implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\StudyTableMap';
+    const TABLE_MAP = '\\Map\\SmsUserTableMap';
 
 
     /**
@@ -65,31 +65,25 @@ abstract class Study implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the id field.
-     *
-     * @var        int
-     */
-    protected $id;
-
-    /**
-     * The value for the name field.
+     * The value for the number field.
      *
      * @var        string
      */
-    protected $name;
+    protected $number;
 
     /**
-     * The value for the description field.
+     * The value for the count field.
      *
+     * Note: this column has a database default value of: '0'
      * @var        string
      */
-    protected $description;
+    protected $count;
 
     /**
-     * @var        ObjectCollection|ChildQuestions[] Collection to store aggregation of ChildQuestions objects.
+     * @var        ObjectCollection|ChildSmsMessages[] Collection to store aggregation of ChildSmsMessages objects.
      */
-    protected $collQuestionss;
-    protected $collQuestionssPartial;
+    protected $collSmsMessagess;
+    protected $collSmsMessagessPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -101,15 +95,28 @@ abstract class Study implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildQuestions[]
+     * @var ObjectCollection|ChildSmsMessages[]
      */
-    protected $questionssScheduledForDeletion = null;
+    protected $smsMessagessScheduledForDeletion = null;
 
     /**
-     * Initializes internal state of Base\Study object.
+     * Applies default values to this object.
+     * This method should be called from the object's constructor (or
+     * equivalent initialization method).
+     * @see __construct()
+     */
+    public function applyDefaultValues()
+    {
+        $this->count = '0';
+    }
+
+    /**
+     * Initializes internal state of Base\SmsUser object.
+     * @see applyDefaults()
      */
     public function __construct()
     {
+        $this->applyDefaultValues();
     }
 
     /**
@@ -201,9 +208,9 @@ abstract class Study implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Study</code> instance.  If
-     * <code>obj</code> is an instance of <code>Study</code>, delegates to
-     * <code>equals(Study)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>SmsUser</code> instance.  If
+     * <code>obj</code> is an instance of <code>SmsUser</code>, delegates to
+     * <code>equals(SmsUser)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -269,7 +276,7 @@ abstract class Study implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Study The current object, for fluid interface
+     * @return $this|SmsUser The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -331,94 +338,64 @@ abstract class Study implements ActiveRecordInterface
     }
 
     /**
-     * Get the [id] column value.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Get the [name] column value.
+     * Get the [number] column value.
      *
      * @return string
      */
-    public function getName()
+    public function getNumber()
     {
-        return $this->name;
+        return $this->number;
     }
 
     /**
-     * Get the [description] column value.
+     * Get the [count] column value.
      *
      * @return string
      */
-    public function getDescription()
+    public function getCount()
     {
-        return $this->description;
+        return $this->count;
     }
 
     /**
-     * Set the value of [id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Study The current object (for fluent API support)
-     */
-    public function setId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->id !== $v) {
-            $this->id = $v;
-            $this->modifiedColumns[StudyTableMap::COL_ID] = true;
-        }
-
-        return $this;
-    } // setId()
-
-    /**
-     * Set the value of [name] column.
+     * Set the value of [number] column.
      *
      * @param string $v new value
-     * @return $this|\Study The current object (for fluent API support)
+     * @return $this|\SmsUser The current object (for fluent API support)
      */
-    public function setName($v)
+    public function setNumber($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->name !== $v) {
-            $this->name = $v;
-            $this->modifiedColumns[StudyTableMap::COL_NAME] = true;
+        if ($this->number !== $v) {
+            $this->number = $v;
+            $this->modifiedColumns[SmsUserTableMap::COL_NUMBER] = true;
         }
 
         return $this;
-    } // setName()
+    } // setNumber()
 
     /**
-     * Set the value of [description] column.
+     * Set the value of [count] column.
      *
      * @param string $v new value
-     * @return $this|\Study The current object (for fluent API support)
+     * @return $this|\SmsUser The current object (for fluent API support)
      */
-    public function setDescription($v)
+    public function setCount($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->description !== $v) {
-            $this->description = $v;
-            $this->modifiedColumns[StudyTableMap::COL_DESCRIPTION] = true;
+        if ($this->count !== $v) {
+            $this->count = $v;
+            $this->modifiedColumns[SmsUserTableMap::COL_COUNT] = true;
         }
 
         return $this;
-    } // setDescription()
+    } // setCount()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -430,6 +407,10 @@ abstract class Study implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->count !== '0') {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -456,14 +437,11 @@ abstract class Study implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : StudyTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : SmsUserTableMap::translateFieldName('Number', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->number = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : StudyTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : StudyTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->description = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : SmsUserTableMap::translateFieldName('Count', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->count = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -472,10 +450,10 @@ abstract class Study implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = StudyTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = SmsUserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Study'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\SmsUser'), 0, $e);
         }
     }
 
@@ -517,13 +495,13 @@ abstract class Study implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(StudyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(SmsUserTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildStudyQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildSmsUserQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -533,7 +511,7 @@ abstract class Study implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collQuestionss = null;
+            $this->collSmsMessagess = null;
 
         } // if (deep)
     }
@@ -544,8 +522,8 @@ abstract class Study implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Study::setDeleted()
-     * @see Study::isDeleted()
+     * @see SmsUser::setDeleted()
+     * @see SmsUser::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -554,11 +532,11 @@ abstract class Study implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(StudyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(SmsUserTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildStudyQuery::create()
+            $deleteQuery = ChildSmsUserQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -593,7 +571,7 @@ abstract class Study implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(StudyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(SmsUserTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -612,7 +590,7 @@ abstract class Study implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                StudyTableMap::addInstanceToPool($this);
+                SmsUserTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -649,17 +627,18 @@ abstract class Study implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->questionssScheduledForDeletion !== null) {
-                if (!$this->questionssScheduledForDeletion->isEmpty()) {
-                    \QuestionsQuery::create()
-                        ->filterByPrimaryKeys($this->questionssScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->questionssScheduledForDeletion = null;
+            if ($this->smsMessagessScheduledForDeletion !== null) {
+                if (!$this->smsMessagessScheduledForDeletion->isEmpty()) {
+                    foreach ($this->smsMessagessScheduledForDeletion as $smsMessages) {
+                        // need to save related object because we set the relation to null
+                        $smsMessages->save($con);
+                    }
+                    $this->smsMessagessScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collQuestionss !== null) {
-                foreach ($this->collQuestionss as $referrerFK) {
+            if ($this->collSmsMessagess !== null) {
+                foreach ($this->collSmsMessagess as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -686,24 +665,17 @@ abstract class Study implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[StudyTableMap::COL_ID] = true;
-        if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . StudyTableMap::COL_ID . ')');
-        }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(StudyTableMap::COL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'id';
+        if ($this->isColumnModified(SmsUserTableMap::COL_NUMBER)) {
+            $modifiedColumns[':p' . $index++]  = 'number';
         }
-        if ($this->isColumnModified(StudyTableMap::COL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'Name';
-        }
-        if ($this->isColumnModified(StudyTableMap::COL_DESCRIPTION)) {
-            $modifiedColumns[':p' . $index++]  = 'Description';
+        if ($this->isColumnModified(SmsUserTableMap::COL_COUNT)) {
+            $modifiedColumns[':p' . $index++]  = 'count';
         }
 
         $sql = sprintf(
-            'INSERT INTO Study (%s) VALUES (%s)',
+            'INSERT INTO sms_user (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -712,14 +684,11 @@ abstract class Study implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'id':
-                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                    case 'number':
+                        $stmt->bindValue($identifier, $this->number, PDO::PARAM_STR);
                         break;
-                    case 'Name':
-                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
-                        break;
-                    case 'Description':
-                        $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+                    case 'count':
+                        $stmt->bindValue($identifier, $this->count, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -728,13 +697,6 @@ abstract class Study implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
-
-        try {
-            $pk = $con->lastInsertId();
-        } catch (Exception $e) {
-            throw new PropelException('Unable to get autoincrement id.', 0, $e);
-        }
-        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -767,7 +729,7 @@ abstract class Study implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = StudyTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = SmsUserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -784,13 +746,10 @@ abstract class Study implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getId();
+                return $this->getNumber();
                 break;
             case 1:
-                return $this->getName();
-                break;
-            case 2:
-                return $this->getDescription();
+                return $this->getCount();
                 break;
             default:
                 return null;
@@ -816,15 +775,14 @@ abstract class Study implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Study'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['SmsUser'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Study'][$this->hashCode()] = true;
-        $keys = StudyTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['SmsUser'][$this->hashCode()] = true;
+        $keys = SmsUserTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getId(),
-            $keys[1] => $this->getName(),
-            $keys[2] => $this->getDescription(),
+            $keys[0] => $this->getNumber(),
+            $keys[1] => $this->getCount(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -832,20 +790,20 @@ abstract class Study implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collQuestionss) {
+            if (null !== $this->collSmsMessagess) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'questionss';
+                        $key = 'smsMessagess';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'Questionss';
+                        $key = 'sms_messagess';
                         break;
                     default:
-                        $key = 'Questionss';
+                        $key = 'SmsMessagess';
                 }
 
-                $result[$key] = $this->collQuestionss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collSmsMessagess->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -861,11 +819,11 @@ abstract class Study implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Study
+     * @return $this|\SmsUser
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = StudyTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = SmsUserTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -876,19 +834,16 @@ abstract class Study implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Study
+     * @return $this|\SmsUser
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setId($value);
+                $this->setNumber($value);
                 break;
             case 1:
-                $this->setName($value);
-                break;
-            case 2:
-                $this->setDescription($value);
+                $this->setCount($value);
                 break;
         } // switch()
 
@@ -914,16 +869,13 @@ abstract class Study implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = StudyTableMap::getFieldNames($keyType);
+        $keys = SmsUserTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setId($arr[$keys[0]]);
+            $this->setNumber($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setName($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setDescription($arr[$keys[2]]);
+            $this->setCount($arr[$keys[1]]);
         }
     }
 
@@ -944,7 +896,7 @@ abstract class Study implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Study The current object, for fluid interface
+     * @return $this|\SmsUser The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -964,16 +916,13 @@ abstract class Study implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(StudyTableMap::DATABASE_NAME);
+        $criteria = new Criteria(SmsUserTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(StudyTableMap::COL_ID)) {
-            $criteria->add(StudyTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(SmsUserTableMap::COL_NUMBER)) {
+            $criteria->add(SmsUserTableMap::COL_NUMBER, $this->number);
         }
-        if ($this->isColumnModified(StudyTableMap::COL_NAME)) {
-            $criteria->add(StudyTableMap::COL_NAME, $this->name);
-        }
-        if ($this->isColumnModified(StudyTableMap::COL_DESCRIPTION)) {
-            $criteria->add(StudyTableMap::COL_DESCRIPTION, $this->description);
+        if ($this->isColumnModified(SmsUserTableMap::COL_COUNT)) {
+            $criteria->add(SmsUserTableMap::COL_COUNT, $this->count);
         }
 
         return $criteria;
@@ -991,8 +940,8 @@ abstract class Study implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildStudyQuery::create();
-        $criteria->add(StudyTableMap::COL_ID, $this->id);
+        $criteria = ChildSmsUserQuery::create();
+        $criteria->add(SmsUserTableMap::COL_NUMBER, $this->number);
 
         return $criteria;
     }
@@ -1005,7 +954,7 @@ abstract class Study implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getId();
+        $validPk = null !== $this->getNumber();
 
         $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
@@ -1021,22 +970,22 @@ abstract class Study implements ActiveRecordInterface
 
     /**
      * Returns the primary key for this object (row).
-     * @return int
+     * @return string
      */
     public function getPrimaryKey()
     {
-        return $this->getId();
+        return $this->getNumber();
     }
 
     /**
-     * Generic method to set the primary key (id column).
+     * Generic method to set the primary key (number column).
      *
-     * @param       int $key Primary key.
+     * @param       string $key Primary key.
      * @return void
      */
     public function setPrimaryKey($key)
     {
-        $this->setId($key);
+        $this->setNumber($key);
     }
 
     /**
@@ -1045,7 +994,7 @@ abstract class Study implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return null === $this->getId();
+        return null === $this->getNumber();
     }
 
     /**
@@ -1054,24 +1003,24 @@ abstract class Study implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Study (or compatible) type.
+     * @param      object $copyObj An object of \SmsUser (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setName($this->getName());
-        $copyObj->setDescription($this->getDescription());
+        $copyObj->setNumber($this->getNumber());
+        $copyObj->setCount($this->getCount());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getQuestionss() as $relObj) {
+            foreach ($this->getSmsMessagess() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addQuestions($relObj->copy($deepCopy));
+                    $copyObj->addSmsMessages($relObj->copy($deepCopy));
                 }
             }
 
@@ -1079,7 +1028,6 @@ abstract class Study implements ActiveRecordInterface
 
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1092,7 +1040,7 @@ abstract class Study implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Study Clone of current object.
+     * @return \SmsUser Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1116,38 +1064,38 @@ abstract class Study implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Questions' == $relationName) {
-            $this->initQuestionss();
+        if ('SmsMessages' == $relationName) {
+            $this->initSmsMessagess();
             return;
         }
     }
 
     /**
-     * Clears out the collQuestionss collection
+     * Clears out the collSmsMessagess collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addQuestionss()
+     * @see        addSmsMessagess()
      */
-    public function clearQuestionss()
+    public function clearSmsMessagess()
     {
-        $this->collQuestionss = null; // important to set this to NULL since that means it is uninitialized
+        $this->collSmsMessagess = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collQuestionss collection loaded partially.
+     * Reset is the collSmsMessagess collection loaded partially.
      */
-    public function resetPartialQuestionss($v = true)
+    public function resetPartialSmsMessagess($v = true)
     {
-        $this->collQuestionssPartial = $v;
+        $this->collSmsMessagessPartial = $v;
     }
 
     /**
-     * Initializes the collQuestionss collection.
+     * Initializes the collSmsMessagess collection.
      *
-     * By default this just sets the collQuestionss collection to an empty array (like clearcollQuestionss());
+     * By default this just sets the collSmsMessagess collection to an empty array (like clearcollSmsMessagess());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1156,162 +1104,162 @@ abstract class Study implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initQuestionss($overrideExisting = true)
+    public function initSmsMessagess($overrideExisting = true)
     {
-        if (null !== $this->collQuestionss && !$overrideExisting) {
+        if (null !== $this->collSmsMessagess && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = QuestionsTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = SmsMessagesTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collQuestionss = new $collectionClassName;
-        $this->collQuestionss->setModel('\Questions');
+        $this->collSmsMessagess = new $collectionClassName;
+        $this->collSmsMessagess->setModel('\SmsMessages');
     }
 
     /**
-     * Gets an array of ChildQuestions objects which contain a foreign key that references this object.
+     * Gets an array of ChildSmsMessages objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildStudy is new, it will return
+     * If this ChildSmsUser is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildQuestions[] List of ChildQuestions objects
+     * @return ObjectCollection|ChildSmsMessages[] List of ChildSmsMessages objects
      * @throws PropelException
      */
-    public function getQuestionss(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getSmsMessagess(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collQuestionssPartial && !$this->isNew();
-        if (null === $this->collQuestionss || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collQuestionss) {
+        $partial = $this->collSmsMessagessPartial && !$this->isNew();
+        if (null === $this->collSmsMessagess || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collSmsMessagess) {
                 // return empty collection
-                $this->initQuestionss();
+                $this->initSmsMessagess();
             } else {
-                $collQuestionss = ChildQuestionsQuery::create(null, $criteria)
-                    ->filterByStudy($this)
+                $collSmsMessagess = ChildSmsMessagesQuery::create(null, $criteria)
+                    ->filterBySmsUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collQuestionssPartial && count($collQuestionss)) {
-                        $this->initQuestionss(false);
+                    if (false !== $this->collSmsMessagessPartial && count($collSmsMessagess)) {
+                        $this->initSmsMessagess(false);
 
-                        foreach ($collQuestionss as $obj) {
-                            if (false == $this->collQuestionss->contains($obj)) {
-                                $this->collQuestionss->append($obj);
+                        foreach ($collSmsMessagess as $obj) {
+                            if (false == $this->collSmsMessagess->contains($obj)) {
+                                $this->collSmsMessagess->append($obj);
                             }
                         }
 
-                        $this->collQuestionssPartial = true;
+                        $this->collSmsMessagessPartial = true;
                     }
 
-                    return $collQuestionss;
+                    return $collSmsMessagess;
                 }
 
-                if ($partial && $this->collQuestionss) {
-                    foreach ($this->collQuestionss as $obj) {
+                if ($partial && $this->collSmsMessagess) {
+                    foreach ($this->collSmsMessagess as $obj) {
                         if ($obj->isNew()) {
-                            $collQuestionss[] = $obj;
+                            $collSmsMessagess[] = $obj;
                         }
                     }
                 }
 
-                $this->collQuestionss = $collQuestionss;
-                $this->collQuestionssPartial = false;
+                $this->collSmsMessagess = $collSmsMessagess;
+                $this->collSmsMessagessPartial = false;
             }
         }
 
-        return $this->collQuestionss;
+        return $this->collSmsMessagess;
     }
 
     /**
-     * Sets a collection of ChildQuestions objects related by a one-to-many relationship
+     * Sets a collection of ChildSmsMessages objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $questionss A Propel collection.
+     * @param      Collection $smsMessagess A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildStudy The current object (for fluent API support)
+     * @return $this|ChildSmsUser The current object (for fluent API support)
      */
-    public function setQuestionss(Collection $questionss, ConnectionInterface $con = null)
+    public function setSmsMessagess(Collection $smsMessagess, ConnectionInterface $con = null)
     {
-        /** @var ChildQuestions[] $questionssToDelete */
-        $questionssToDelete = $this->getQuestionss(new Criteria(), $con)->diff($questionss);
+        /** @var ChildSmsMessages[] $smsMessagessToDelete */
+        $smsMessagessToDelete = $this->getSmsMessagess(new Criteria(), $con)->diff($smsMessagess);
 
 
-        $this->questionssScheduledForDeletion = $questionssToDelete;
+        $this->smsMessagessScheduledForDeletion = $smsMessagessToDelete;
 
-        foreach ($questionssToDelete as $questionsRemoved) {
-            $questionsRemoved->setStudy(null);
+        foreach ($smsMessagessToDelete as $smsMessagesRemoved) {
+            $smsMessagesRemoved->setSmsUser(null);
         }
 
-        $this->collQuestionss = null;
-        foreach ($questionss as $questions) {
-            $this->addQuestions($questions);
+        $this->collSmsMessagess = null;
+        foreach ($smsMessagess as $smsMessages) {
+            $this->addSmsMessages($smsMessages);
         }
 
-        $this->collQuestionss = $questionss;
-        $this->collQuestionssPartial = false;
+        $this->collSmsMessagess = $smsMessagess;
+        $this->collSmsMessagessPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related Questions objects.
+     * Returns the number of related SmsMessages objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related Questions objects.
+     * @return int             Count of related SmsMessages objects.
      * @throws PropelException
      */
-    public function countQuestionss(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countSmsMessagess(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collQuestionssPartial && !$this->isNew();
-        if (null === $this->collQuestionss || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collQuestionss) {
+        $partial = $this->collSmsMessagessPartial && !$this->isNew();
+        if (null === $this->collSmsMessagess || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collSmsMessagess) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getQuestionss());
+                return count($this->getSmsMessagess());
             }
 
-            $query = ChildQuestionsQuery::create(null, $criteria);
+            $query = ChildSmsMessagesQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
 
             return $query
-                ->filterByStudy($this)
+                ->filterBySmsUser($this)
                 ->count($con);
         }
 
-        return count($this->collQuestionss);
+        return count($this->collSmsMessagess);
     }
 
     /**
-     * Method called to associate a ChildQuestions object to this object
-     * through the ChildQuestions foreign key attribute.
+     * Method called to associate a ChildSmsMessages object to this object
+     * through the ChildSmsMessages foreign key attribute.
      *
-     * @param  ChildQuestions $l ChildQuestions
-     * @return $this|\Study The current object (for fluent API support)
+     * @param  ChildSmsMessages $l ChildSmsMessages
+     * @return $this|\SmsUser The current object (for fluent API support)
      */
-    public function addQuestions(ChildQuestions $l)
+    public function addSmsMessages(ChildSmsMessages $l)
     {
-        if ($this->collQuestionss === null) {
-            $this->initQuestionss();
-            $this->collQuestionssPartial = true;
+        if ($this->collSmsMessagess === null) {
+            $this->initSmsMessagess();
+            $this->collSmsMessagessPartial = true;
         }
 
-        if (!$this->collQuestionss->contains($l)) {
-            $this->doAddQuestions($l);
+        if (!$this->collSmsMessagess->contains($l)) {
+            $this->doAddSmsMessages($l);
 
-            if ($this->questionssScheduledForDeletion and $this->questionssScheduledForDeletion->contains($l)) {
-                $this->questionssScheduledForDeletion->remove($this->questionssScheduledForDeletion->search($l));
+            if ($this->smsMessagessScheduledForDeletion and $this->smsMessagessScheduledForDeletion->contains($l)) {
+                $this->smsMessagessScheduledForDeletion->remove($this->smsMessagessScheduledForDeletion->search($l));
             }
         }
 
@@ -1319,57 +1267,32 @@ abstract class Study implements ActiveRecordInterface
     }
 
     /**
-     * @param ChildQuestions $questions The ChildQuestions object to add.
+     * @param ChildSmsMessages $smsMessages The ChildSmsMessages object to add.
      */
-    protected function doAddQuestions(ChildQuestions $questions)
+    protected function doAddSmsMessages(ChildSmsMessages $smsMessages)
     {
-        $this->collQuestionss[]= $questions;
-        $questions->setStudy($this);
+        $this->collSmsMessagess[]= $smsMessages;
+        $smsMessages->setSmsUser($this);
     }
 
     /**
-     * @param  ChildQuestions $questions The ChildQuestions object to remove.
-     * @return $this|ChildStudy The current object (for fluent API support)
+     * @param  ChildSmsMessages $smsMessages The ChildSmsMessages object to remove.
+     * @return $this|ChildSmsUser The current object (for fluent API support)
      */
-    public function removeQuestions(ChildQuestions $questions)
+    public function removeSmsMessages(ChildSmsMessages $smsMessages)
     {
-        if ($this->getQuestionss()->contains($questions)) {
-            $pos = $this->collQuestionss->search($questions);
-            $this->collQuestionss->remove($pos);
-            if (null === $this->questionssScheduledForDeletion) {
-                $this->questionssScheduledForDeletion = clone $this->collQuestionss;
-                $this->questionssScheduledForDeletion->clear();
+        if ($this->getSmsMessagess()->contains($smsMessages)) {
+            $pos = $this->collSmsMessagess->search($smsMessages);
+            $this->collSmsMessagess->remove($pos);
+            if (null === $this->smsMessagessScheduledForDeletion) {
+                $this->smsMessagessScheduledForDeletion = clone $this->collSmsMessagess;
+                $this->smsMessagessScheduledForDeletion->clear();
             }
-            $this->questionssScheduledForDeletion[]= clone $questions;
-            $questions->setStudy(null);
+            $this->smsMessagessScheduledForDeletion[]= $smsMessages;
+            $smsMessages->setSmsUser(null);
         }
 
         return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this Study is new, it will return
-     * an empty collection; or if this Study has previously
-     * been saved, it will retrieve related Questionss from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in Study.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|ChildQuestions[] List of ChildQuestions objects
-     */
-    public function getQuestionssJoinNewuser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildQuestionsQuery::create(null, $criteria);
-        $query->joinWith('Newuser', $joinBehavior);
-
-        return $this->getQuestionss($query, $con);
     }
 
     /**
@@ -1379,11 +1302,11 @@ abstract class Study implements ActiveRecordInterface
      */
     public function clear()
     {
-        $this->id = null;
-        $this->name = null;
-        $this->description = null;
+        $this->number = null;
+        $this->count = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
+        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1400,14 +1323,14 @@ abstract class Study implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collQuestionss) {
-                foreach ($this->collQuestionss as $o) {
+            if ($this->collSmsMessagess) {
+                foreach ($this->collSmsMessagess as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
         } // if ($deep)
 
-        $this->collQuestionss = null;
+        $this->collSmsMessagess = null;
     }
 
     /**
@@ -1417,7 +1340,7 @@ abstract class Study implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(StudyTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(SmsUserTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

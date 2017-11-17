@@ -950,6 +950,10 @@ abstract class User implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
         }
@@ -1283,11 +1287,11 @@ abstract class User implements ActiveRecordInterface
             $keys[9] => $this->getCreatedAt(),
             $keys[10] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[9]] instanceof \DateTime) {
+        if ($result[$keys[9]] instanceof \DateTimeInterface) {
             $result[$keys[9]] = $result[$keys[9]]->format('c');
         }
 
-        if ($result[$keys[10]] instanceof \DateTime) {
+        if ($result[$keys[10]] instanceof \DateTimeInterface) {
             $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
 
@@ -1683,10 +1687,12 @@ abstract class User implements ActiveRecordInterface
     public function initRelation($relationName)
     {
         if ('MessagesRelatedByFromid' == $relationName) {
-            return $this->initMessagessRelatedByFromid();
+            $this->initMessagessRelatedByFromid();
+            return;
         }
         if ('MessagesRelatedByToid' == $relationName) {
-            return $this->initMessagessRelatedByToid();
+            $this->initMessagessRelatedByToid();
+            return;
         }
     }
 
