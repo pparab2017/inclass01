@@ -204,7 +204,7 @@ function sendMsg($arrObj, $subscribed)
         $con->commit();
 
 
-        if($subscribed && $arrObj["token"]!= null ) {
+        if($subscribed) {
 
            $userToken =  DevicetokensQuery::create()
                ->filterByUserId($arrObj["User_id"])
@@ -212,9 +212,10 @@ function sendMsg($arrObj, $subscribed)
 
             $registrationIds = array();
            for($i = 0;$i< sizeof($userToken); $i++) {
-               array_push($registrationIds, $userToken[i]->getToken());
+               array_push($registrationIds, $userToken[$i]->getToken());
            }
 
+           print_r($registrationIds);
             sendpush($registrationIds, $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
                 $question->getId(), $question->getText(), $question->getChoises());
         }
