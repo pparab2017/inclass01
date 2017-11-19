@@ -40,3 +40,30 @@ $app->get('/myAdmin[/[dashboard]]', function ($request, $response, $args) {
 
 
 
+$app->get('/myAdmin/messages', function ($request, $response, $args) {
+
+    $errorString="";
+    $paramValue = $request-> getQueryParam('error',null);
+    if($paramValue!=null)
+        $errorString = Utils::getErrorString($paramValue);
+    return $this->view->render($response, 'public.myAdmin.messages.twig.html', [
+        "error" => $errorString
+    ]);
+})->setName('myAdmin.messages')
+    ->add($checkAdminAuthMiddleware);
+
+
+
+$app->get('/myAdmin/logs', function ($request, $response, $args) {
+
+    $errorString="";
+    $paramValue = $request-> getQueryParam('error',null);
+    if($paramValue!=null)
+        $errorString = Utils::getErrorString($paramValue);
+    return $this->view->render($response, 'public.myAdmin.messageLog.twig.html', [
+        "error" => $errorString
+    ]);
+})->setName('myAdmin.logs')
+    ->add($checkAdminAuthMiddleware);
+
+

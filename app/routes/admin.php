@@ -59,7 +59,7 @@ join NewUser N on Q.user_id = N.id;";
     //json_encode($_GET['recordsTotal']); this is how we access the server side params, if in case
     return json_encode($results);
 
-})->setName('admin.messageLog');
+})->setName('admin.messageLog')->add($checkAdminAuthMiddleware);
 
 $app->post('/admin/user/add', function ($request, $response, $args) {
 
@@ -230,7 +230,7 @@ $app->get('/admin/user/getAllQuestions', function ($request, $response, $args){
     }
 
 
-})->setName('myAdmin.user.getAllQuestions');
+})->setName('myAdmin.user.getAllQuestions') ->add($checkAdminAuthMiddleware);
 
 
 $app->get('/admin/message/delete/{id}', function ($request, $response, $args) {
@@ -251,7 +251,7 @@ $app->get('/admin/message/delete/{id}', function ($request, $response, $args) {
         return json_encode($returnJson);
     }
 
-})->setName('admin.message.delete');
+})->setName('admin.message.delete')->add($checkAdminAuthMiddleware);
 
 
 
@@ -292,7 +292,7 @@ if($questions!=null) {
     }
 
 
-})->setName('myAdmin.user.UpdateMessage');
+})->setName('myAdmin.user.UpdateMessage')->add($checkAdminAuthMiddleware);
 
 
 
@@ -331,7 +331,7 @@ $app->post('/admin/user/addMessage', function ($request, $response, $args){
     }
 
 
-})->setName('myAdmin.user.addMessage');
+})->setName('myAdmin.user.addMessage')->add($checkAdminAuthMiddleware);
 
 
 

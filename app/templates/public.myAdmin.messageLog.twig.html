@@ -1,0 +1,63 @@
+{% extends "public.base.twig.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block header %}
+<div class="container"  style="color: white" >
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding-top: 10px; padding-bottom: 10px">
+                <a style="color: white" href="\">Home</a> ❯ <a style="color: white" href="/myAdmin/messages"> Add Messages </a>
+                ❯ Messages Logs <span class="glyphicon glyphicon-tasks"></span>  </div></div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+{% block content %}
+
+
+
+<div class="tabContainer topCornersRounded">
+    <h4>Response Logs</h4>
+    <br />
+    <button id="btnRefreshLogs" type="button" class="btn btn-success">
+        Refresh Logs  <i class="glyphicon glyphicon-retweet"></i>
+    </button>
+    <br />
+    <br />
+    <table id="tblResponses" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>Question Text</th>
+            <th>Choices</th>
+            <th>Reminder Type</th>
+            <th>User Name</th>
+            <th>User Response</th>
+            <th>Last Sent Time</th>
+            <!--<th></th>-->
+        </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+        <tr>
+            <th>Question Text</th>
+            <th>Choices</th>
+            <th>Reminder Type</th>
+            <th>User Name</th>
+            <th>User Response</th>
+            <th>Last Sent Time</th>
+            <!--<th></th>-->
+        </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+{% endblock %}
+
+
+{% block myscripts %}
+<script type="text/javascript" src="/assets/js/logs-handler.js" ></script>
+{% endblock %}

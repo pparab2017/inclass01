@@ -1,0 +1,135 @@
+{% extends "public.base.twig.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block header %}
+<div class="container"  style="color: white" >
+    <div class="row">
+        <div class="col-sm-12">
+            <div style="padding-top: 10px; padding-bottom: 10px">
+                <a style="color: white" href="\">Home</a>
+                ❯ Add Messages <span class="glyphicon glyphicon-tasks"></span>  </div></div>
+    </div>
+
+</div>
+
+{% endblock %}
+{% block content %}
+
+
+
+<div class="tabContainer topCornersRounded">
+    <h4>Manage Questions</h4>
+    <br />
+    <table id="tblQuestions" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>Question Text</th>
+            <th>Choices</th>
+            <th>Reminder Type</th>
+            <th>Reminder Times</th>
+            <th>User Name</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+        <tr>
+            <th>Question Text</th>
+            <th>Choices</th>
+            <th>Reminder Type</th>
+            <th>Reminder Times</th>
+            <th>User Name</th>
+            <th></th>
+        </tr>
+        </tfoot>
+    </table>
+    <button id="btnAddQuestion" type="button" class="btn btn-success" data-toggle="modal" data-target=".bd-question-modal-lg" data-keyboard="false" data-backdrop="static">
+        Add Question
+        <i class="glyphicon glyphicon-plus"></i>
+    </button>
+
+    <button id="btnGetResponseLog" type="button" class="btn btn-success" style="margin-left:2%" onclick="location.href = '/myAdmin/logs'">
+        View Response Logs
+        <i class="glyphicon glyphicon-tasks"></i>
+    </button>
+</div>
+
+
+
+<div id="question-modal" class="modal fade bd-question-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="doNothing" id="Question-form" method="post" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="questionPanelHeader">Add New Question</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p class="text-danger" id="errorText"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Question Text</label>
+                            <input class="form-control" type="text" id="question-text" name="question-text" placeholder="Enter Question" required>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Enter Choices</label> <small>Enter comma separated choices</small>
+                            <input class="form-control" type="text" id="question-choices" name="question-choices" placeholder="Enter Choices - Ex: True, False." required>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label>Reminder Type</label>
+                            <select class="form-control" id="reminder-type" name="reminder-type" required>
+                                <option value="H" selected>Hourly</option>
+                                <option value="O">Once A Day</option>
+                                <option value="T">Twice A Day</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-6">
+                            <label>Reminder Times</label>
+                            <input class="form-control" type="text" id="reminder-time-1" name="reminder-time-1" placeholder="00:00AM" disabled>
+                            <br />
+                            <input class="form-control" type="text" id="reminder-time-2" name="reminder-time-2" placeholder="00:00AM" required disabled>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>Select User</label>
+                            <select class="form-control" id="user-name" name="user-name" required>
+                                <option value="" selected>Choose One</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                </div>
+                <div class="modal-footer" id="btnContainer-question">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" id="submitBtn" class="btn btn-success">Submit</button>
+                    <button type="submit" id="submitUpdate" class="btn btn-warning" hidden>Update</button>
+                    <button type="button" id="submitDelete" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
+
+
+{% block myscripts %}
+<script type="text/javascript" src="/assets/js/questions-handler.js" ></script>
+{% endblock %}

@@ -216,8 +216,10 @@ function sendMsg($arrObj, $subscribed)
            }
 
            print_r($registrationIds);
+           if(sizeof($registrationIds) > 0){
             sendpush($registrationIds, $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
                 $question->getId(), $question->getText(), $question->getChoises());
+           }
         }
     }
 
