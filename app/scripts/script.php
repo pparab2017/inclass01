@@ -28,8 +28,7 @@ q.Type,
 q.Time,
 q.User_id,
 q.LastSent,
-u.Subscribed,
-d.token
+u.Subscribed
  from Questions q JOIN
 NewUser u on u.id = q.user_id 
 ";
