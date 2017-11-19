@@ -32,44 +32,20 @@ u.Subscribed,
 d.token
  from Questions q JOIN
 NewUser u on u.id = q.user_id 
-left join DeviceTokens d on u.id = d.user_id;";
+";
 
-//$sql = str_replace("{DOCTOR_ID}",$doctor->getId(),$sql);
 $conn = Propel::getConnection();
 $reader = $conn->prepare($sql);
 $reader->execute();
 $results = $reader->fetchAll(PDO::FETCH_ASSOC);
 
-//print_r ($results);
+
 
 for($i = 0 ; $i < sizeof($results); $i++ ){
-    //echo $results[$i]["Text"];
+
     $timeString = explode(",",  $results[$i]["Time"]);
-    //print_r ($time);
-    //echo "UTC:".time();
+
     echo date('H:i:s') .PHP_EOL ;
-//    echo PHP_EOL ;
-//    $string =  date('H:i:s') ;
-//
-//    echo $results[$i]["LastSent"] . PHP_EOL;
-//
-//    echo PHP_EOL ;
-//    $time = explode(':', $timeString[1]);
-//    echo ($time[0]*60) + ($time[1]) + ($time[2]/60) . PHP_EOL;
-//
-//
-//    $date = new DateTime("2017-11-16 10:07:24");
-//    echo $date->getTimestamp() . PHP_EOL;;
-//
-//    $dateNow = new DateTime("2017-11-16 10:25:24");
-//    echo $dateNow->getTimestamp() . PHP_EOL;;
-//
-//    echo ($dateNow->getTimestamp() - $date->getTimestamp() )/3600 . PHP_EOL;
-
-
-    //$time2 = explode(',', "00:07:24");
-
-    //print_r ($time2);
 
     $lastSend = new DateTime("2017-11-17 10:25:24");
     $dateNow = new DateTime();
@@ -95,7 +71,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                 if ($diff >= 1) {
                     // send a messages
                     //update last sent
-                    sendMsg($results[$i],$subscribed);
+                    sendMsg($results[$i]);
                     echo "sEnd Hourly";
                 }
             } else {
@@ -227,8 +203,20 @@ function sendMsg($arrObj, $subscribed)
     }
     finally {
         $con->commit();
+
+
         if($subscribed && $arrObj["token"]!= null ) {
-            sendpush($arrObj["token"], $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
+
+           $userToken =  DevicetokensQuery::create()
+               ->filterByUserId($arrObj["User_id"])
+               ->find();
+
+            $registrationIds = array();
+           for($i = 0;$i< sizeof($userToken); $i++) {
+               array_push($registrationIds, $userToken[i]->getToken());
+           }
+
+            sendpush($registrationIds, $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
                 $question->getId(), $question->getText(), $question->getChoises());
         }
     }
@@ -238,7 +226,7 @@ function sendMsg($arrObj, $subscribed)
 function sendpush($token, $message, $title, $rID,$qID,$text,$ch)
 {
 
-    $registrationIds = array($token);
+    $registrationIds = $token;
 // prep the bundle
     $msg = array
     (
