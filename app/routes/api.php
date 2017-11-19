@@ -389,10 +389,14 @@ $app->post('/api/submitResponse', function ($request, $response, $args) {
 })->setName("submitResponse");
 
 
-$app->get('/api/logout', function ($request, $response, $args){
+$app->post('/api/logout', function ($request, $response, $args){
     $userId = $this->jwt->user;
+    $params = $request->getParsedBody();
     $device = DevicetokensQuery::create()
-        ->findOneByUserId($userId);
+        ->filterByToken($params["token"])
+        ->filterByUserId($userId)
+        ->findOne();
+
     $device->delete();
     return json_encode("okay");
 })->setName("api.logout");
