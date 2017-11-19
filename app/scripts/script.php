@@ -70,7 +70,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                 if ($diff >= 1) {
                     // send a messages
                     //update last sent
-                    sendMsg($results[$i]);
+                    sendMsg($results[$i],$subscribed);
                     echo "sEnd Hourly";
                 }
             } else {
@@ -211,11 +211,12 @@ function sendMsg($arrObj, $subscribed)
                ->find();
 
             $registrationIds = array();
-           for($i = 0;$i< sizeof($userToken); $i++) {
+           for($i = 0;$i < sizeof($userToken); $i++) {
                array_push($registrationIds, $userToken[$i]->getToken());
            }
 
            print_r($registrationIds);
+
            if(sizeof($registrationIds) > 0){
             sendpush($registrationIds, $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
                 $question->getId(), $question->getText(), $question->getChoises());
