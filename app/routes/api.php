@@ -399,6 +399,7 @@ $app->post('/api/logout', function ($request, $response, $args){
 
     $device->delete();
     return json_encode("okay");
+    
 })->setName("api.logout");
 
 
