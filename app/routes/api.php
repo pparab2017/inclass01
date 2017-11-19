@@ -734,6 +734,7 @@ $app->post('/api/SurveyAppLogin', function ($request, $response, $args) {
             $data["userEmail"] = $user->getEmail();
             $data["userFname"] = $user->getFname();
             $data["userLname"] = $user->getLname();
+            $data["gender"] = $user->getGender();
             return $response->withStatus(201)
                 ->withHeader("Content-Type", "application/json")
                 ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));

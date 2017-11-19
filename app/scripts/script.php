@@ -32,7 +32,7 @@ u.Subscribed,
 d.token
  from Questions q JOIN
 NewUser u on u.id = q.user_id 
-join DeviceTokens d on u.id = d.user_id;";
+left join DeviceTokens d on u.id = d.user_id;";
 
 //$sql = str_replace("{DOCTOR_ID}",$doctor->getId(),$sql);
 $conn = Propel::getConnection();
@@ -73,9 +73,14 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
 
     $lastSend = new DateTime("2017-11-17 10:25:24");
     $dateNow = new DateTime();
-    //echo date($dateNow->format("Y-m-d")) < date($lastSend->format("Y-m-d"));
+    $subscribed = false;
 
-    if($results[$i]["Subscribed"] == "YES") {
+    if($results[$i]["Subscribed"] == "YES")
+    {
+        $subscribed = true;
+    }
+
+    {
 
         if ($results[$i]["Type"] == "H") {
 
@@ -90,12 +95,12 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                 if ($diff >= 1) {
                     // send a messages
                     //update last sent
-                    sendMsg($results[$i]);
+                    sendMsg($results[$i],$subscribed);
                     echo "sEnd Hourly";
                 }
             } else {
                 // send message
-                sendMsg($results[$i]);
+                sendMsg($results[$i],$subscribed);
                 echo "sEnd Hourly first";
             }
         } else if ($results[$i]["Type"] == "O") {
@@ -113,7 +118,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
 
                     if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                         //send message
-                        sendMsg($results[$i]);
+                        sendMsg($results[$i],$subscribed);
                         echo "sEnd once day";
                     }
 
@@ -129,7 +134,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
 
                 if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                     //send message
-                    sendMsg($results[$i]);
+                    sendMsg($results[$i],$subscribed);
                     echo "sEnd once day first";
                 }
             }
@@ -146,7 +151,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                     $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
                     if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                         //send message
-                        sendMsg($results[$i]);
+                        sendMsg($results[$i],$subscribed);
                         echo "sEnd 2wise day 1st";
                     }
 
@@ -157,7 +162,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                     $SecondTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
                     if ($SecondTimeToCheck - $SecondTimeToSend >= 0) {
                         //send message
-                        sendMsg($results[$i]);
+                        sendMsg($results[$i],$subscribed);
                         echo "sEnd 2wise day 2nd";
                     }
                 }
@@ -176,7 +181,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                     if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                         //send message
                         echo "sEnd 2wise day 1st";
-                        sendMsg($results[$i]);
+                        sendMsg($results[$i],$subscribed);
                     }
 
                 } else if (date($lastSend->format("Y-m-d")) == date($dateNow->format("Y-m-d"))) {
@@ -186,7 +191,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                     $SecondTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
                     if ($SecondTimeToCheck - $SecondTimeToSend >= 0) {
                         //send message
-                        sendMsg($results[$i]);
+                        sendMsg($results[$i],$subscribed);
                         echo "sEnd 2wise day 2nd";
                     }
                 }
@@ -199,7 +204,7 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
 //
 //
 // API access key from Google API's Console
-function sendMsg($arrObj)
+function sendMsg($arrObj, $subscribed)
 {
     $con = Propel::getWriteConnection('default');// get the data base name connection
     try {
@@ -222,8 +227,10 @@ function sendMsg($arrObj)
     }
     finally {
         $con->commit();
-        sendpush($arrObj["token"],$arrObj["Text"],"Cloud Messaging",$newMsg->getId(),
-            $question->getId(),$question->getText(),$question->getChoises());
+        if($subscribed) {
+            sendpush($arrObj["token"], $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
+                $question->getId(), $question->getText(), $question->getChoises());
+        }
     }
 
 }
