@@ -227,7 +227,7 @@ function sendMsg($arrObj, $subscribed)
     }
     finally {
         $con->commit();
-        if($subscribed) {
+        if($subscribed && $arrObj["token"]!= null ) {
             sendpush($arrObj["token"], $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
                 $question->getId(), $question->getText(), $question->getChoises());
         }

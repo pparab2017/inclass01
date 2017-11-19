@@ -663,6 +663,10 @@ ORDER BY R.id DESC";
                 $data = array("results"=>$results, "status"=>"ok");
                 return $response->withJson($data);
             }
+            else{
+                $data = array("results"=>array(), "status"=>"ok");
+                return $response->withJson($data);
+            }
             //json_encode($_GET['recordsTotal']); this is how we access the server side params, if in case
             //return json_encode($results);
         }
