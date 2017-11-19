@@ -2,12 +2,7 @@
 var selectedQuestion;
 var tableQuestions;
 
-var questionRoutes = {
-    listQuestions: "{{path_for('myAdmin.user.getAllQuestions')}}",
-    addQuestion: "{{path_for('/admin/user/addMessage')}}",
-    updateQuestion: "{{path_for('/admin/user/updateMessage')}}",
-    deleteQuestion: "{{path_for('/admin/message/delete/{id}', { 'id' : '{id}' })}}"
-};
+
 var getUsersRoute = "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/admin/user/getAll"
 $(document).ready(function () {
 

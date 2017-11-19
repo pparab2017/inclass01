@@ -60,4 +60,10 @@
 
 {% block myscripts %}
 <script type="text/javascript" src="/assets/js/logs-handler.js" ></script>
+<script type="text/javascript">
+    var logRoutes = {
+        responseLogs: "{{path_for('admin.messageLog')}}"
+    };
+
+</script>
 {% endblock %}

@@ -132,4 +132,13 @@
 
 {% block myscripts %}
 <script type="text/javascript" src="/assets/js/questions-handler.js" ></script>
+
+<script type="text/javascript">
+    var questionRoutes = {
+        listQuestions: "{{path_for('myAdmin.user.getAllQuestions')}}",
+        addQuestion: "{{path_for('myAdmin.user.addMessage')}}",
+        updateQuestion: "{{path_for('myAdmin.user.UpdateMessage')}}",
+        deleteQuestion: "{{path_for('myAdmin.user.delete', { 'id' : '{id}' })}}"
+    };
+</script>
 {% endblock %}

@@ -2,9 +2,6 @@
 var selectedQuestion;
 var tableLogs;
 
-var logRoutes = {
-    responseLogs: "{{path_for('admin.messageLog')}}"
-};
 
 $(document).ready(function () {
 
