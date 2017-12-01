@@ -267,6 +267,23 @@ CREATE TABLE `User`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- inclass
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `inclass`;
+
+CREATE TABLE `inclass`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `first_name` VARCHAR(100),
+    `last_name` VARCHAR(100),
+    `email` VARCHAR(100),
+    `gender` VARCHAR(45),
+    `ip_address` VARCHAR(100),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- sms_messages
 -- ---------------------------------------------------------------------
 

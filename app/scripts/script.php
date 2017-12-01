@@ -133,9 +133,9 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
                 } else if (date($lastSend->format("Y-m-d")) == date($dateNow->format("Y-m-d"))) {
                     $time_02 = explode(':', $timeString[1]);
                     $timeNow_02 = explode(':', date('H:i:s'));
-                    $SecondTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
-                    $SecondTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
-                    if ($SecondTimeToCheck - $SecondTimeToSend >= 0) {
+                    $SecondTimeToSend = ($time_02[0] * 60) + ($time_02[1]) + ($time_02[2] / 60);
+                    $SecondTimeToCheck = ($timeNow_02[0] * 60) + ($timeNow_02[1]) + ($timeNow_02[2] / 60);
+                    if ($SecondTimeToCheck - $SecondTimeToSend >= 0 && $SecondTimeToCheck - $SecondTimeToSend < 6 ) {
                         //send message
                         sendMsg($results[$i],$subscribed);
                         echo "sEnd 2wise day 2nd";
@@ -144,31 +144,16 @@ for($i = 0 ; $i < sizeof($results); $i++ ){
 
 
             } else {
-                $lastSend = new DateTime($results[$i]["LastSent"]);
-                $dateNow = new DateTime();
+                $time_01 = explode(':', $timeString[0]);
+                $timeNow_01 = explode(':', date('H:i:s'));
+                $FirstTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
+                $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
+                echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
 
-
-                if (date($lastSend->format("Y-m-d")) < date($dateNow->format("Y-m-d"))) {
-                    $time_01 = explode(':', $timeString[0]);
-                    $timeNow_01 = explode(':', date('H:i:s'));
-                    $FirstTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
-                    $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
-                    if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
-                        //send message
-                        echo "sEnd 2wise day 1st";
-                        sendMsg($results[$i],$subscribed);
-                    }
-
-                } else if (date($lastSend->format("Y-m-d")) == date($dateNow->format("Y-m-d"))) {
-                    $time_02 = explode(':', $timeString[1]);
-                    $timeNow_02 = explode(':', date('H:i:s'));
-                    $SecondTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
-                    $SecondTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
-                    if ($SecondTimeToCheck - $SecondTimeToSend >= 0) {
-                        //send message
-                        sendMsg($results[$i],$subscribed);
-                        echo "sEnd 2wise day 2nd";
-                    }
+                if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
+                    //send message
+                    sendMsg($results[$i],$subscribed);
+                    echo "sEnd twise day first";
                 }
             }
         }

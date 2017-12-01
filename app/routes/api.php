@@ -357,6 +357,27 @@ $app->get('/api/getAllUsers', function ($request, $response, $args) {
 })->setName('api.getAllUsers');
 
 
+$app->post('/api/inclass', function ($request, $response, $args){
+    $params = $request->getParsedBody();
+
+    $sql = "SELECT id, first_name, last_name, email, gender
+ FROM `inclass`  
+ order by {KEY} {ORDER}
+ LIMIT 50 OFFSET {FROM}
+";
+
+    $sql = str_replace("{KEY}",$params["key"],$sql);
+    $sql = str_replace("{ORDER}",$params["order"],$sql);
+    $sql = str_replace("{FROM}",$params["from"],$sql);
+    $conn = Propel::getConnection();
+    $reader = $conn->prepare($sql);
+    $reader->execute();
+    $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
+    return $response->withJson(['status'=>'ok', 'Messages'=>$Msgs]);;
+
+
+})->setName("inclass");
+
 $app->post('/api/submitResponse', function ($request, $response, $args) {
 
     $params = $request->getParsedBody();
@@ -399,7 +420,7 @@ $app->post('/api/logout', function ($request, $response, $args){
 
     $device->delete();
     return json_encode("okay");
-    
+
 })->setName("api.logout");
 
 
@@ -1298,5 +1319,8 @@ $app->get('/api/createSMS', function ($request, $response, $args) {
     );
 
 })->setName('api.createSMS');
+
+
+
 
 
