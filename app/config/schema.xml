@@ -232,6 +232,104 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
+  <table name="project_device_token" idMethod="native" phpName="ProjectDeviceToken">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER"/>
+    <column name="token" phpName="Token" type="VARCHAR" size="1000"/>
+    <foreign-key foreignTable="project_user" name="fk_toekn_userId">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_toekn_userId_idx">
+      <index-column name="user_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="project_messages" idMethod="native" phpName="ProjectMessages">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="text" phpName="Text" type="LONGVARCHAR"/>
+    <column name="reminder_type" phpName="ReminderType" type="CHAR" sqlType="enum('H','O','T')" defaultValue="H"/>
+    <column name="type" phpName="Type" type="CHAR" sqlType="enum('SURVEY','QUESTION','MESSAGE')" defaultValue="QUESTION"/>
+    <column name="Time" phpName="Time" type="VARCHAR" size="45"/>
+    <column name="Study_Id" phpName="StudyId" type="INTEGER" required="true"/>
+    <column name="LastSent" phpName="Lastsent" type="TIMESTAMP"/>
+    <behavior name="timestampable" />
+    <foreign-key foreignTable="project_study" name="fk_study_messgaes">
+      <reference local="Study_Id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_study_messgaes_idx">
+      <index-column name="Study_Id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="project_notification" idMethod="native" phpName="ProjectNotification">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="study_id" phpName="StudyId" type="INTEGER"/>
+    <column name="response_text" phpName="ResponseText" type="LONGVARCHAR"/>
+    <column name="time" phpName="Time" type="TIMESTAMP"/>
+    <column name="user_id" phpName="UserId" type="INTEGER"/>
+    <column name="message_id" phpName="MessageId" type="INTEGER"/>
+    <column name="opened_at" phpName="OpenedAt" type="TIMESTAMP"/>
+    <column name="answred_at" phpName="AnswredAt" type="TIMESTAMP"/>
+    <behavior name="timestampable" />
+    <foreign-key foreignTable="project_messages" name="fk_message_notification_id">
+      <reference local="message_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="project_study" name="fk_study_notification_id">
+      <reference local="study_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="project_user" name="fk_user_notification_id">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_user_notification_id_idx">
+      <index-column name="user_id"/>
+    </index>
+    <index name="fk_study_notification_id_idx">
+      <index-column name="study_id"/>
+    </index>
+    <index name="fk_message_notification_id_idx">
+      <index-column name="message_id"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="project_study" idMethod="native" phpName="ProjectStudy">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="study_name" phpName="StudyName" type="VARCHAR" size="45"/>
+    <column name="study_description" phpName="StudyDescription" type="VARCHAR" size="300"/>
+    <behavior name="timestampable" />
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="project_user" idMethod="native" phpName="ProjectUser">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="email" phpName="Email" type="VARCHAR" size="255" required="true"/>
+    <column name="hash" phpName="Hash" type="VARCHAR" size="255" required="true"/>
+    <column name="fname" phpName="Fname" type="VARCHAR" size="255"/>
+    <column name="lname" phpName="Lname" type="VARCHAR" size="255"/>
+    <column name="gender" phpName="Gender" type="CHAR" sqlType="enum('FEMALE','MALE')"/>
+    <column name="role" phpName="Role" type="CHAR" sqlType="enum('COORDINATOR','STUDENT')" defaultValue="STUDENT"/>
+    <column name="Subscribed" phpName="Subscribed" type="CHAR" sqlType="enum('YES','NO')" defaultValue="YES"/>
+    <column name="study_id" phpName="StudyId" type="INTEGER"/>
+    <behavior name="timestampable" />
+    <foreign-key foreignTable="project_study" name="fk_project_study">
+      <reference local="study_id" foreign="id"/>
+    </foreign-key>
+    <index name="fk_project_study_idx">
+      <index-column name="study_id"/>
+    </index>
+    <unique name="email_UNIQUE">
+      <unique-column name="email"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
   <table name="sms_messages" idMethod="native" phpName="SmsMessages">
     <column name="user_number" phpName="UserNumber" type="VARCHAR" size="100"/>
     <column name="question" phpName="Question" type="VARCHAR" size="500"/>

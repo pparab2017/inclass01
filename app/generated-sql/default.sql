@@ -284,6 +284,124 @@ CREATE TABLE `inclass`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- project_device_token
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_device_token`;
+
+CREATE TABLE `project_device_token`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER,
+    `token` VARCHAR(1000),
+    PRIMARY KEY (`id`),
+    INDEX `fk_toekn_userId_idx` (`user_id`),
+    CONSTRAINT `fk_toekn_userId`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `project_user` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- project_messages
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_messages`;
+
+CREATE TABLE `project_messages`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `text` TEXT,
+    `reminder_type` enum('H','O','T') DEFAULT 'H',
+    `type` enum('SURVEY','QUESTION','MESSAGE') DEFAULT 'QUESTION',
+    `Time` VARCHAR(45),
+    `Study_Id` INTEGER NOT NULL,
+    `LastSent` DATETIME,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    INDEX `fk_study_messgaes_idx` (`Study_Id`),
+    CONSTRAINT `fk_study_messgaes`
+        FOREIGN KEY (`Study_Id`)
+        REFERENCES `project_study` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- project_notification
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_notification`;
+
+CREATE TABLE `project_notification`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `study_id` INTEGER,
+    `response_text` TEXT,
+    `time` DATETIME,
+    `user_id` INTEGER,
+    `message_id` INTEGER,
+    `opened_at` DATETIME,
+    `answred_at` DATETIME,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    INDEX `fk_user_notification_id_idx` (`user_id`),
+    INDEX `fk_study_notification_id_idx` (`study_id`),
+    INDEX `fk_message_notification_id_idx` (`message_id`),
+    CONSTRAINT `fk_message_notification_id`
+        FOREIGN KEY (`message_id`)
+        REFERENCES `project_messages` (`id`),
+    CONSTRAINT `fk_study_notification_id`
+        FOREIGN KEY (`study_id`)
+        REFERENCES `project_study` (`id`),
+    CONSTRAINT `fk_user_notification_id`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `project_user` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- project_study
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_study`;
+
+CREATE TABLE `project_study`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `study_name` VARCHAR(45),
+    `study_description` VARCHAR(300),
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- project_user
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project_user`;
+
+CREATE TABLE `project_user`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(255) NOT NULL,
+    `hash` VARCHAR(255) NOT NULL,
+    `fname` VARCHAR(255),
+    `lname` VARCHAR(255),
+    `gender` enum('FEMALE','MALE'),
+    `role` enum('COORDINATOR','STUDENT') DEFAULT 'STUDENT',
+    `Subscribed` enum('YES','NO') DEFAULT 'YES',
+    `study_id` INTEGER,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `email_UNIQUE` (`email`),
+    INDEX `fk_project_study_idx` (`study_id`),
+    CONSTRAINT `fk_project_study`
+        FOREIGN KEY (`study_id`)
+        REFERENCES `project_study` (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- sms_messages
 -- ---------------------------------------------------------------------
 

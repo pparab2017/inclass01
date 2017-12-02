@@ -70,8 +70,8 @@ $container["jwt"] = function ($container) {
 $app->add(new \Slim\Middleware\JwtAuthentication([
     "secure" => false,
     "secret" => getenv("JWT_SECRET"),
-    "path" => ["/api"],
-    "passthrough" => ["/api/signup", "/api/login", "/api/forgotPassword","/api/getAllProducts","/api/getProductsByType/","/api/SurveyAppLogin","/api/respondSMS","/api/MyrespondSMS","/api/inclass"],
+    "path" => ["/api","/project_api"],
+    "passthrough" => ["/project_api/login","/api/signup", "/api/login", "/api/forgotPassword","/api/getAllProducts","/api/getProductsByType/","/api/SurveyAppLogin","/api/respondSMS","/api/MyrespondSMS","/api/inclass"],
     "attribute" => "jwt",
     "error" => function ($request, $response, $arguments) {
         $data["status"] = "error";
@@ -90,6 +90,10 @@ require '../app/routes/auth.php';
 require '../app/routes/admin.php';
 require '../app/routes/api.php';
 require '../app/routes/dashboard.php';
+
+// project apis
+require '../app/routes/project_api.php';
+
 
 $app->get('/', function (Request $request, Response $response) {
 
