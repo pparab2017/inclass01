@@ -1,8 +1,8 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: rlews
- * Date: 3/6/16
+ * User: Pushparaj P. Parab
+ * Date: 2nd December 2017
  * Time: 12:38 AM
  */
 
@@ -63,7 +63,7 @@ $app->post ('/project_api/register_device', function ($request, $response, $args
     $params = $request->getParsedBody();
     $patient_id = $this->jwt->user;
     if(Utils::checkIfNotEmpty($patient_id)) {
-        $p = ProjectUserQuery::create()->filterById($patient_id,NewuserQuery::EQUAL)->findOne();
+        $p = ProjectUserQuery::create()->filterById($patient_id,ProjectUserQuery::EQUAL)->findOne();
         if($p != NULL) {
 
             $reg = new ProjectDeviceToken();
@@ -82,20 +82,160 @@ $app->post ('/project_api/register_device', function ($request, $response, $args
 
 })->setName('project_api.deviceRegister');
 
-$app->get('/project_api/get_my_messages', function ($request, $response, $args) {
+$app->post('/project_api/get_my_messages', function ($request, $response, $args) {
     $params = $request->getParsedBody();
     $userId = $this->jwt->user;
 
 
     if(Utils::checkIfNotEmpty($userId))
     {
-        $sql = "SELECT m.id, m.text, m.type,m.Study_Id, n.id AS response_id, n.response_text
+
+        $count = ProjectNotificationQuery::create()
+            ->findByUserId($userId)
+            ->count();
+
+        $sql = "SELECT m.id, m.text, m.type,m.Study_Id, n.id AS response_id, n.response_text, n.opened_at
                 FROM project_messages m 
                 JOIN project_study s on s.id  = m.Study_Id
                 JOIN project_notification n on n.message_id = m.id
                 JOIN project_user u on u.study_id = s.id
                 WHERE u.id = {USER_ID}
-                ORDER BY m.time DESC;";
+                ORDER BY m.time DESC
+                LIMIT {_SIZE} OFFSET {_FROM};";
+        $sql = str_replace("{USER_ID}",$userId,$sql);
+        $sql = str_replace("{_SIZE}",$params["size"],$sql);
+        $sql = str_replace("{_FROM}",$params["from"],$sql);
+        $conn = Propel::getConnection();
+        $reader = $conn->prepare($sql);
+        $reader->execute();
+        $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
+
+        for($i = 0; $i < count($Msgs); $i++){
+            //question
+            $temp = $Msgs[$i]["text"];
+            $php_obj = json_decode($temp,true);
+            $Msgs[$i]["text"] = $php_obj;
+
+            //response
+            $tempResponse = $Msgs[$i]["response_text"];
+            $php_obj_response = json_decode($tempResponse,true);
+            $Msgs[$i]["response_text"] = $php_obj_response;
+
+        }
+
+        if($Msgs != null)
+        {
+            return $response->withJson(['status'=>'ok','count' => $count, 'Messages'=>$Msgs]);
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+
+})->setName('project_api.getMyMessages');
+
+$app->post('/project_api/submit_question', function ($request, $response, $args) {
+
+    $params = $request->getParsedBody();
+    $user_id = $this->jwt->user;
+
+    if(Utils::checkIfNotEmpty($user_id)) {
+        $p = ProjectUserQuery::create()->filterById($user_id,ProjectUserQuery::EQUAL)->findOne();
+        if($p != NULL) {
+            $id  = $params["responseID"];
+            if(Utils::checkIfNotEmpty($id)){
+
+                $responseMessage = ProjectNotificationQuery::create()
+                    ->filterById($id, ProjectUserQuery::EQUAL)
+                    ->findOne();
+
+                if($responseMessage != NULL){
+
+                    $responseMessage->setResponseText($params["responseText"]);
+                    $responseMessage->save();
+
+                    return $response->withJson(['status'=>'ok']);
+                }
+                return $response
+                    ->withStatus(400)
+                    ->withJson(['status'=>'error', "message"=>"Invalid notification ID"]);
+
+            }  return $response
+                ->withStatus(400)
+                ->withJson(['status'=>'error', "message"=>"Invalid notification ID"]);
+
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+})->setName('project_api.submitQuestion');
+
+$app->get('/project_api/open_question/{id}', function ($request, $response, $args) {
+
+    $params = $request->getParsedBody();
+    $user_id = $this->jwt->user;
+    $now = new DateTime();
+    if(Utils::checkIfNotEmpty($user_id)) {
+        $p = ProjectUserQuery::create()->filterById($user_id,ProjectUserQuery::EQUAL)->findOne();
+        if($p != NULL) {
+            $id  = $args['id'];
+            if(Utils::checkIfNotEmpty($id)){
+
+                $responseMessage = ProjectNotificationQuery::create()
+                    ->filterById($id, ProjectUserQuery::EQUAL)
+                    ->findOne();
+
+                if($responseMessage != NULL){
+
+                    $responseMessage->setOpenedAt($now);
+                    $responseMessage->save();
+
+                    return $response->withJson(['status'=>'ok']);
+                }
+                return $response
+                    ->withStatus(400)
+                    ->withJson(['status'=>'error', "message"=>"Invalid notification ID"]);
+
+            }  return $response
+                ->withStatus(400)
+                ->withJson(['status'=>'error', "message"=>"Invalid notification ID"]);
+
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+})->setName('project_api.openQuestion');
+
+$app->get('/project_api/get_my_surveys', function ($request, $response, $args) {
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+
+
+    if(Utils::checkIfNotEmpty($userId))
+    {
+
+        $sql = "SELECT m.id, m.text, m.type,m.Study_Id, n.id AS response_id, n.response_text, n.opened_at
+                FROM project_messages m 
+                JOIN project_study s on s.id  = m.Study_Id
+                JOIN project_notification n on n.message_id = m.id
+                JOIN project_user u on u.study_id = s.id
+                WHERE u.id = {USER_ID} AND m.type ='SURVEY'
+                ORDER BY m.time DESC";
+
         $sql = str_replace("{USER_ID}",$userId,$sql);
         $conn = Propel::getConnection();
         $reader = $conn->prepare($sql);
@@ -103,9 +243,16 @@ $app->get('/project_api/get_my_messages', function ($request, $response, $args) 
         $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
 
         for($i = 0; $i < count($Msgs); $i++){
+            //question
             $temp = $Msgs[$i]["text"];
             $php_obj = json_decode($temp,true);
             $Msgs[$i]["text"] = $php_obj;
+
+            //response
+            $tempResponse = $Msgs[$i]["response_text"];
+            $php_obj_response = json_decode($tempResponse,true);
+            $Msgs[$i]["response_text"] = $php_obj_response;
+
         }
 
         if($Msgs != null)
@@ -121,10 +268,69 @@ $app->get('/project_api/get_my_messages', function ($request, $response, $args) 
         ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
 
 
-})->setName('project_api.getMyMessages');
+})->setName('project_api.getMySurveys');
+
+// number of surveys answered or not
+// number of messages answered or not
+$app->get('/project_api/account_dashboard', function ($request, $response, $args) {
+    $params = $request->getParsedBody();
+    $userId = $this->jwt->user;
+
+
+    if(Utils::checkIfNotEmpty($userId))
+    {
+
+
+        $user = ProjectUserQuery::create()
+            ->findOneById($userId);
+
+        $data["userId"] = $user->getId();
+        $data["userEmail"] = $user->getEmail();
+        $data["userFname"] = $user->getFname();
+        $data["userLname"] = $user->getLname();
+        $data["gender"] = $user->getGender();
+
+        $sql = "SELECT SUM(CASE 
+                            WHEN t.response_text IS NULL and m.type = 'SURVEY'  THEN 1
+                            ELSE 0
+                            END) AS SURVEY_PENDING,
+                SUM(CASE 
+                            WHEN t.response_text IS NOT NULL and m.type = 'SURVEY' THEN 1
+                            ELSE 0
+                            END) AS SURVEY_ANSWRED,
+                SUM(CASE 
+                            WHEN t.response_text IS NULL and m.type = 'QUESTION' THEN 1
+                            ELSE 0
+                            END) AS QUESTION_PENDING,
+                SUM(CASE 
+                            WHEN t.response_text IS NOT NULL and m.type = 'QUESTION' THEN 1
+                            ELSE 0
+                            END) AS QUESTION_ANSWRED   
+                FROM project_notification t
+                join project_messages m on m.id = t.message_id
+                WHERE t.user_id = {USER_ID};";
+        $sql = str_replace("{USER_ID}",$userId,$sql);
+        $conn = Propel::getConnection();
+        $reader = $conn->prepare($sql);
+        $reader->execute();
+        $Msgs = $reader->fetch(PDO::FETCH_ASSOC);
 
 
 
+        if($Msgs != null)
+        {
+            return $response->withJson(['status'=>'ok', 'dashboard'=>$Msgs,'user' => $data] );
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+
+})->setName('project_api.account_dashboard');
 
 
 ?>
