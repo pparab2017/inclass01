@@ -90,6 +90,7 @@ require '../app/routes/auth.php';
 require '../app/routes/admin.php';
 require '../app/routes/api.php';
 require '../app/routes/dashboard.php';
+require '../app/routes/project_web_methods.php';
 
 // project apis
 require '../app/routes/project_api.php';

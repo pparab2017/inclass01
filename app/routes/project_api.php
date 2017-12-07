@@ -332,5 +332,4 @@ $app->get('/project_api/account_dashboard', function ($request, $response, $args
 
 })->setName('project_api.account_dashboard');
 
-
 ?>
