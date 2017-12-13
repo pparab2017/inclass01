@@ -637,3 +637,44 @@ $app->get('/coordinator/response/user/{id}', function ($request, $response, $arg
 
 })->setName('coordinator.response.user');
 //->add($checkAdminAuthMiddleware);
+
+
+
+//delete user
+$app->get('/coordinator/response/survey/{id}', function ($request, $response, $args) {
+    $surveyId = $args['id'];
+    if(Utils::checkIfNotEmpty($surveyId))
+    {
+
+        $sql = " select u.fname,u.lname,u.id as user_id,pn.response_text,pn.opened_at from  
+    project_notification pn
+    Join  project_user u on pn.user_id = u.id
+    where pn.message_id = {SURVEY_ID}";
+
+        $sql = str_replace("{SURVEY_ID}",$surveyId,$sql);
+
+        $conn = Propel::getConnection();
+        $reader = $conn->prepare($sql);
+        $reader->execute();
+        $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
+
+        for($i = 0; $i < count($Msgs); $i++){
+
+            //response
+            $tempResponse = $Msgs[$i]["response_text"];
+            $php_obj_response = json_decode($tempResponse,true);
+            $Msgs[$i]["response_text"] = $php_obj_response;
+        }
+
+        if($Msgs != null) {
+            return $response->withJson(['status'=>'ok' ,'Messages'=>$Msgs]);
+        }else{
+            return $response->withJson(['status'=>'ok' ,'Messages'=>$Msgs]);
+        }
+    }
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"Invalid user ID"]);
+
+})->setName('coordinator.response.user');
+//->add($checkAdminAuthMiddleware);
