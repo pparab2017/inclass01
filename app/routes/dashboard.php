@@ -33,10 +33,14 @@ $app->get('/project/admin[/[dashboard]]', function ($request, $response, $args) 
     $paramValue = $request-> getQueryParam('error',null);
     if($paramValue!=null)
         $errorString = Utils::getErrorString($paramValue);
+
+
     return $this->view->render($response, 'public.project.admin.dashboard.twig.html', [
         "error" => $errorString
     ]);
-})->setName('project.coordinator.dashboard')
+
+
+})->setName('project.admin.dashboard')
     ->add($checkAdminAuthMiddleware);
 
 
