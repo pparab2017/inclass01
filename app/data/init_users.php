@@ -98,7 +98,7 @@ $message->setReminderType("H");
 $message->setType("QUESTION");
 $message->setText('{"message_type":"QUESTION","message":"How are you toady?","number_of_choices":4,"choices":"Vary Good|Good|Bad|Vary Bad","response":null,"survey":null}
 ');
-$message->setLastsent($datetime);
+
 $message->save();
 
 
@@ -108,7 +108,6 @@ $message->setReminderType("H");
 $message->setType("MESSAGE");
 $message->setText('{"message_type":"MESSAGE","message":"Dont forget to drink water today!!","number_of_choices":0,"choices":null,"response":null,"survey":null}
 ');
-$message->setLastsent($datetime);
 $message->save();
 
 
@@ -118,7 +117,6 @@ $message->setReminderType("H");
 $message->setType("QUESTION");
 $message->setText('{"message_type":"QUESTION","message":"Did you get your health check up done in last 1 month?","number_of_choices":2,"choices":"Yes|No","response":null,"survey":null}
 ');
-$message->setLastsent($datetime);
 $message->save();
 
 
@@ -127,7 +125,7 @@ $message->setStudyId($study01->getId());
 $message->setReminderType("O");
 $message->setType("SURVEY");
 $message->setText('{"message_type":"SURVEY","message":"Survey for Cardiac Health","number_of_choices":0,"choices":null,"response":null,"survey":{"survey_title":"Survey for Cardiac Health","survey_desc":"This survey is to collect information about your ongoing progress for cardiac health issues.","survey_instruction":"Read questions carefully and answer.","number_of_questions":4,"questions":[{"question_type":"TEXT","question_text":"What is your age?","number_of_choices":0,"question_choices":null,"response":null,"htmlIndex":"row0"},{"question_type":"MCQ","question_text":"Do you take walk everyday?","number_of_choices":2,"question_choices":"Yes|No","response":null,"htmlIndex":"row1"},{"question_type":"MCQ","question_text":"How many glasses of water did you drink today?","number_of_choices":4,"question_choices":"1|2|3|4","response":null,"htmlIndex":"row2"},{"question_type":"TEXT","question_text":"Do you regularly visit your physicican?","number_of_choices":0,"question_choices":null,"response":null,"htmlIndex":"row3"}]}}');
-$message->setLastsent($datetime);
+
 $message->save();
 
 
@@ -136,7 +134,7 @@ $message->setStudyId($study02->getId());
 $message->setReminderType("O");
 $message->setType("SURVEY");
 $message->setText('{"message_type":"SURVEY","message":"Starter survey","number_of_choices":0,"choices":"","response":"","survey":{"survey_title":"Starter survey","survey_desc":"This is a starter survey","survey_instruction":"This has only 4 questions.","number_of_questions":4,"questions":[{"question_type":"TEXT","question_text":"Write your name below.","number_of_choices":0,"question_choices":null,"response":null},{"question_type":"TEXT","question_text":"How good are you in Math?","number_of_choices":0,"question_choices":null,"response":null},{"question_type":"MCQ","question_text":"How will you rate your self from in math?","number_of_choices":5,"question_choices":"1|2|3|4|5","response":null},{"question_type":"MCQ","question_text":"How will you rate your self from in logic?","number_of_choices":4,"question_choices":"Vary good|Good|Bad|Vary Bad","response":null}]}}');
-$message->setLastsent($datetime);
+
 $message->save();
 
 //$text = $message->getText();
