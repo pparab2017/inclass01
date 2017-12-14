@@ -347,4 +347,20 @@ $app->get('/project_api/account_dashboard', function ($request, $response, $args
 
 })->setName('project_api.account_dashboard');
 
+
+$app->post('/project_api/subscribe', function ($request, $response, $args){
+    $userId = $this->jwt->user;
+    $params = $request->getParsedBody();
+    $user = ProjectUserQuery::create()
+        ->findOneById($userId);
+
+    $user->setSubscribed($params["val"]);
+    $user->save();
+
+    return json_encode($user->getSubscribed());
+})->setName("project_api.subscribe");
+
+
+
+
 ?>

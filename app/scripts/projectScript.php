@@ -50,7 +50,7 @@ function sendMessages($study){
 //    NewUser u on u.id = q.user_id
 //    ";
 
-    $sql =  "select m.id as questionId,m.Text,m.reminder_type as Type,
+    $sql =  "select m.id as questionId,m.Text,m.reminder_type as Type,m.type as Q_type,
 m.Time,m.LastSent from project_messages m
 Join project_study s on s.id = m.study_id
 where s.id = {STUDY_ID};";
@@ -214,7 +214,10 @@ function sendMsg($arrObj, $study)
 
 
         for($j = 0;$j < sizeof($users[$i]->getProjectDeviceTokens()); $j++) {
-            array_push($registrationIds, $users[$i]->getProjectDeviceTokens()[$j]->getToken());
+            if($users[$i]->getSubscribed() == "YES") {
+
+                array_push($registrationIds, $users[$i]->getProjectDeviceTokens()[$j]->getToken());
+            }
         }
     }
 
@@ -228,12 +231,30 @@ function sendMsg($arrObj, $study)
 
 
         for($i = 0;$i < sizeof($Onlyusers); $i++) {
-            $NewNotification = new ProjectNotification();
-            $NewNotification->setStudyId($study);
-            $NewNotification->setTime(New DateTime());
-            $NewNotification->setUserId($Onlyusers[$i]->getId());
-            $NewNotification->setMessageId($arrObj["questionId"]);
-            $NewNotification->save();
+            if($arrObj["Q_type"] != "SURVEY") {
+                $NewNotification = new ProjectNotification();
+                $NewNotification->setStudyId($study);
+                $NewNotification->setTime(New DateTime());
+                $NewNotification->setUserId($Onlyusers[$i]->getId());
+                $NewNotification->setMessageId($arrObj["questionId"]);
+                $NewNotification->save();
+            }else{
+
+                $NewNotificationtoCheck = ProjectNotificationQuery::create()
+                    ->filterByUserId($Onlyusers[$i]->getId(),ProjectNotificationQuery::EQUAL)
+                    ->filterByMessageId($arrObj["questionId"],ProjectNotificationQuery::EQUAL)
+                    ->findOne();
+
+                if($NewNotificationtoCheck==null){
+                    $NewNotification = new ProjectNotification();
+                    $NewNotification->setStudyId($study);
+                    $NewNotification->setTime(New DateTime());
+                    $NewNotification->setUserId($Onlyusers[$i]->getId());
+                    $NewNotification->setMessageId($arrObj["questionId"]);
+                    $NewNotification->save();
+                }
+
+            }
         }
 
         $msg = ProjectMessagesQuery::create()
