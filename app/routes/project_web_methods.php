@@ -373,7 +373,7 @@ $app->post('/coordinator/message/add', function ($request, $response, $args) {
         $reader->execute();
         $Msgs = $reader->fetchAll(PDO::FETCH_ASSOC);
 
-        $Msgs[0]["text"] = json_decode($Msgs[0]["text"],true);
+        $Msgs[0]["text"] = json_decode($Msgs[0]["text"],true);;
 
         return $response->withJson(['status'=>'ok', 'UpdatedMessage'=>$Msgs]);
 
@@ -554,7 +554,8 @@ $app->get('/coordinator/message/byStudy/{id}', function ($request, $response, $a
 $app->get('/user/getbyStudyId/{id}', function ($request, $response, $args) {
 
     $projectUser = ProjectUserQuery::create()
-        ->filterByStudyId($a)
+        ->filterByStudyId($args['id'],ProjectUserQuery::EQUAL )
+        ->filterByRole("STUDENT", ProjectUserQuery::EQUAL)
         ->find();
 
     if($projectUser != null)
