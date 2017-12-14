@@ -362,5 +362,18 @@ $app->post('/project_api/subscribe', function ($request, $response, $args){
 
 
 
+$app->get('/project_api/getSubscrition', function ($request, $response, $args){
+
+
+    $userId = $this->jwt->user;
+
+    $user = ProjectUserQuery::create()
+        ->findOneById($userId);
+
+    return json_encode($user->getSubscribed());
+})->setName("project_api.getSubscrition");
+
+
+
 
 ?>
