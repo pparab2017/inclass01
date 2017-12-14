@@ -48,13 +48,13 @@
 
 
     <button id="btnAddUser" type="button" class="btn btn-success" data-toggle="modal" data-target=".bd-user-modal-lg" data-keyboard="false" data-backdrop="static">
-        Add Patient
+        Add Coordinators
         <i class="glyphicon glyphicon-plus"></i></button>
 
-    <button id="btnGetResponseLog" type="button" class="btn btn-success" style="margin-left:2%" onclick="location.href = '/myAdmin/messages'">
-        Add Messages
-        <i class="glyphicon glyphicon-envelope"></i>
-    </button>
+    <!--<button id="btnGetResponseLog" type="button" class="btn btn-success" style="margin-left:2%" onclick="location.href = '/myAdmin/messages'">-->
+        <!--Add Messages-->
+        <!--<i class="glyphicon glyphicon-envelope"></i>-->
+    <!--</button>-->
 </div>
 
 
@@ -65,7 +65,7 @@
             <div class="modal-content" >
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="userPanelHeader">Add New Patient</h4>
+                    <h4 class="modal-title" id="userPanelHeader">Add New Coordinator</h4>
 
                 </div>
                 <div class="modal-body" >
@@ -123,7 +123,7 @@
                             <label>Role</label>
 
                             <select  class="form-control" id="user-role" name="user-role" disabled="disabled" readonly  >
-                                <option value="MALE" >PATIENT</option>
+                                <option value="MALE" >COORDINATOR</option>
 
 
                             </select>
@@ -345,7 +345,7 @@
 
 
         $("#btnAddUser").click(function () {
-            $("#userPanelHeader").text("Add New Patient");
+            $("#userPanelHeader").text("Add New Coordinator");
             ClearUserForm();
             $('#submitUpdate').remove();
             $('#submitDelete').remove();
@@ -388,7 +388,7 @@
             e.preventDefault();
             console.log("test");
             $('#errorText').text("");
-            $("#userPanelHeader").text("Edit Patient");
+            $("#userPanelHeader").text("Edit Coordinator");
             $('#submitBtn').remove();
 
 
