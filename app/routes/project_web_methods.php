@@ -554,6 +554,7 @@ $app->get('/coordinator/message/byStudy/{id}', function ($request, $response, $a
 $app->get('/user/getbyStudyId/{id}', function ($request, $response, $args) {
 
     $projectUser = ProjectUserQuery::create()
+        ->filterByStudyId($args['id'],ProjectUserQuery::EQUAL)
         ->find();
 
     if($projectUser != null)
