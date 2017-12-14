@@ -96,7 +96,7 @@ $message = new ProjectMessages();
 $message->setStudyId($study01->getId());
 $message->setReminderType("H");
 $message->setType("QUESTION");
-$message->setText('{"message_type":"QUESTION","message":"How are you toady?","number_of_choices":4,"choices":"Vary Good|Good|Bad|Vary Bad","response":"","survey":""}
+$message->setText('{"message_type":"QUESTION","message":"How are you toady?","number_of_choices":4,"choices":"Vary Good|Good|Bad|Vary Bad","response":null,"survey":null}
 ');
 $message->setLastsent($datetime);
 $message->save();
@@ -135,7 +135,7 @@ $message = new ProjectMessages();
 $message->setStudyId($study02->getId());
 $message->setReminderType("O");
 $message->setType("SURVEY");
-$message->setText('{"message_type":"SURVEY","message":"Starter survey","number_of_choices":0,"choices":"","response":"","survey":{"survey_title":"Starter survey","survey_desc":"This is a starter survey","survey_instruction":"This has only 4 questions.","number_of_questions":4,"questions":[{"question_type":"TEXT","question_text":"Write your name below.","number_of_choices":0,"question_choices":"","response":""},{"question_type":"TEXT","question_text":"How good are you in Math?","number_of_choices":0,"question_choices":"","response":""},{"question_type":"MCQ","question_text":"How will you rate your self from in math?","number_of_choices":5,"question_choices":"1|2|3|4|5","response":""},{"question_type":"MCQ","question_text":"How will you rate your self from in logic?","number_of_choices":4,"question_choices":"Vary good|Good|Bad|Vary Bad","response":""}]}}');
+$message->setText('{"message_type":"SURVEY","message":"Starter survey","number_of_choices":0,"choices":"","response":"","survey":{"survey_title":"Starter survey","survey_desc":"This is a starter survey","survey_instruction":"This has only 4 questions.","number_of_questions":4,"questions":[{"question_type":"TEXT","question_text":"Write your name below.","number_of_choices":0,"question_choices":null,"response":null},{"question_type":"TEXT","question_text":"How good are you in Math?","number_of_choices":0,"question_choices":null,"response":null},{"question_type":"MCQ","question_text":"How will you rate your self from in math?","number_of_choices":5,"question_choices":"1|2|3|4|5","response":null},{"question_type":"MCQ","question_text":"How will you rate your self from in logic?","number_of_choices":4,"question_choices":"Vary good|Good|Bad|Vary Bad","response":null}]}}');
 $message->setLastsent($datetime);
 $message->save();
 

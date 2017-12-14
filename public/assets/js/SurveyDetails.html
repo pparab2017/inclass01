@@ -18,57 +18,57 @@
 </head>
 <body>
     <div id="surveydetailcontainer">
-        <!--<form action="doNothing" id="User-form" method="post" enctype="multipart/form-data">-->
-            <div class="row">
-                <h4 class="modal-title col-xs-10" id="surveyPanelHeader" style="text-align:center;font-weight:bold">Start New Survey</h4>
-                <button type="button" class="col-xs-2 btn btn-success" id="btnBack"> <i class="glyphicon glyphicon-list-alt"></i>&nbsp;&nbsp;Survey List</button>
+        <!--<form action="doNothing" id="SurveyDetail-form" method="post" enctype="multipart/form-data">-->
+        <div class="row">
+            <h4 class="modal-title col-xs-10" id="surveyPanelHeader" style="text-align:center;font-weight:bold">Start New Survey</h4>
+            <button type="button" class="col-xs-2 btn btn-success" id="btnBack"> <i class="glyphicon glyphicon-list-alt"></i>&nbsp;&nbsp;Survey List</button>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <p class="text-danger" id="errorTextSurvey"></p>
             </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <p class="text-danger" id="errorTextSurvey"></p>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <label>Survey Title</label>
+                <input class="form-control" type="text" id="survey-title" name="survey-title" placeholder="Enter Survey Title" required>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                <label>Survey Description</label>
+                <textarea class="form-control" rows="2" id="survey-description" name="survey-description" placeholder="Describe purpose of this survey." required></textarea>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-xs-12">
+                <label>Special Instructions</label>
+                <input class="form-control" type="text" id="survey-instruction" name="survey-instruction" placeholder="Any special instructions!" required>
+            </div>
+        </div>
+        <br />
+        <div class="well" id="questionContainer">
+            <div class="row" id="questionHeader">
+                <div class="col-xs-8">
+                    <label style="font-weight:bold;font-size:medium">QUESTIONS LIST</label>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <label>Survey Title</label>
-                    <input class="form-control" type="text" id="survey-title" name="survey-title" placeholder="Enter Survey Title" required>
+                <div class="col-xs-4">
+                    <label style="font-weight:bold;font-size:medium">TOTAL QUESTIONS:</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <label id="no-of-questions">0</label>
                 </div>
             </div>
             <br />
-            <div class="row">
-                <div class="col-xs-12">
-                    <label>Survey Description</label>
-                    <textarea class="form-control" rows="2" id="survey-description" name="survey-description" placeholder="Describe purpose of this survey." required></textarea>
-                </div>
+            <div id="addQuestionList">
             </div>
             <br />
-            <div class="row">
-                <div class="col-xs-12">
-                    <label>Special Instructions</label>
-                    <input class="form-control" type="text" id="survey-instruction" name="survey-instruction" placeholder="Any special instructions!" required>
-                </div>
-            </div>
             <br />
-            <div class="well" id="questionContainer">
-                <div class="row" id="questionHeader">
-                    <div class="col-xs-8">
-                        <label style="font-weight:bold;font-size:medium">QUESTIONS LIST</label>
-                    </div>
-                    <div class="col-xs-4">
-                        <label style="font-weight:bold;font-size:medium">TOTAL QUESTIONS:</label>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <label id="no-of-questions">0</label>
-                    </div>
-                </div>
-                <br />
-                <div id="questionList">
-                </div>
-                <br />
-                <br />
-            </div>
-            <div class="row" id="btnContainer-survey">
-                <button type="submit" id="submitSurvey" class="btn btn-success">SAVE</button>
-            </div>
+        </div>
+        <div class="row" id="btnContainer-survey">
+            <button type="button" id="submitSurvey" class="btn btn-success">SAVE</button>
+        </div>
         <!--</form>-->
     </div>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -77,13 +77,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="/assets/js/navigationhandler.js"></script>
-    <script src="/assets/js/users-handler.js"></script>
-    <script src="/assets/js/model-handler.js"></script>
-    <script src="/assets/js/messages-handler.js"></script>
-    <script src="/assets/js/survey-handler.js"></script>
-    <script src="/assets/js/surveydetail-handler.js"></script>
-    <script src="/assets/js/surveyresponse-handler.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.js"></script>
+    <script src="js/navigationhandler.js"></script>
+    <script src="js/users-handler.js"></script>
+    <script src="js/model-handler.js"></script>
+    <script src="js/messages-handler.js"></script>
+    <script src="js/survey-handler.js"></script>
+    <script src="js/surveydetail-handler.js"></script>
 </body>
 </html>

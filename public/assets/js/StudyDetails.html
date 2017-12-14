@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Dashboard</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/select2/select2/master/dist/css/select2.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.css">
+    <link href="css/leftnavigation.css" rel="stylesheet" />
+</head>
+<body class="container">
+    <h4 class="jumbotron page-title">Study Coordinator Dashboard</h4>
+    <!--BEGIN SIDEBAR MENU-->
+    <div class="col-lg-2">
+        <nav id="sidebar" role="navigation" class="navbar-default navbar-static-side">
+            <div class="sidebar-collapse menu-scroll">
+                <ul id="side-menu" class="nav" role="tablist" style="font-weight:bold;font-size:large;text-align:center;">
+                    <div class="clearfix"></div>
+                    <li role="presentation" id="usersTab">
+                        <a role="tab" data-toggle="tab" href="#usersContent" aria-controls="usersContent">
+                            <span class="menu-title">Users&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-user"></i></span>
+                        </a>
+                    </li>
+                    <li role="presentation" id="messagesTab">
+                        <a role="tab" data-toggle="tab" href="#messagesContent" aria-controls="messagesContent">
+                            <span class="menu-title">Messages&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-envelope"></i></span>
+                        </a>
+                    </li>
+                    <li role="presentation" id="surveysTab">
+                        <a role="tab" data-toggle="tab" href="#surveysContent" aria-controls="surveysContent">
+                            <span class="menu-title">Surveys</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <!--END SIDEBAR MENU-->
+    <!-- Tab panes -->
+    <div class="tab-content col-lg-10">
+        <div role="tabpanel" class="tab-pane active" id="usersContent"></div>
+        <div role="tabpanel" class="tab-pane" id="messagesContent"></div>
+        <div role="tabpanel" class="tab-pane" id="surveysContent"></div>
+    </div>
+
+    <input type="hidden" id="selectedStudyId"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.js"></script>
+    <script src="/assets/js/navigationhandler.js"></script>
+    <script src="/assets/js/users-handler.js"></script>
+    <script src="/assets/js/model-handler.js"></script>
+    <script src="/assets/js/messages-handler.js"></script>
+    <script src="/assets/js/survey-handler.js"></script>
+    <script src="/assets/js/surveydetail-handler.js"></script>
+    <script src="/assets/js/surveyresponse-handler.js"></script>
+
+</body>
+</html>

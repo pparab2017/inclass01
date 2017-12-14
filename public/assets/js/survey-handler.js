@@ -1,5 +1,5 @@
 ﻿var tableSurveys;
-var thisStudyId;
+var thisStudyIdSurveys;
 
 var surveyRoutes = {
     listSurvey: "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/coordinator/message/byStudy/{id}",
@@ -9,7 +9,7 @@ var surveyRoutes = {
 };
 
 function InitSurveyInfo(studyId) {
-    thisStudyId = studyId;
+    thisStudyIdSurveys = studyId;
     tableSurveys = $('#tblSurveys')
             .on('xhr.dt', function (e, settings, json, xhr) { // To test the Ajax_output
                 console.log(json);
@@ -18,7 +18,7 @@ function InitSurveyInfo(studyId) {
             {
                 "processing": true,
                 "ajax": {
-                    "url": surveyRoutes.listSurvey.replace("{id}", thisStudyId),
+                    "url": surveyRoutes.listSurvey.replace("{id}", thisStudyIdSurveys),
                     "dataSrc": function (json) {
                         var filteredSurveys = [];
                         var length = json.Messages.length;
@@ -33,8 +33,8 @@ function InitSurveyInfo(studyId) {
                 "columns": [
                     { "defaultContent": " <a href='#' id='selectSurvey'><span class='glyphicon glyphicon-expand'></span>Show Details</a>", "autoWidth": false, "orderable": false },
                     { "data": 'text.message' },
-                    { "data": 'LastSent' },
-                    { "defaultContent": " <a href='#' id='editSurvey'><span class='glyphicon glyphicon-edit'></span> Edit</a>  ", "autoWidth": false, "orderable": false },
+                    { "data": 'LastSent' }
+                    //{ "defaultContent": " <a href='#' id='editSurvey'><span class='glyphicon glyphicon-edit'></span> Edit</a>  ", "autoWidth": false, "orderable": false }
                 ]
             });
 
@@ -67,7 +67,7 @@ function InitSurveyInfo(studyId) {
 
         $("#surveysContent").load("EditSurvey.html #editSurveycontainer");
         setTimeout(function () {
-            InitSurveyEdit(selectedSurvey, thisStudyId);
+            InitSurveyEdit(selectedSurvey, thisStudyIdSurveys);
         }, 50);
     });
 
@@ -99,7 +99,7 @@ function InitSurveyInfo(studyId) {
             url: deleteUrl,
             success: function (res) {
                 if (res.status == 'ok') {
-                    tblSurveys.ajax.reload();
+                    tableSurveys.ajax.reload();
                 } else {
                     console.log(res);
                 }

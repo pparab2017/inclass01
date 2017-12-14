@@ -1,7 +1,7 @@
 ﻿
 var selectedUser;
 var tableUsers;
-var thisStudyId;
+var userthisStudyId;
 var userRoutes = {
     listUsers: "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/user/getbyStudyId/{Study_id}",
     addUser: "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/user/add",
@@ -9,14 +9,11 @@ var userRoutes = {
     deleteUser: "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/user/delete/{id}",
     userResponses: "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/coordinator/response/user/{id}"
 };
-//var getUsersRoute = "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/admin/user/getAll"
 
-
-//$(document).ready(function () {
 function InitUserInfo(studyId) {
 
-    thisStudyId = studyId;
-    userRoutes.listUsers = userRoutes.listUsers.replace("{Study_id}", thisStudyId);
+    userthisStudyId = studyId;
+    userRoutes.listUsers = userRoutes.listUsers.replace("{Study_id}", userthisStudyId);
     UserFormsDoNothing();
     BindUserEvents();
 
@@ -35,16 +32,16 @@ function InitUserInfo(studyId) {
 
     tableUsers = $('#tblUsers')
             .on('xhr.dt', function (e, settings, json, xhr) { // To test the Ajax_output
-                console.log(json);
+                // console.log(json);
             })
             .DataTable(
             {
                 "processing": true,
                 "ajax": {
-                    "url": userRoutes.listUsers.replace("{Study_id}", thisStudyId),
+                    "url": userRoutes.listUsers.replace("{Study_id}", userthisStudyId),
                     "dataSrc": function (json) {
                         for (i = 0; i < json.user.length; i++) {
-                            if (json.user[i].StudyId == thisStudyId) {
+                            if (json.user[i].StudyId == userthisStudyId) {
                                 json.user[i]["Name"] = json.user[i]["Fname"] + " " + json.user[i]["Lname"];
                             }
                         }
@@ -79,19 +76,24 @@ function InitUserInfo(studyId) {
          {
              "destroy": true,
              "processing": true,
-             //"data": userResponses,
              "ajax": {
                  "url": url,
                  "dataSrc": function (json) {
-                     return json.Messages;
+                     var filteredMsgs = [];
+                     for (var i = 0; i < json.Messages.length; i++) {
+                         if (json.Messages[i].response_text != null && json.Messages[i].response_text != "") {
+                             filteredMsgs.push(json.Messages[i]);
+                         }
+                     }
+                     return filteredMsgs;
                  }
              },
              "columns": [
                  { "defaultContent": "", "autoWidth": false, "orderable": false },
-                 { "data": 'text.message_type' },
-                 { "data": 'text.message' },
-                 { "data": 'text.choices' },
-                 { "data": 'text.response' }
+                 { "data": 'response_text.message_type' },
+                 { "data": 'response_text.message' },
+                 { "data": 'response_text.choices' },
+                 { "data": 'response_text.response' }
              ],
              "order": [[1, 'asc']]
          });
@@ -127,7 +129,7 @@ function InitUserInfo(studyId) {
         BindUserEvents();
     });
 }
-//});
+
 function BindUserEvents() {
     //Coordinator button clicks
     $("#submitBtn").unbind();
@@ -144,7 +146,7 @@ function BindUserEvents() {
                 "userGender": $("#gender").val(),
                 "userFname": $("#first-name").val(),
                 "userLname": $("#last-name").val(),
-                "userStudyId": thisStudyId,
+                "userStudyId": userthisStudyId,
                 "userRole": "STUDENT",
                 "userEmail": $("#email").val(),
             }
@@ -179,7 +181,7 @@ function BindUserEvents() {
                 "userGender": $("#gender").val(),
                 "userFname": $("#first-name").val(),
                 "userLname": $("#last-name").val(),
-                "userStudyId": thisStudyId,
+                "userStudyId": userthisStudyId,
                 "userRole": "STUDENT",
                 "userEmail": $("#email").val(),
                 "id": selectedUser.Id
@@ -205,7 +207,7 @@ function BindUserEvents() {
     });
 
     //Delete User
-    $('#submitDelete').click(function () {
+    $('#submitDelete').click(function (e) {
         var deleteUrl = userRoutes.deleteUser.replace("{id}", selectedUser.Id);
         $.ajax({
             type: 'GET',

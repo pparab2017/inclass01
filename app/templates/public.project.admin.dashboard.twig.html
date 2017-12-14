@@ -173,13 +173,13 @@
 
 
     var ajaxCallRoutes ={
-        user:"{{path_for('myAdmin.user.ajax')}}"
+        user:"{{path_for('project.user.ajax')}}"
     }
 
     var userRoutes = {
-        add:"{{path_for('myAdmin.user.add')}}",
-        update:"{{path_for('myAdmin.user.update')}}",
-        delete:"{{path_for('myAdmin.user.delete', { 'id' : '{id}' })}}"
+        add:"{{path_for('project.user.add')}}",
+        update:"{{path_for('project.user.update')}}",
+        delete:"{{path_for('project.user.delete', { 'id' : '{id}' })}}"
     };
 
 
@@ -366,7 +366,7 @@
                     "processing": true,
                     "ajax": {
                         "url": ajaxCallRoutes.user,
-                        "dataSrc" : "Newusers"
+                        "dataSrc" : "ProjectUsers"
                     },
                     "columns": [
 

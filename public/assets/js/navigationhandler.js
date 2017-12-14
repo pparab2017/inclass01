@@ -15,15 +15,12 @@
     //setting default tab content
     $("#usersContent").load("/assets/js/UserInformation.html #usercontainer");
     setTimeout(function () {
-        //console.log(studyId);
         InitUserInfo(studyId);
-
-    }, 500);
+    }, 50);
     
 
     //tab navigation
     $('nav ul').on('click', '#usersTab', function () {
-
         $("#usersContent").load("/assets/js/UserInformation.html #usercontainer");
         setTimeout(function () {
             InitUserInfo(studyId);

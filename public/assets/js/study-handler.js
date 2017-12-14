@@ -54,7 +54,7 @@ $(document).ready(function () {
         var row = tableStudies.row(tr);
         if (row.child.isShown()) {
             row.child.hide();
-            $(this).html("<span class='glyphicon glyphicon glyphicon-expand'></span> Show Details");
+            $(this).html("<span class='glyphicon glyphicon glyphicon de-expand'></span> Show Details");
         }
         else {
             // Open this row
@@ -100,21 +100,22 @@ function GetStudyDetail(study) {
             '<td>Study Description:</td>' +
             '<td>' + study.StudyDescription + '</td>' +
         '</tr>' +
-        '<tr>' +
-            '<td>Users Enrolled:</td>' +
-            '<td>' + study.EnrolledUsersCount + '</td>' +
-            '<td><a href="#" id="seeStudyUsers"><span class="glyphicon glyphicon-information"></span> View Enrolled Users  </a></td>' +
-        '</tr>' +
-        '<tr>' +
-            '<td>Messages Sent:</td>' +
-            '<td>' + study.MessagesCount + '</td>' +
-            '<td><a href="#" id="seeMessages"><span class="glyphicon glyphicon-information"></span> View All Messages  </a></td>' +
-        '</tr>' +
-        '<tr>' +
-            '<td>Surveys Sent:</td>' +
-            '<td>' + study.SurveyCount + '</td>' +
-            '<td><a href="#" id="seeSurveys"><span class="glyphicon glyphicon-information"></span> View All Surveys  </a></td>' +
-        '</tr><br/>' +
+        //'<tr>' +
+        //    '<td>Users Enrolled:</td>' +
+        //    '<td>' + study.EnrolledUsersCount + '</td>' +
+        //    '<td><a href="#" id="seeStudyUsers"><span class="glyphicon glyphicon-information"></span> View Enrolled Users  </a></td>' +
+        //'</tr>' +
+        //'<tr>' +
+        //    '<td>Messages Sent:</td>' +
+        //    '<td>' + study.MessagesCount + '</td>' +
+        //    '<td><a href="#" id="seeMessages"><span class="glyphicon glyphicon-information"></span> View All Messages  </a></td>' +
+        //'</tr>' +
+        //'<tr>' +
+        //    '<td>Surveys Sent:</td>' +
+        //    '<td>' + study.SurveyCount + '</td>' +
+        //    '<td><a href="#" id="seeSurveys"><span class="glyphicon glyphicon-information"></span> View All Surveys  </a></td>' +
+        //'</tr>' +
+        '<br/>' +
         '<tr>' +
         '<td colspan=3>' +
         '<button id="btnEditStudy" type="button" class="btn btn-success" data-toggle="modal" data-target=".bd-study-modal-lg" data-keyboard="false" data-backdrop="static">'+

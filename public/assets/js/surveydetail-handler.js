@@ -6,26 +6,27 @@ var addSurvey = "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/coord
 
 function InitSurveyDetail(studyid, surveyid) {
 
-    console.log(studyid + surveyid);
     //get selected study id
     thisStudyId = studyid;
     //Adding a blank Question Row on page load.
     var rowKey = "row" + questionCount;
-    console.log("rtrying to bind");
     AddNewRowHtml(rowKey);
 
-    BindQuestionAddButtonEvents();
 
     $("#btnBack").click(function () {
         $("#surveysContent").load("/assets/js/SurveyInformation.html #surveycontainer");
         setTimeout(function () {
             InitSurveyInfo(thisStudyId);
-        }, 50);
+        }, 500);
     });
 
     //Save Survey
     $('#submitSurvey').click(function () {
-        var objToPost = GetObjectToPost("add");
+        //if ($('#SurveyDetail-form')[0].checkValidity()) {
+        //    e.preventDefault();
+        //    SurveyDetailsFormsDoNothing();
+
+        var objToPost = GetObjectToPost_Method("add");
         console.log(objToPost);
         $.ajax({
             type: 'POST',
@@ -36,7 +37,8 @@ function InitSurveyDetail(studyid, surveyid) {
                     $("#surveysContent").load("/assets/js/SurveyInformation.html #surveycontainer");
                     setTimeout(function () {
                         InitSurveyInfo(thisStudyId);
-                    }, 50);
+                    }, 500);
+
                 } else {
                     $("#errorTextSurvey").text(res);
                 }
@@ -45,14 +47,13 @@ function InitSurveyDetail(studyid, surveyid) {
                 console.log('error: ' + errorThrown);
             }
         });
+        //}
     });
 }
 
-function BindQuestionAddButtonEvents() {
-
-    console.log("binding events");
+function BindQuestionMyEvents() {
     //delete question row.
-    $("#questionList > .row").on('click', '.btn-danger', function () {
+    $("#addQuestionList > .row").on('click', '.btn-danger', function () {
         var rowKey = $(this).closest(".row").attr("id");
         console.log(rowKey);
         for (var i = 0; i < questionsList.length; i++) {
@@ -62,11 +63,10 @@ function BindQuestionAddButtonEvents() {
         //delete questionsList[rowKey];
         console.log(questionsList);
         $("#no-of-questions").val(questionsList.length);
-        $("#questionList").find("#" + rowKey).remove();
+        $("#addQuestionList").find("#" + rowKey).remove();
     });
     //save question row.
-    $("#questionList > .row").on('click', '.btn-success', function () {
-        console.log("ddfdfdf");
+    $("#addQuestionList > .row").on('click', '.btn-success', function () {
         var quesType = $(this).closest(".row").find("#question-type").val();
         var quesText = $(this).closest(".row").find("#question-text").val();
         var choices = "";
@@ -94,8 +94,7 @@ function BindQuestionAddButtonEvents() {
         $(this).closest(".row").find(".btn-danger").attr("disabled", false);
     });
     //change event for question type
-    $("#questionList > .row").on('change', 'select', function () {
-        console.log("refrete");
+    $("#addQuestionList > .row").on('change', 'select', function () {
         if ($(this).val() == QUESTION_TYPE.MCQ) {
             $(this).closest(".row").find('#question-choices').attr("disabled", false);
             $(this).closest(".row").find('#question-choices').val("");
@@ -108,13 +107,11 @@ function BindQuestionAddButtonEvents() {
 }
 function AddNewRowHtml(rowKey) {
     //add empty question row
+    // SurveyDetailsFormsDoNothing();
     var questionHtml = GetBlankQuestionRow(rowKey);
-    $("#questionList").append(questionHtml);
-    console.log("rer");
-
+    $("#addQuestionList").append(questionHtml);
+    BindQuestionMyEvents();
 }
-
-
 function GetBlankQuestionRow(rowKey) {
     return '<div class="row well" id="' + rowKey + '">' +
                     '<div class="col-xs-6">' +
@@ -145,98 +142,12 @@ function GetBlankQuestionRow(rowKey) {
                     '</div>' +
              '</div>';
 }
-
-
-function BindSurveyEvents() {
-    //Coordinator button clicks
-    $("#submitSurvey").unbind();
-    $("#updateSurvey").unbind();
-    $("#deleteSurvey").unbind();
-
-    //Add Message
-    $('#submitSurvey').click(function () {
-        var objToPost = GetSurveyObjectToPost("add");
-
-
-        console.log(objToPost);
-        $.ajax({
-            type: 'POST',
-            url: surveyRoutes.addSurvey,
-            data: objToPost,
-            success: function (res) {
-                if (res.status == "ok") {
-                    tableSurveys.ajax.reload();
-                    $('#survey-modal').modal('hide');
-                } else {
-                    $("#errorTextSurvey").text(res);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('error: ' + errorThrown);
-            }
-        });
-    });
-
-    //Update Existing Message
-    $('#updateSurvey').click(function () {
-        var objToPost = GetSurveyObjectToPost("update");
-        $.ajax({
-            type: 'POST',
-            url: surveyRoutes.updateSurvey,
-            data: objToPost,
-            success: function (res) {
-                if (res.status == "ok") {
-                    tableSurveys.ajax.reload();
-                    $('#survey-modal').modal('hide');
-                } else {
-                    $("#errorTextSurvey").text(res);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('error: ' + errorThrown);
-            }
-        });
-    });
-
-    //Delete Message
-    $('#deleteSurvey').click(function () {
-        var deleteUrl = surveyRoutes.deleteSurvey.replace("{id}", selectedSurvey.id);
-        $.ajax({
-            type: 'GET',
-            url: deleteUrl,
-            success: function (res) {
-                if (res.status == "ok") {
-                    tableSurveys.ajax.reload();
-                    $('#survey-modal').modal('hide');
-                } else {
-                    $("#errorTextSurvey").text(res);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log('error: ' + errorThrown);
-            }
-        });
-    });
-}
-function ClearSurveyForm() {
-    $('#message-type').val("MESSAGE");
-    $('#message-text').val("");
-    $('#question-choices').val("");
-    $('#reminder-type').val("H");
-    $('#reminder-time-1').val("");
-    $('#reminder-time-2').val("");
-    $('#question-choices').attr("disabled", true);
-    $('#reminder-time-1').attr("disabled", true);
-    $('#reminder-time-2').attr("disabled", true);
-    $('#errorTextSurvey').text("");
-    selectedSurvey = "";
-}
-function FormsDoNothing() {
-    $('#Survey-form').submit(function (event) {
+function SurveyDetailsFormsDoNothing() {
+    $('#SurveyDetail-form').submit(function (event) {
         event.preventDefault();
     });
 }
-function GetSurveyObjectToPost(action) {
+function GetObjectToPost_Method(action) {
 
     var reminderType = "O";
     var msgType = MESSAGE_TYPE.SURVEY;

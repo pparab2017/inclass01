@@ -19,7 +19,7 @@ $app->get('/MyAdmin/login', function($request, $response, $args){
 
 
 $app->get('/login', function($request, $response, $args){
-    return $this->view->render($response, 'public.admin.login.twig.html', []);
+    return $this->view->render($response, 'public.project.login.twig.html', []);
 })->setName('login')
     ->add($checkIfDontNeedAuth);
 
@@ -29,7 +29,7 @@ $app->post('/login', function ($request, $response, $args){
     $params = $request->getParsedBody();
 
     //return $response->getBody()->write(var_dump($params));
-    $falloutLoginView = "public.admin.login.twig.html";
+    $falloutLoginView = "public.project.login.twig.html";
 
     if(!Utils::checkIfNotEmpty($params['login-name'])){
         $params['errors'] = array('username'=>'Error with username');

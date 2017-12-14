@@ -9,7 +9,7 @@ function InitSurveyResponseDetail(surveyid, surveyTitle) {
     $("#surveyResponsesPanelHeader").html("Survey Title: " + surveyTitle);
 
     $("#btnBackToSurveys").click(function () {
-        $("#surveysContent").load("SurveyInformation.html #surveycontainer");
+        $("#surveysContent").load("/assets/js/SurveyInformation.html #surveycontainer");
         setTimeout(function () {
             InitSurveyInfo(thisStudyId);
         }, 50);
@@ -28,7 +28,9 @@ function InitSurveyResponseDetail(surveyid, surveyTitle) {
                        var filteredSurveys = [];
                        var length = json.Messages.length;
                        for (var i = 0 ; i < length ; i++) {
-                           if (json.Messages[i].response_text.message_type == MESSAGE_TYPE.SURVEY) {
+                           if (json.Messages[i].response_text != null && json.Messages[i].response_text!=""
+                                   && json.Messages[i].response_text.message_type == MESSAGE_TYPE.SURVEY)
+                           {
                                json.Messages[i]["user_name"] = json.Messages[i].fname + " " + json.Messages[i].lname;
                                json.Messages[i]["responded"] = json.Messages[i].response_text != "" ? "Yes" : "No";
                                json.Messages[i]["opened_at"] = json.Messages[i].opened_at == null ? "" : json.Messages[i].opened_at;
@@ -81,16 +83,3 @@ function InitSurveyResponseDetail(surveyid, surveyTitle) {
         }).draw();
     });
 }
-//function BindQuestion(question) {
-//    var questionText = "QuestionA";
-//    var choices = "1|2|3|4";
-//    var response = "1";
-//    var questionHtml = '<div class="row">' +
-//                                '<div class="col-xs-12">' +
-//                                    '<label>Question - </label>' +
-//                                    '<label>Choices - </label>' +
-//                                    '<label>Response</label>' +
-//                                '</div>' +
-//                            '</div>'
-//    return questionHtml;
-//}

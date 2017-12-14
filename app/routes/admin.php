@@ -14,6 +14,113 @@ use Propel\Runtime\Propel;
 
 
 
+
+
+$app->post('/myAdmin/user/add', function ($request, $response, $args) {
+
+    $con = Propel::getWriteConnection('default');// get the data base name connection
+    $returnJson = "OK";
+    try {
+        $params = $request->getParsedBody();// get the form request
+        $user = new Newuser();
+        $user->setFname(htmlentities($params['user-fname']));
+        $user->setLname($params['user-lname']);
+        $user->setEmail($params['user-email']);
+        $user->setHash(Utils::generateHash($params['user-pass']));
+        $user->setGender($params['user-gender']);
+        $user->setRole('PATIENT');
+
+        $con->beginTransaction();
+        $user->save();
+
+
+    }
+    catch (Exception $e) {
+        $con->rollBack();
+        if(strpos($e, '1062') !== false)
+        {
+            $returnJson =  "Action not completed, An account with this email address already exist!";
+        }
+        else
+        {
+            $returnJson = $e->getMessage();
+        }
+    }
+    finally
+    {
+        $con->commit();
+        return json_encode($returnJson);
+
+    }
+
+
+})->setName('myAdmin.user.add')
+    ->add($checkAdminAuthMiddleware);
+
+
+
+
+$app->post('/myAdmin/user/update', function ($request, $response, $args) {
+    $returnJson = "OK";
+    try {
+        $params = $request->getParsedBody();// get the form request
+        $user = NewuserQuery::create()->findOneById($params['user-EditId']);
+        $user->setEmail($params['user-email']);
+        if($params['user-pass']!= "PASSWORD")
+            $user->setHash(Utils::generateHash($params['user-pass']));
+        $user->setFname($params['user-fname']);
+        $user->setLname($params['user-lname']);
+        $user->setGender($params['user-gender']);
+        $user->setRole('PATIENT');
+        $user->save();
+    }
+    catch (Exception $ex)
+    {
+        if(strpos($ex, '1062') !== false)
+        {
+            $returnJson =  "Action not completed, An account with this email address already exist!";
+        }
+        else
+        {
+            $returnJson = $ex->getMessage();
+        }
+    }
+    finally
+    {
+        return json_encode($returnJson);
+    }
+
+
+})
+    ->setName('myAdmin.user.update')
+    ->add($checkAdminAuthMiddleware);
+
+
+
+$app->get('/myAdmin/user/delete/{id}', function ($request, $response, $args) {
+
+    $returnJson = "OK";
+
+    try{
+        NewuserQuery::create()
+            ->findById( $args['id'])
+            ->delete();
+    }
+    catch (Exception $ex)
+    {
+        $returnJson = $ex->getMessage();
+    }
+    finally
+    {
+        return json_encode($returnJson);
+    }
+
+})->setName('myAdmin.user.delete')
+    ->add($checkAdminAuthMiddleware);
+
+
+
+
 $app->get('/myAdmin/user/ajax', function ($request, $response, $args) {
 
 
@@ -335,108 +442,6 @@ $app->post('/admin/user/addMessage', function ($request, $response, $args){
 
 
 
-
-$app->post('/myAdmin/user/add', function ($request, $response, $args) {
-
-    $con = Propel::getWriteConnection('default');// get the data base name connection
-    $returnJson = "OK";
-    try {
-        $params = $request->getParsedBody();// get the form request
-        $user = new Newuser();
-        $user->setFname(htmlentities($params['user-fname']));
-        $user->setLname($params['user-lname']);
-        $user->setEmail($params['user-email']);
-        $user->setHash(Utils::generateHash($params['user-pass']));
-        $user->setGender($params['user-gender']);
-        $user->setRole('PATIENT');
-
-        $con->beginTransaction();
-        $user->save();
-
-
-    }
-    catch (Exception $e) {
-        $con->rollBack();
-        if(strpos($e, '1062') !== false)
-        {
-            $returnJson =  "Action not completed, An account with this email address already exist!";
-        }
-        else
-        {
-            $returnJson = $e->getMessage();
-        }
-    }
-    finally
-    {
-        $con->commit();
-        return json_encode($returnJson);
-
-    }
-
-
-})->setName('myAdmin.user.add')
-    ->add($checkAdminAuthMiddleware);
-
-
-
-
-$app->post('/myAdmin/user/update', function ($request, $response, $args) {
-    $returnJson = "OK";
-    try {
-        $params = $request->getParsedBody();// get the form request
-        $user = NewuserQuery::create()->findOneById($params['user-EditId']);
-        $user->setEmail($params['user-email']);
-        if($params['user-pass']!= "PASSWORD")
-            $user->setHash(Utils::generateHash($params['user-pass']));
-        $user->setFname($params['user-fname']);
-        $user->setLname($params['user-lname']);
-        $user->setGender($params['user-gender']);
-        $user->setRole('PATIENT');
-        $user->save();
-    }
-    catch (Exception $ex)
-    {
-        if(strpos($ex, '1062') !== false)
-        {
-            $returnJson =  "Action not completed, An account with this email address already exist!";
-        }
-        else
-        {
-            $returnJson = $ex->getMessage();
-        }
-    }
-    finally
-    {
-        return json_encode($returnJson);
-    }
-
-
-})
-    ->setName('myAdmin.user.update')
-    ->add($checkAdminAuthMiddleware);
-
-
-
-$app->get('/myAdmin/user/delete/{id}', function ($request, $response, $args) {
-
-    $returnJson = "OK";
-
-    try{
-        NewuserQuery::create()
-            ->findById( $args['id'])
-            ->delete();
-    }
-    catch (Exception $ex)
-    {
-        $returnJson = $ex->getMessage();
-    }
-    finally
-    {
-        return json_encode($returnJson);
-    }
-
-})->setName('myAdmin.user.delete')
-    ->add($checkAdminAuthMiddleware);
 
 
 $app->get('/doctor/patient/surveyResults/{id}', function($request, $response, $args)

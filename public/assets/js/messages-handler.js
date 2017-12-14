@@ -1,7 +1,7 @@
 
 var selectedMessage;
 var tableMessages;
-var thisStudyId;
+var thisStudyIdMsgs;
 
 var messageRoutes = {
     listMessages: "http://ec2-18-216-112-134.us-east-2.compute.amazonaws.com/coordinator/message/byStudy/{id}",
@@ -11,7 +11,7 @@ var messageRoutes = {
 };
 
 function InitMessageInfo(studyId) {
-    thisStudyId = studyId;
+    thisStudyIdMsgs = studyId;
 
     FormsDoNothing();
     BindMessageEvents();
@@ -40,7 +40,7 @@ function InitMessageInfo(studyId) {
             {
                 "processing": true,
                 "ajax": {
-                    "url": messageRoutes.listMessages.replace("{id}", thisStudyId),
+                    "url": messageRoutes.listMessages.replace("{id}", thisStudyIdMsgs),
                     "dataSrc": function (json) {
                         var filteredMessages = [];
                         var length = json.Messages.length;
@@ -117,7 +117,6 @@ function InitMessageInfo(studyId) {
 
         var selected_message = data;
         selectedMessage = data;
-
         $('#message-type').val(selected_message.type);
         $('#message-text').val(selected_message.text.message);
         $('#reminder-type').val(selected_message.reminder_type);
@@ -126,15 +125,17 @@ function InitMessageInfo(studyId) {
             $('#question-choices').attr('disabled', false);
             $('#question-choices').val(selected_message.text.choices);
         }
-        if (selected_message.reminderType == "O") {
-            $('#reminder-time-1').val(selected_message.time.split(",")[0]);
+        if (selected_message.reminder_type == "O" && selected_message.Time!=null) {
+            
+            $('#reminder-time-1').val(selected_message.Time.split(",")[0]);
             $('#reminder-time-1').attr('disabled', false);
         }
-        else if (selected_message.reminderType == "T") {
-            $('#reminder-time-1').val(selected_message.time.split(",")[0]);
+        else if (selected_message.reminder_type == "T" && selected_message.Time!=null) {
+          
+            $('#reminder-time-1').val(selected_message.Time.split(",")[0]);
             $('#reminder-time-1').attr('disabled', false);
 
-            $('#reminder-time-2').val(selected_message.time.split(",")[1]);
+            $('#reminder-time-2').val(selected_message.Time.split(",")[1]);
             $('#reminder-time-2').attr('disabled', false);
         }
 
@@ -201,7 +202,7 @@ function BindMessageEvents() {
 
     //Add Message
     $('#submitMessage').click(function () {
-        var objToPost = GetObjectToPost("add");
+        var objToPost = GetObjectToPostMessage("add");
         console.log(objToPost);
         $.ajax({
             type: 'POST',
@@ -223,7 +224,7 @@ function BindMessageEvents() {
 
     //Update Existing Message
     $('#updateMessage').click(function () {
-        var objToPost = GetObjectToPost("update");
+        var objToPost = GetObjectToPostMessage("update");
         $.ajax({
             type: 'POST',
             url: messageRoutes.updateMessage,
@@ -297,7 +298,7 @@ function GetInfoMessageDetail(m) {
 
 
 
-function GetObjectToPost(action) {
+function GetObjectToPostMessage(action) {
     var msgType = $("#message-type").val();
     var messageText = $("#message-text").val();
     var choices = "";
@@ -322,7 +323,7 @@ function GetObjectToPost(action) {
             "reminderType": reminderType,
             "type": msgType,
             "time": reminderTime,
-            "studyId": thisStudyId
+            "studyId": thisStudyIdMsgs
         };
         console.log(obj);
         return obj;
@@ -333,7 +334,7 @@ function GetObjectToPost(action) {
             "reminderType": reminderType,
             "type": msgType,
             "time": reminderTime,
-            "studyId": thisStudyId,
+            "studyId": thisStudyIdMsgs,
             "id": selectedMessage.id
         };
         console.log(obj);
