@@ -37,19 +37,26 @@ for($i = 0; $i< sizeof($results); $i++){
 }
 
 function sendMessages($study){
-    $sql = "select 
-    q.id as questionId,
-    q.Text,
-    q.Choises,
-    q.Type,
-    q.Time,
-    q.User_id,
-    q.LastSent,
-    u.Subscribed
-     from Questions q JOIN
-    NewUser u on u.id = q.user_id 
-    ";
+//    $sql = "select
+//    q.id as questionId,
+//    q.Text,
+//    q.Choises,
+//    q.Type,
+//    q.Time,
+//    q.User_id,
+//    q.LastSent,
+//    u.Subscribed
+//     from Questions q JOIN
+//    NewUser u on u.id = q.user_id
+//    ";
 
+    $sql =  "select m.id as questionId,m.Text,m.reminder_type as Type,
+m.Time,m.LastSent from project_messages m
+Join project_study s on s.id = m.study_id
+where s.id = {STUDY_ID};";
+
+
+    $sql = str_replace("{STUDY_ID}",$study,$sql);
     $conn = Propel::getConnection();
     $reader = $conn->prepare($sql);
     $reader->execute();
@@ -57,43 +64,46 @@ function sendMessages($study){
 
 
 
+
     for($i = 0 ; $i < sizeof($results); $i++ ){
 
         $timeString = explode(",",  $results[$i]["Time"]);
 
-        echo date('H:i:s') .PHP_EOL ;
+        echo $results[$i]["Text"] . PHP_EOL;
 
-        $lastSend = new DateTime("2017-11-17 10:25:24");
+       // echo date('H:i:s') .PHP_EOL ;
+
+      //  $lastSend = new DateTime("2017-11-17 10:25:24");
         $dateNow = new DateTime();
         $subscribed = false;
 
-        if($results[$i]["Subscribed"] == "YES")
-        {
-            $subscribed = true;
-        }
+//        if($results[$i]["Subscribed"] == "YES")
+//        {
+//            $subscribed = true;
+//        }
 
         {
 
             if ($results[$i]["Type"] == "H") {
 
-                echo "sEnd Hourly" . PHP_EOL;
-                echo $results[$i]["LastSent"] . PHP_EOL;
+              //  echo "sEnd Hourly" . PHP_EOL;
+               // echo $results[$i]["LastSent"] . PHP_EOL;
                 if ($results[$i]["LastSent"] != null || $results[$i]["LastSent"] != "") {
                     $lastSend = new DateTime($results[$i]["LastSent"]);
                     $dateNow = new DateTime();
 
                     $diff = ($dateNow->getTimestamp() - $lastSend->getTimestamp()) / 3600;
-                    echo $diff;
+                    //echo $diff;
                     if ($diff >= 1) {
                         // send a messages
                         //update last sent
-                        sendMsg($results[$i],$subscribed);
-                        echo "sEnd Hourly";
+                        sendMsg($results[$i],$study);
+                        //echo "sEnd Hourly";
                     }
                 } else {
                     // send message
-                    sendMsg($results[$i],$subscribed);
-                    echo "sEnd Hourly first";
+                    sendMsg($results[$i],$study);
+                    //echo "sEnd Hourly first";
                 }
             } else if ($results[$i]["Type"] == "O") {
                 if ($results[$i]["LastSent"] != null || $results[$i]["LastSent"] != "") {
@@ -106,12 +116,12 @@ function sendMessages($study){
                         $timeNow_01 = explode(':', date('H:i:s'));
                         $FirstTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
                         $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
-                        echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
+                        //echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
 
                         if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                             //send message
-                            sendMsg($results[$i],$subscribed);
-                            echo "sEnd once day";
+                            sendMsg($results[$i],$study);
+                           // echo "sEnd once day";
                         }
 
                     }
@@ -122,12 +132,12 @@ function sendMessages($study){
                     $timeNow_01 = explode(':', date('H:i:s'));
                     $FirstTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
                     $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
-                    echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
+                    //echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
 
                     if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                         //send message
-                        sendMsg($results[$i],$subscribed);
-                        echo "sEnd once day first";
+                        sendMsg($results[$i],$study);
+                        //echo "sEnd once day first";
                     }
                 }
             } else {
@@ -143,8 +153,8 @@ function sendMessages($study){
                         $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
                         if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                             //send message
-                            sendMsg($results[$i],$subscribed);
-                            echo "sEnd 2wise day 1st";
+                            sendMsg($results[$i],$study);
+                            //echo "sEnd 2wise day 1st";
                         }
 
                     } else if (date($lastSend->format("Y-m-d")) == date($dateNow->format("Y-m-d"))) {
@@ -154,8 +164,8 @@ function sendMessages($study){
                         $SecondTimeToCheck = ($timeNow_02[0] * 60) + ($timeNow_02[1]) + ($timeNow_02[2] / 60);
                         if ($SecondTimeToCheck - $SecondTimeToSend >= 0 && $SecondTimeToCheck - $SecondTimeToSend < 6 ) {
                             //send message
-                            sendMsg($results[$i],$subscribed);
-                            echo "sEnd 2wise day 2nd";
+                            sendMsg($results[$i],$study);
+                           // echo "sEnd 2wise day 2nd";
                         }
                     }
 
@@ -165,12 +175,12 @@ function sendMessages($study){
                     $timeNow_01 = explode(':', date('H:i:s'));
                     $FirstTimeToSend = ($time_01[0] * 60) + ($time_01[1]) + ($time_01[2] / 60);
                     $FirstTimeToCheck = ($timeNow_01[0] * 60) + ($timeNow_01[1]) + ($timeNow_01[2] / 60);
-                    echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
+                   // echo $FirstTimeToCheck . "   -- " . $FirstTimeToSend;
 
                     if ($FirstTimeToCheck - $FirstTimeToSend >= 0) {
                         //send message
-                        sendMsg($results[$i],$subscribed);
-                        echo "sEnd twise day first";
+                        sendMsg($results[$i],$study);
+                      //  echo "sEnd twise day first";
                     }
                 }
             }
@@ -184,22 +194,66 @@ function sendMessages($study){
 //
 //
 // API access key from Google API's Console
-function sendMsg($arrObj, $subscribed)
+function sendMsg($arrObj, $study)
 {
+    echo "Send messgae function" . $study . PHP_EOL;
+
     $con = Propel::getWriteConnection('default');// get the data base name connection
+
+    $registrationIds = array();
+    $users = ProjectUserQuery::create()
+        ->joinWithProjectDeviceToken()
+        ->filterByStudyId($study, ProjectUserQuery::EQUAL)
+        ->find();
+
+
+
+
+    for($i = 0;$i < sizeof($users); $i++) {
+        echo $users[0]->getFname() . PHP_EOL;
+
+
+        for($j = 0;$j < sizeof($users[$i]->getProjectDeviceTokens()); $j++) {
+            array_push($registrationIds, $users[$i]->getProjectDeviceTokens()[$j]->getToken());
+        }
+    }
+
+
+
+    $Onlyusers = ProjectUserQuery::create()
+        ->filterByStudyId($study, ProjectUserQuery::EQUAL)
+        ->find();
+
     try {
-        $newMsg = new Studyresponse();
-        $newMsg->setUserId($arrObj["User_id"]);
-        $newMsg->setQuestionId($arrObj["questionId"]);
-        $newMsg->setLastsenttime(New DateTime());
 
-        $con->beginTransaction();
-        $newMsg->save();
 
-        $question = QuestionsQuery::create()
-            ->findOneById($arrObj["questionId"]);
-        $question->setLastsent(New DateTime());
-        $question->save();
+        for($i = 0;$i < sizeof($Onlyusers); $i++) {
+            $NewNotification = new ProjectNotification();
+            $NewNotification->setStudyId($study);
+            $NewNotification->setTime(New DateTime());
+            $NewNotification->setUserId($Onlyusers[$i]->getId());
+            $NewNotification->setMessageId($arrObj["questionId"]);
+            $NewNotification->save();
+        }
+
+        $msg = ProjectMessagesQuery::create()
+            ->filterById($arrObj["questionId"])
+            ->findOne()
+            ->setLastsent(New DateTime())
+            ->save();
+
+//        $newMsg = new Studyresponse();
+//        $newMsg->setUserId($arrObj["User_id"]);
+//        $newMsg->setQuestionId($arrObj["questionId"]);
+//        $newMsg->setLastsenttime(New DateTime());
+//
+//        $con->beginTransaction();
+//        $newMsg->save();
+//
+//        $question = QuestionsQuery::create()
+//            ->findOneById($arrObj["questionId"]);
+//        $question->setLastsent(New DateTime());
+//        $question->save();
     }
     catch (Exception $e)
     {
@@ -209,22 +263,21 @@ function sendMsg($arrObj, $subscribed)
         $con->commit();
 
 
-        if($subscribed) {
+       // if($subscribed)
+        {
 
-           $userToken =  DevicetokensQuery::create()
-               ->filterByUserId($arrObj["User_id"])
-               ->find();
+//           $userToken =  DevicetokensQuery::create()
+//               ->filterByUserId($arrObj["User_id"])
+//               ->find();
 
-            $registrationIds = array();
-           for($i = 0;$i < sizeof($userToken); $i++) {
-               array_push($registrationIds, $userToken[$i]->getToken());
-           }
+
+
 
            print_r($registrationIds);
 
            if(sizeof($registrationIds) > 0){
-            sendpush($registrationIds, $arrObj["Text"], "Cloud Messaging", $newMsg->getId(),
-                $question->getId(), $question->getText(), $question->getChoises());
+            sendpush($registrationIds, $arrObj["Text"], "Cloud Messaging", $arrObj["questionId"],
+                0, "", "");
            }
         }
     }
