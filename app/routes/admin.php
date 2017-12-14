@@ -28,7 +28,7 @@ $app->post('/myAdmin/user/add', function ($request, $response, $args) {
         $user->setEmail($params['user-email']);
         $user->setHash(Utils::generateHash($params['user-pass']));
         $user->setGender($params['user-gender']);
-        $user->setRole('PATIENT');
+        $user->setRole('COORDINATOR');
 
         $con->beginTransaction();
         $user->save();
@@ -71,7 +71,7 @@ $app->post('/myAdmin/user/update', function ($request, $response, $args) {
         $user->setFname($params['user-fname']);
         $user->setLname($params['user-lname']);
         $user->setGender($params['user-gender']);
-        $user->setRole('PATIENT');
+        $user->setRole('COORDINATOR');
         $user->save();
     }
     catch (Exception $ex)
