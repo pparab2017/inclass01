@@ -52,7 +52,7 @@ $app->get('/project/coordinator[/[dashboard]]', function ($request, $response, $
     $paramValue = $request-> getQueryParam('error',null);
     if($paramValue!=null)
         $errorString = Utils::getErrorString($paramValue);
-    return $this->view->render($response, 'public.project.admin.dashboard.twig.html', [
+    return $this->view->render($response, 'public.project.coordinator.dashboard.twig.html', [
         "error" => $errorString
     ]);
 })->setName('project.coordinator.dashboard')
