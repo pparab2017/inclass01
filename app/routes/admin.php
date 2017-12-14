@@ -22,7 +22,7 @@ $app->post('/myAdmin/user/add', function ($request, $response, $args) {
     $returnJson = "OK";
     try {
         $params = $request->getParsedBody();// get the form request
-        $user = new Newuser();
+        $user = new ProjectUser();
         $user->setFname(htmlentities($params['user-fname']));
         $user->setLname($params['user-lname']);
         $user->setEmail($params['user-email']);
@@ -64,7 +64,7 @@ $app->post('/myAdmin/user/update', function ($request, $response, $args) {
     $returnJson = "OK";
     try {
         $params = $request->getParsedBody();// get the form request
-        $user = NewuserQuery::create()->findOneById($params['user-EditId']);
+        $user = ProjectUserQuery::create()->findOneById($params['user-EditId']);
         $user->setEmail($params['user-email']);
         if($params['user-pass']!= "PASSWORD")
             $user->setHash(Utils::generateHash($params['user-pass']));
@@ -102,7 +102,7 @@ $app->get('/myAdmin/user/delete/{id}', function ($request, $response, $args) {
     $returnJson = "OK";
 
     try{
-        NewuserQuery::create()
+        ProjectUserQuery::create()
             ->findById( $args['id'])
             ->delete();
     }
@@ -124,7 +124,8 @@ $app->get('/myAdmin/user/delete/{id}', function ($request, $response, $args) {
 $app->get('/myAdmin/user/ajax', function ($request, $response, $args) {
 
 
-    $users = NewuserQuery::create()
+    $users = ProjectUserQuery::create()
+        ->filterByRole("COORDINATOR",ProjectUserQuery::EQUAL )
         ->find()
         ->toJSON();
 

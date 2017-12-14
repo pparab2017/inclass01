@@ -48,12 +48,12 @@
 
 
     <button id="btnAddUser" type="button" class="btn btn-success" data-toggle="modal" data-target=".bd-user-modal-lg" data-keyboard="false" data-backdrop="static">
-        Add Coordinators
+        Add Patient
         <i class="glyphicon glyphicon-plus"></i></button>
 
-    <!--<button id="btnGetResponseLog" type="button" class="btn btn-success" style="margin-left:2%" onclick="location.href = '/myAdmin/messages'">-->
-        <!--Add Messages-->
-        <!--<i class="glyphicon glyphicon-envelope"></i>-->
+    <button id="btnGetResponseLog" type="button" class="btn btn-success" style="margin-left:2%" onclick="location.href = '/myAdmin/messages'">
+        Add Messages
+        <i class="glyphicon glyphicon-envelope"></i>
     </button>
 </div>
 
@@ -65,7 +65,7 @@
             <div class="modal-content" >
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title" id="userPanelHeader">Add New Coordinator</h4>
+                    <h4 class="modal-title" id="userPanelHeader">Add New Patient</h4>
 
                 </div>
                 <div class="modal-body" >
@@ -123,7 +123,7 @@
                             <label>Role</label>
 
                             <select  class="form-control" id="user-role" name="user-role" disabled="disabled" readonly  >
-                                <option value="MALE" >COORDINATOR</option>
+                                <option value="MALE" >PATIENT</option>
 
 
                             </select>
@@ -173,13 +173,13 @@
 
 
     var ajaxCallRoutes ={
-        user:"{{path_for('project.user.ajax')}}"
+        user:"{{path_for('myAdmin.user.ajax')}}"
     }
 
     var userRoutes = {
-        add:"{{path_for('project.user.add')}}",
-        update:"{{path_for('project.user.update')}}",
-        delete:"{{path_for('project.user.delete', { 'id' : '{id}' })}}"
+        add:"{{path_for('myAdmin.user.add')}}",
+        update:"{{path_for('myAdmin.user.update')}}",
+        delete:"{{path_for('myAdmin.user.delete', { 'id' : '{id}' })}}"
     };
 
 
@@ -345,7 +345,7 @@
 
 
         $("#btnAddUser").click(function () {
-            $("#userPanelHeader").text("Add New Coordinator");
+            $("#userPanelHeader").text("Add New Patient");
             ClearUserForm();
             $('#submitUpdate').remove();
             $('#submitDelete').remove();
@@ -388,7 +388,7 @@
             e.preventDefault();
             console.log("test");
             $('#errorText').text("");
-            $("#userPanelHeader").text("Edit Coordinator");
+            $("#userPanelHeader").text("Edit Patient");
             $('#submitBtn').remove();
 
 
