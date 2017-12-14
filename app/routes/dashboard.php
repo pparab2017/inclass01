@@ -26,17 +26,35 @@ $app->get('/admin[/[dashboard]]', function ($request, $response, $args) {
     ->add($checkAdminAuthMiddleware);
 
 
-$app->get('/myAdmin[/[dashboard]]', function ($request, $response, $args) {
+
+$app->get('/project/admin[/[dashboard]]', function ($request, $response, $args) {
 
     $errorString="";
     $paramValue = $request-> getQueryParam('error',null);
     if($paramValue!=null)
         $errorString = Utils::getErrorString($paramValue);
-    return $this->view->render($response, 'public.myAdmin.dashboard.twig.html', [
+    return $this->view->render($response, 'public.project.admin.dashboard.twig.html', [
         "error" => $errorString
     ]);
-})->setName('myAdmin.dashboard')
+})->setName('project.admin.dashboard')
     ->add($checkAdminAuthMiddleware);
+
+
+
+
+$app->get('/project/coordinator[/[dashboard]]', function ($request, $response, $args) {
+
+    $errorString="";
+    $paramValue = $request-> getQueryParam('error',null);
+    if($paramValue!=null)
+        $errorString = Utils::getErrorString($paramValue);
+    return $this->view->render($response, 'public.project.coordinator.dashboard.twig.html', [
+        "error" => $errorString
+    ]);
+})->setName('project.coordinator.dashboard')
+    ->add($checkCoordinatorAuthMiddleware);
+
+
 
 
 

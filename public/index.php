@@ -98,7 +98,7 @@ require '../app/routes/project_api.php';
 
 $app->get('/', function (Request $request, Response $response) {
 
-    return $this->view->render($response, 'public.AdminHome.twig.html', [
+    return $this->view->render($response, 'public.project.login.twig.html', [
     ]);
 })->setName('main')
     ->add($checkIfDontNeedAuth);

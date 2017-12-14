@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div id="studyResponseContainer">
+        <div>
+            <div class="row">
+                <h4 class="modal-title col-xs-10" id="surveyResponsesPanelHeader" style="text-align:center;font-weight:bold">Survey Responses</h4>
+                <button type="button" class="col-xs-2 btn btn-success" id="btnBackToSurveys"> <i class="glyphicon glyphicon-list-alt"></i>&nbsp;&nbsp;Survey List</button>
+            </div>
+            <br />
+            <table id="tblSurveyResponses" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Opened At</th>
+                        <th>User Responded</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Opened At</th>
+                        <th>Reponded At</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div id="surveyresponse-modal" class="modal fade bd-surveyresponse-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="surveyresponsePanelHeader">Responses</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <table id="tblUserResponses" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Question No.</th>
+                                        <th>Question Type</th>
+                                        <th>Question</th>
+                                        <th>Choices</th>
+                                        <th>Response</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot>
+                                    <tr>
+
+                                        <th>Question No.</th>
+                                        <th>Question Type</th>
+                                        <th>Question</th>
+                                        <th>Choices</th>
+                                        <th>Response</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

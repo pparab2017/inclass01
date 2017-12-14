@@ -13,6 +13,16 @@ use Respect\Validation\Validator as v;
 
 
 
+$checkCoordinatorAuthMiddleware = function ($request, $response, $next) {
+    if(Utils::isAuthenticatedAs(Utils::USER_TYPE_NURSE)){
+        $response = $next($request, $response);
+        return $response;
+    }
+    $path = $this->get('router')->pathFor('main');
+    return $response->withRedirect($path);
+};
+
+
 
 $checkAdminAuthMiddleware = function ($request, $response, $next) {
     if(Utils::isAuthenticatedAs(Utils::USER_TYPE_ADMIN)){

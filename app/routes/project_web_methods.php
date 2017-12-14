@@ -13,11 +13,53 @@ use Respect\Validation\Validator as v;
 use Propel\Runtime\Propel;
 
 
+
+//Study getAll, Add, Update, Delete
+$app->get('/coordinator/viewStudy', function ($request, $response, $args) {
+
+    return $this->view->render($response, 'public.project.coordinator.studyDetails.twig.html', [
+
+    ]);
+
+
+})->setName('coordinator.viewStudy');
+//->add($checkAdminAuthMiddleware);
+
+
+
+
+
+
+
+
+
 //Study getAll, Add, Update, Delete
 $app->get('/coordinator/allStudy', function ($request, $response, $args) {
 
     $projectStudy = ProjectStudyQuery::create()
+        ->joinProjectUser()
+        ->useProjectUserQuery()
+            ->groupById()
+        ->withColumn('Count(ProjectUser.Id)', 'count')
+        ->endUse()
+
+        ->joinWithProjectMessages()
+        ->useProjectMessagesQuery()
+        ->groupByStudyId()
+        ->withColumn('Count(ProjectMessages.Id)', 'Mcount')
+        ->endUse()
+
+        ->select(array(ProjectStudy.Id => Id,ProjectStudy.StudyName =>StudyName,
+            ProjectStudy.StudyDescription =>StudyDescription,
+            ProjectStudy.CreatedAt=>CreatedAt,
+            ProjectStudy.UpdatedAt=>UpdatedAt
+            ))
         ->find();
+
+
+    //StudyDescription
+    //CreatedAt
+    //UpdatedAt
 
     if($projectStudy != null)
     {
@@ -138,7 +180,7 @@ $app->get('/coordinator/study/delete/{id}', function ($request, $response, $args
         ->withStatus(400)
         ->withJson(['status'=>'error']);
 
-})->setName('coordinator.allStudy');
+})->setName('coordinator.delete');
 //->add($checkAdminAuthMiddleware);
 
 
@@ -429,15 +471,21 @@ if($projectMessage != null) {
 
 $app->get('/coordinator/message/delete/{id}', function ($request, $response, $args) {
 
-    $projectMessage = ProjectMessagesQuery::create()
-        ->filterById($args['id'], ProjectStudyQuery::EQUAL)
+
+
+    $Id = $args['id'];
+    $projectMessage2 = ProjectMessagesQuery::create()
+        ->filterById($Id, ProjectMessagesQuery::EQUAL)
         ->findOne();
 
-    if($projectMessage != null)
+    if($projectMessage2 != null)
     {
-        $projectMessage->delete();
+        $projectMessage2->delete();
         return $response->withJson(['status'=>'ok']);
     }
+
+
+
     return $response
         ->withStatus(400)
         ->withJson(['status'=>'error']);
@@ -598,13 +646,13 @@ $app->get('/coordinator/response/user/{id}', function ($request, $response, $arg
     if(Utils::checkIfNotEmpty($userId))
     {
 
-        $sql = "SELECT m.id, m.text, m.type,m.Study_Id, n.id AS response_id, n.response_text, n.opened_at
-                FROM project_messages m 
-                JOIN project_study s on s.id  = m.Study_Id
-                JOIN project_notification n on n.message_id = m.id
-                JOIN project_user u on u.study_id = s.id
-                WHERE u.id = {USER_ID}
-                ORDER BY m.time DESC";
+        $sql = "   select 
+                p.id, p.text, p.type,p.Study_Id, pn.id AS response_id, pn.response_text, pn.opened_at from
+    project_notification pn
+    Join  project_user u on pn.user_id = u.id
+    join project_messages p on p.id =  pn.message_id
+    where u.id = {USER_ID}
+                ORDER BY p.time DESC";
         $sql = str_replace("{USER_ID}",$userId,$sql);
 
         $conn = Propel::getConnection();

@@ -1,0 +1,79 @@
+{% extends "public.base.twig.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block header %}
+<div class="container"  style="color: white" >
+    <div class="row">
+        <div class="col-sm-12">
+            <h4 > Coordinator Dashboard <span class="glyphicon glyphicon-dashboard"></span>  </h4></div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+{% block content %}
+
+
+<div class="tabContainer topCornersRounded">
+
+<!--<h4 >Study Coordinator Dashboard</h4>-->
+    <div class="row">
+<!--BEGIN SIDEBAR MENU-->
+<div class="col-lg-2" >
+    <nav id="sidebar" role="navigation" class="navbar-nav navbar-static-side" style="width: 100%">
+        <div class="sidebar-collapse menu-scroll">
+            <ul id="side-menu" class="nav" role="tablist" style="text-align:left;">
+                <div class="clearfix"></div>
+                <li role="presentation" id="usersTab" class="active">
+                    <a role="tab" data-toggle="tab" href="#usersContent" aria-controls="usersContent">
+                        <span class="menu-title"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp;&nbsp;Users</span>
+                    </a>
+                </li>
+                <li role="presentation" id="messagesTab">
+                    <a role="tab" data-toggle="tab" href="#messagesContent" aria-controls="messagesContent">
+                        <span class="menu-title"><i class="glyphicon glyphicon-envelope"></i>&nbsp;&nbsp;&nbsp;Messages</span>
+                    </a>
+                </li>
+                <li role="presentation" id="surveysTab">
+                    <a role="tab" data-toggle="tab" href="#surveysContent" aria-controls="surveysContent">
+                        <span class="menu-title"><i class="glyphicon glyphicon-th-list"></i>&nbsp;&nbsp;&nbsp;Surveys </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<!--END SIDEBAR MENU-->
+<!-- Tab panes -->
+
+
+<div class="tab-content col-lg-10" style="border-left: 1px dashed #ddd">
+    <div role="tabpanel" class="tab-pane active" id="usersContent"></div>
+    <div role="tabpanel" class="tab-pane" id="messagesContent"></div>
+    <div role="tabpanel" class="tab-pane" id="surveysContent"></div>
+</div>
+    </div>
+<input type="hidden" id="selectedStudyId"/>
+
+</div>
+
+{% endblock %}
+
+
+{% block myscripts %}
+
+
+
+<script src="/assets/js/navigationhandler.js"></script>
+<script src="/assets/js/users-handler.js"></script>
+<script src="/assets/js/model-handler.js"></script>
+<script src="/assets/js/messages-handler.js"></script>
+<script src="/assets/js/survey-handler.js"></script>
+<script src="/assets/js/surveydetail-handler.js"></script>
+<script src="/assets/js/surveyresponse-handler.js"></script>
+<script src="/assets/js/editsurvey-handler.js"></script>
+
+
+{% endblock %}

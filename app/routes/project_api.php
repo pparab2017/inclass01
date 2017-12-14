@@ -15,6 +15,21 @@ use Tuupola\Base62;
 use Propel\Runtime\Propel;
 
 
+
+$app->post('/project_api/logout', function ($request, $response, $args){
+    $userId = $this->jwt->user;
+    $params = $request->getParsedBody();
+    $device = ProjectDeviceTokenQuery::create()
+        ->filterByToken($params["token"])
+        ->filterByUserId($userId)
+        ->findOne();
+
+    $device->delete();
+    return $response
+        ->withJson(['status'=>'ok']);
+
+})->setName("project_api.logout");
+
 $app->post('/project_api/login', function ($request, $response, $args) {
 
 

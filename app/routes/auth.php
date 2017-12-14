@@ -18,13 +18,13 @@ $app->get('/MyAdmin/login', function($request, $response, $args){
     ->add($checkIfDontNeedAuth);
 
 
-$app->get('/admin/login', function($request, $response, $args){
+$app->get('/login', function($request, $response, $args){
     return $this->view->render($response, 'public.admin.login.twig.html', []);
-})->setName('adminLogin')
+})->setName('login')
     ->add($checkIfDontNeedAuth);
 
 
-$app->post('/admin/login', function ($request, $response, $args){
+$app->post('/login', function ($request, $response, $args){
 
     $params = $request->getParsedBody();
 
@@ -47,18 +47,30 @@ $app->post('/admin/login', function ($request, $response, $args){
 
    // $user->getFname();
     if($user == NULL || !Utils::verifyPassword($params['login-pass'], $user->getHash())) {
-        $params['errors'] = array('login' => 'Incorrect Username or Password');
-        return $this->view->render($response, $falloutLoginView, $params);
+
+        $coordinator =  ProjectUserQuery::create()
+            ->filterByEmail($params['login-name'], ProjectUserQuery::EQUAL)
+            ->findOne();
+        if($coordinator==null || !Utils::verifyPassword($params['login-pass'], $coordinator->getHash())){
+                   $params['errors'] = array('login' => 'Incorrect Username or Password');
+                   return $this->view->render($response, $falloutLoginView, $params);
+        }else{
+            Utils::authenticateAs($coordinator, Utils::USER_TYPE_NURSE);
+            $path = $this->get('router')->pathFor('project.coordinator.dashboard');
+            return $response->withRedirect($path);
+        }
+
+    }else {
+
+        //if($user->getro)
+        Utils::authenticateAs($user, Utils::USER_TYPE_ADMIN);
+
+        $path = $this->get('router')->pathFor('project.admin.dashboard');
+        return $response->withRedirect($path);
     }
 
 
-    Utils::authenticateAs($user, Utils::USER_TYPE_ADMIN);
-
-    $path = $this->get('router')->pathFor('myAdmin.dashboard');
-    return $response->withRedirect($path);
-
-
-})->setName('adminAuth');
+})->setName('auth');
 
 
 $app->get('/logout', function ($request, $response, $args) {

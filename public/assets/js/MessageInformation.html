@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages Information</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/master/build/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/select2/select2/master/dist/css/select2.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.css">
+</head>
+<body>
+    <div id="messagecontainer">
+        <div id="messageinfo">
+            <h4><strong>Messages</strong> </h4>
+            <br />
+            <table id="tblMessages" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Message Type</th>
+                        <th>Message Text</th>
+                        <th>Reminder Type</th>
+                        <th>Last Sent Time</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Message Type</th>
+                        <th>Message Text</th>
+                        <th>Reminder Type</th>
+                        <th>Last Sent Time</th>
+                        <th></th>
+
+                    </tr>
+                </tfoot>
+            </table>
+            <button id="btnAddMessage" type="button" class="btn btn-success" data-toggle="modal" data-target=".bd-message-modal-lg" data-keyboard="false" data-backdrop="static">
+                Add Message
+                <i class="glyphicon glyphicon-plus"></i>
+            </button>
+        </div>
+
+        <!--Modal for New Message-->
+        <div id="message-modal" class="modal fade bd-message-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <form action="doNothing" id="Message-form" method="post" enctype="multipart/form-data">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="messagePanelHeader">Add New Message</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p class="text-danger" id="errorTextMsg"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <label>Message Type</label>
+                                    <select class="form-control" id="message-type" name="message-type" required>
+                                        <option value="MESSAGE" selected>Infomational Message</option>
+                                        <option value="QUESTION">Question</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <label>Message Text</label>
+                                    <input class="form-control" type="text" id="message-text" name="message-text" placeholder="Enter Message" required>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <label>Enter Choices</label> <small>Enter | separated choices</small>
+                                    <input class="form-control" type="text" id="question-choices" name="question-choices" placeholder="Enter Choices - Ex: True|False." required disabled>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <label>Reminder Type</label>
+                                    <select class="form-control" id="reminder-type" name="reminder-type" required>
+                                        <option value="H" selected>Hourly</option>
+                                        <option value="O">Once A Day</option>
+                                        <option value="T">Twice A Day</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-6">
+                                    <label>Reminder Times</label>
+                                    <input class="form-control" type="text" id="reminder-time-1" name="reminder-time-1" placeholder="00:00AM" disabled>
+                                    <br />
+                                    <input class="form-control" type="text" id="reminder-time-2" name="reminder-time-2" placeholder="00:00AM" required disabled>
+                                </div>
+                            </div>
+                            <br />
+                            <br />
+                        </div>
+                        <div class="modal-footer" id="btnContainer-message">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="submit" id="submitMessage" class="btn btn-success">Submit</button>
+                            <button type="submit" id="updateMessage" class="btn btn-warning">Update</button>
+                            <button type="button" id="deleteMessage" class="btn btn-danger">Delete</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.js"></script>
+        <script src="js/model-handler.js"></script>
+        <script src="js/messages-handler.js"></script>
+    </div>
+</body>
+</html>
