@@ -437,5 +437,61 @@ CREATE TABLE `sms_user`
     UNIQUE INDEX `number_UNIQUE` (`number`)
 ) ENGINE=InnoDB;
 
+-- ---------------------------------------------------------------------
+-- voting_option
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `voting_option`;
+
+CREATE TABLE `voting_option`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(45),
+    `more` VARCHAR(500),
+    `color` VARCHAR(45),
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- voting_user
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `voting_user`;
+
+CREATE TABLE `voting_user`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(45) NOT NULL,
+    `fname` VARCHAR(45) NOT NULL,
+    `lname` VARCHAR(45) NOT NULL,
+    `gender` enum('MALE','FEMALE') NOT NULL,
+    `hash` VARCHAR(45) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `email_UNIQUE` (`email`)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- voting_user_option
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `voting_user_option`;
+
+CREATE TABLE `voting_user_option`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `user_id` INTEGER NOT NULL,
+    `vote_id` INTEGER NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `user_id_UNIQUE` (`user_id`),
+    UNIQUE INDEX `id_UNIQUE` (`id`),
+    INDEX `fkk_voting_option_id_idx` (`vote_id`),
+    CONSTRAINT `fkk_voting_option_id`
+        FOREIGN KEY (`vote_id`)
+        REFERENCES `voting_option` (`id`),
+    CONSTRAINT `fkk_voting_user_id`
+        FOREIGN KEY (`user_id`)
+        REFERENCES `voting_user` (`id`)
+) ENGINE=InnoDB;
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

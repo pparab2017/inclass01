@@ -2,17 +2,14 @@
 
 namespace Base;
 
-use \ProjectMessages as ChildProjectMessages;
-use \ProjectMessagesQuery as ChildProjectMessagesQuery;
-use \ProjectNotificationQuery as ChildProjectNotificationQuery;
-use \ProjectStudy as ChildProjectStudy;
-use \ProjectStudyQuery as ChildProjectStudyQuery;
-use \ProjectUser as ChildProjectUser;
-use \ProjectUserQuery as ChildProjectUserQuery;
-use \DateTime;
+use \VotingOption as ChildVotingOption;
+use \VotingOptionQuery as ChildVotingOptionQuery;
+use \VotingUser as ChildVotingUser;
+use \VotingUserOptionQuery as ChildVotingUserOptionQuery;
+use \VotingUserQuery as ChildVotingUserQuery;
 use \Exception;
 use \PDO;
-use Map\ProjectNotificationTableMap;
+use Map\VotingUserOptionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -24,21 +21,20 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'project_notification' table.
+ * Base class that represents a row from the 'voting_user_option' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class ProjectNotification implements ActiveRecordInterface
+abstract class VotingUserOption implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Map\\ProjectNotificationTableMap';
+    const TABLE_MAP = '\\Map\\VotingUserOptionTableMap';
 
 
     /**
@@ -75,27 +71,6 @@ abstract class ProjectNotification implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the study_id field.
-     *
-     * @var        int
-     */
-    protected $study_id;
-
-    /**
-     * The value for the response_text field.
-     *
-     * @var        string
-     */
-    protected $response_text;
-
-    /**
-     * The value for the time field.
-     *
-     * @var        DateTime
-     */
-    protected $time;
-
-    /**
      * The value for the user_id field.
      *
      * @var        int
@@ -103,54 +78,21 @@ abstract class ProjectNotification implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the message_id field.
+     * The value for the vote_id field.
      *
      * @var        int
      */
-    protected $message_id;
+    protected $vote_id;
 
     /**
-     * The value for the opened_at field.
-     *
-     * @var        DateTime
+     * @var        ChildVotingOption
      */
-    protected $opened_at;
+    protected $aVotingOption;
 
     /**
-     * The value for the answred_at field.
-     *
-     * @var        DateTime
+     * @var        ChildVotingUser
      */
-    protected $answred_at;
-
-    /**
-     * The value for the created_at field.
-     *
-     * @var        DateTime
-     */
-    protected $created_at;
-
-    /**
-     * The value for the updated_at field.
-     *
-     * @var        DateTime
-     */
-    protected $updated_at;
-
-    /**
-     * @var        ChildProjectMessages
-     */
-    protected $aProjectMessages;
-
-    /**
-     * @var        ChildProjectStudy
-     */
-    protected $aProjectStudy;
-
-    /**
-     * @var        ChildProjectUser
-     */
-    protected $aProjectUser;
+    protected $aVotingUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -161,7 +103,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Base\ProjectNotification object.
+     * Initializes internal state of Base\VotingUserOption object.
      */
     public function __construct()
     {
@@ -256,9 +198,9 @@ abstract class ProjectNotification implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>ProjectNotification</code> instance.  If
-     * <code>obj</code> is an instance of <code>ProjectNotification</code>, delegates to
-     * <code>equals(ProjectNotification)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>VotingUserOption</code> instance.  If
+     * <code>obj</code> is an instance of <code>VotingUserOption</code>, delegates to
+     * <code>equals(VotingUserOption)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -324,7 +266,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|ProjectNotification The current object, for fluid interface
+     * @return $this|VotingUserOption The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -396,46 +338,6 @@ abstract class ProjectNotification implements ActiveRecordInterface
     }
 
     /**
-     * Get the [study_id] column value.
-     *
-     * @return int
-     */
-    public function getStudyId()
-    {
-        return $this->study_id;
-    }
-
-    /**
-     * Get the [response_text] column value.
-     *
-     * @return string
-     */
-    public function getResponseText()
-    {
-        return $this->response_text;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [time] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getTime($format = NULL)
-    {
-        if ($format === null) {
-            return $this->time;
-        } else {
-            return $this->time instanceof \DateTimeInterface ? $this->time->format($format) : null;
-        }
-    }
-
-    /**
      * Get the [user_id] column value.
      *
      * @return int
@@ -446,100 +348,20 @@ abstract class ProjectNotification implements ActiveRecordInterface
     }
 
     /**
-     * Get the [message_id] column value.
+     * Get the [vote_id] column value.
      *
      * @return int
      */
-    public function getMessageId()
+    public function getVoteId()
     {
-        return $this->message_id;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [opened_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getOpenedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->opened_at;
-        } else {
-            return $this->opened_at instanceof \DateTimeInterface ? $this->opened_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [answred_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getAnswredAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->answred_at;
-        } else {
-            return $this->answred_at instanceof \DateTimeInterface ? $this->answred_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [created_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getCreatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->created_at;
-        } else {
-            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [updated_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getUpdatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->updated_at;
-        } else {
-            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
-        }
+        return $this->vote_id;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\ProjectNotification The current object (for fluent API support)
+     * @return $this|\VotingUserOption The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -549,81 +371,17 @@ abstract class ProjectNotification implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[ProjectNotificationTableMap::COL_ID] = true;
+            $this->modifiedColumns[VotingUserOptionTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [study_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setStudyId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->study_id !== $v) {
-            $this->study_id = $v;
-            $this->modifiedColumns[ProjectNotificationTableMap::COL_STUDY_ID] = true;
-        }
-
-        if ($this->aProjectStudy !== null && $this->aProjectStudy->getId() !== $v) {
-            $this->aProjectStudy = null;
-        }
-
-        return $this;
-    } // setStudyId()
-
-    /**
-     * Set the value of [response_text] column.
-     *
-     * @param string $v new value
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setResponseText($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->response_text !== $v) {
-            $this->response_text = $v;
-            $this->modifiedColumns[ProjectNotificationTableMap::COL_RESPONSE_TEXT] = true;
-        }
-
-        return $this;
-    } // setResponseText()
-
-    /**
-     * Sets the value of [time] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setTime($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->time !== null || $dt !== null) {
-            if ($this->time === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->time->format("Y-m-d H:i:s.u")) {
-                $this->time = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectNotificationTableMap::COL_TIME] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setTime()
-
-    /**
      * Set the value of [user_id] column.
      *
      * @param int $v new value
-     * @return $this|\ProjectNotification The current object (for fluent API support)
+     * @return $this|\VotingUserOption The current object (for fluent API support)
      */
     public function setUserId($v)
     {
@@ -633,119 +391,39 @@ abstract class ProjectNotification implements ActiveRecordInterface
 
         if ($this->user_id !== $v) {
             $this->user_id = $v;
-            $this->modifiedColumns[ProjectNotificationTableMap::COL_USER_ID] = true;
+            $this->modifiedColumns[VotingUserOptionTableMap::COL_USER_ID] = true;
         }
 
-        if ($this->aProjectUser !== null && $this->aProjectUser->getId() !== $v) {
-            $this->aProjectUser = null;
+        if ($this->aVotingUser !== null && $this->aVotingUser->getId() !== $v) {
+            $this->aVotingUser = null;
         }
 
         return $this;
     } // setUserId()
 
     /**
-     * Set the value of [message_id] column.
+     * Set the value of [vote_id] column.
      *
      * @param int $v new value
-     * @return $this|\ProjectNotification The current object (for fluent API support)
+     * @return $this|\VotingUserOption The current object (for fluent API support)
      */
-    public function setMessageId($v)
+    public function setVoteId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->message_id !== $v) {
-            $this->message_id = $v;
-            $this->modifiedColumns[ProjectNotificationTableMap::COL_MESSAGE_ID] = true;
+        if ($this->vote_id !== $v) {
+            $this->vote_id = $v;
+            $this->modifiedColumns[VotingUserOptionTableMap::COL_VOTE_ID] = true;
         }
 
-        if ($this->aProjectMessages !== null && $this->aProjectMessages->getId() !== $v) {
-            $this->aProjectMessages = null;
+        if ($this->aVotingOption !== null && $this->aVotingOption->getId() !== $v) {
+            $this->aVotingOption = null;
         }
 
         return $this;
-    } // setMessageId()
-
-    /**
-     * Sets the value of [opened_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setOpenedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->opened_at !== null || $dt !== null) {
-            if ($this->opened_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->opened_at->format("Y-m-d H:i:s.u")) {
-                $this->opened_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectNotificationTableMap::COL_OPENED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setOpenedAt()
-
-    /**
-     * Sets the value of [answred_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setAnswredAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->answred_at !== null || $dt !== null) {
-            if ($this->answred_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->answred_at->format("Y-m-d H:i:s.u")) {
-                $this->answred_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectNotificationTableMap::COL_ANSWRED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setAnswredAt()
-
-    /**
-     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setCreatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
-                $this->created_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectNotificationTableMap::COL_CREATED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setCreatedAt()
-
-    /**
-     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     */
-    public function setUpdatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
-                $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ProjectNotificationTableMap::COL_UPDATED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setUpdatedAt()
+    } // setVoteId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -783,50 +461,14 @@ abstract class ProjectNotification implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ProjectNotificationTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : VotingUserOptionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ProjectNotificationTableMap::translateFieldName('StudyId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->study_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ProjectNotificationTableMap::translateFieldName('ResponseText', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->response_text = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ProjectNotificationTableMap::translateFieldName('Time', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->time = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ProjectNotificationTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : VotingUserOptionTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ProjectNotificationTableMap::translateFieldName('MessageId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->message_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ProjectNotificationTableMap::translateFieldName('OpenedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->opened_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ProjectNotificationTableMap::translateFieldName('AnswredAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->answred_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ProjectNotificationTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ProjectNotificationTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : VotingUserOptionTableMap::translateFieldName('VoteId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->vote_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -835,10 +477,10 @@ abstract class ProjectNotification implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 10; // 10 = ProjectNotificationTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = VotingUserOptionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\ProjectNotification'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\VotingUserOption'), 0, $e);
         }
     }
 
@@ -857,14 +499,11 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aProjectStudy !== null && $this->study_id !== $this->aProjectStudy->getId()) {
-            $this->aProjectStudy = null;
+        if ($this->aVotingUser !== null && $this->user_id !== $this->aVotingUser->getId()) {
+            $this->aVotingUser = null;
         }
-        if ($this->aProjectUser !== null && $this->user_id !== $this->aProjectUser->getId()) {
-            $this->aProjectUser = null;
-        }
-        if ($this->aProjectMessages !== null && $this->message_id !== $this->aProjectMessages->getId()) {
-            $this->aProjectMessages = null;
+        if ($this->aVotingOption !== null && $this->vote_id !== $this->aVotingOption->getId()) {
+            $this->aVotingOption = null;
         }
     } // ensureConsistency
 
@@ -889,13 +528,13 @@ abstract class ProjectNotification implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ProjectNotificationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(VotingUserOptionTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildProjectNotificationQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildVotingUserOptionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -905,9 +544,8 @@ abstract class ProjectNotification implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aProjectMessages = null;
-            $this->aProjectStudy = null;
-            $this->aProjectUser = null;
+            $this->aVotingOption = null;
+            $this->aVotingUser = null;
         } // if (deep)
     }
 
@@ -917,8 +555,8 @@ abstract class ProjectNotification implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see ProjectNotification::setDeleted()
-     * @see ProjectNotification::isDeleted()
+     * @see VotingUserOption::setDeleted()
+     * @see VotingUserOption::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -927,11 +565,11 @@ abstract class ProjectNotification implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectNotificationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VotingUserOptionTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildProjectNotificationQuery::create()
+            $deleteQuery = ChildVotingUserOptionQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -966,7 +604,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectNotificationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VotingUserOptionTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -985,7 +623,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ProjectNotificationTableMap::addInstanceToPool($this);
+                VotingUserOptionTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1016,25 +654,18 @@ abstract class ProjectNotification implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aProjectMessages !== null) {
-                if ($this->aProjectMessages->isModified() || $this->aProjectMessages->isNew()) {
-                    $affectedRows += $this->aProjectMessages->save($con);
+            if ($this->aVotingOption !== null) {
+                if ($this->aVotingOption->isModified() || $this->aVotingOption->isNew()) {
+                    $affectedRows += $this->aVotingOption->save($con);
                 }
-                $this->setProjectMessages($this->aProjectMessages);
+                $this->setVotingOption($this->aVotingOption);
             }
 
-            if ($this->aProjectStudy !== null) {
-                if ($this->aProjectStudy->isModified() || $this->aProjectStudy->isNew()) {
-                    $affectedRows += $this->aProjectStudy->save($con);
+            if ($this->aVotingUser !== null) {
+                if ($this->aVotingUser->isModified() || $this->aVotingUser->isNew()) {
+                    $affectedRows += $this->aVotingUser->save($con);
                 }
-                $this->setProjectStudy($this->aProjectStudy);
-            }
-
-            if ($this->aProjectUser !== null) {
-                if ($this->aProjectUser->isModified() || $this->aProjectUser->isNew()) {
-                    $affectedRows += $this->aProjectUser->save($con);
-                }
-                $this->setProjectUser($this->aProjectUser);
+                $this->setVotingUser($this->aVotingUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1068,45 +699,24 @@ abstract class ProjectNotification implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ProjectNotificationTableMap::COL_ID] = true;
+        $this->modifiedColumns[VotingUserOptionTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ProjectNotificationTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . VotingUserOptionTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_ID)) {
+        if ($this->isColumnModified(VotingUserOptionTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_STUDY_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'study_id';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_RESPONSE_TEXT)) {
-            $modifiedColumns[':p' . $index++]  = 'response_text';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_TIME)) {
-            $modifiedColumns[':p' . $index++]  = 'time';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_USER_ID)) {
+        if ($this->isColumnModified(VotingUserOptionTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_MESSAGE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'message_id';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_OPENED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'opened_at';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_ANSWRED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'answred_at';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'created_at';
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_UPDATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'updated_at';
+        if ($this->isColumnModified(VotingUserOptionTableMap::COL_VOTE_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'vote_id';
         }
 
         $sql = sprintf(
-            'INSERT INTO project_notification (%s) VALUES (%s)',
+            'INSERT INTO voting_user_option (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1118,32 +728,11 @@ abstract class ProjectNotification implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'study_id':
-                        $stmt->bindValue($identifier, $this->study_id, PDO::PARAM_INT);
-                        break;
-                    case 'response_text':
-                        $stmt->bindValue($identifier, $this->response_text, PDO::PARAM_STR);
-                        break;
-                    case 'time':
-                        $stmt->bindValue($identifier, $this->time ? $this->time->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'message_id':
-                        $stmt->bindValue($identifier, $this->message_id, PDO::PARAM_INT);
-                        break;
-                    case 'opened_at':
-                        $stmt->bindValue($identifier, $this->opened_at ? $this->opened_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'answred_at':
-                        $stmt->bindValue($identifier, $this->answred_at ? $this->answred_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'vote_id':
+                        $stmt->bindValue($identifier, $this->vote_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1191,7 +780,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ProjectNotificationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = VotingUserOptionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1211,31 +800,10 @@ abstract class ProjectNotification implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getStudyId();
-                break;
-            case 2:
-                return $this->getResponseText();
-                break;
-            case 3:
-                return $this->getTime();
-                break;
-            case 4:
                 return $this->getUserId();
                 break;
-            case 5:
-                return $this->getMessageId();
-                break;
-            case 6:
-                return $this->getOpenedAt();
-                break;
-            case 7:
-                return $this->getAnswredAt();
-                break;
-            case 8:
-                return $this->getCreatedAt();
-                break;
-            case 9:
-                return $this->getUpdatedAt();
+            case 2:
+                return $this->getVoteId();
                 break;
             default:
                 return null;
@@ -1261,93 +829,51 @@ abstract class ProjectNotification implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['ProjectNotification'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['VotingUserOption'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['ProjectNotification'][$this->hashCode()] = true;
-        $keys = ProjectNotificationTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['VotingUserOption'][$this->hashCode()] = true;
+        $keys = VotingUserOptionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getStudyId(),
-            $keys[2] => $this->getResponseText(),
-            $keys[3] => $this->getTime(),
-            $keys[4] => $this->getUserId(),
-            $keys[5] => $this->getMessageId(),
-            $keys[6] => $this->getOpenedAt(),
-            $keys[7] => $this->getAnswredAt(),
-            $keys[8] => $this->getCreatedAt(),
-            $keys[9] => $this->getUpdatedAt(),
+            $keys[1] => $this->getUserId(),
+            $keys[2] => $this->getVoteId(),
         );
-        if ($result[$keys[3]] instanceof \DateTimeInterface) {
-            $result[$keys[3]] = $result[$keys[3]]->format('c');
-        }
-
-        if ($result[$keys[6]] instanceof \DateTimeInterface) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
-        if ($result[$keys[7]] instanceof \DateTimeInterface) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
-        }
-
-        if ($result[$keys[8]] instanceof \DateTimeInterface) {
-            $result[$keys[8]] = $result[$keys[8]]->format('c');
-        }
-
-        if ($result[$keys[9]] instanceof \DateTimeInterface) {
-            $result[$keys[9]] = $result[$keys[9]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aProjectMessages) {
+            if (null !== $this->aVotingOption) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'projectMessages';
+                        $key = 'votingOption';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'project_messages';
+                        $key = 'voting_option';
                         break;
                     default:
-                        $key = 'ProjectMessages';
+                        $key = 'VotingOption';
                 }
 
-                $result[$key] = $this->aProjectMessages->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aVotingOption->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aProjectStudy) {
+            if (null !== $this->aVotingUser) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'projectStudy';
+                        $key = 'votingUser';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'project_study';
+                        $key = 'voting_user';
                         break;
                     default:
-                        $key = 'ProjectStudy';
+                        $key = 'VotingUser';
                 }
 
-                $result[$key] = $this->aProjectStudy->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aProjectUser) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'projectUser';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'project_user';
-                        break;
-                    default:
-                        $key = 'ProjectUser';
-                }
-
-                $result[$key] = $this->aProjectUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aVotingUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1363,11 +889,11 @@ abstract class ProjectNotification implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\ProjectNotification
+     * @return $this|\VotingUserOption
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ProjectNotificationTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = VotingUserOptionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1378,7 +904,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\ProjectNotification
+     * @return $this|\VotingUserOption
      */
     public function setByPosition($pos, $value)
     {
@@ -1387,31 +913,10 @@ abstract class ProjectNotification implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setStudyId($value);
-                break;
-            case 2:
-                $this->setResponseText($value);
-                break;
-            case 3:
-                $this->setTime($value);
-                break;
-            case 4:
                 $this->setUserId($value);
                 break;
-            case 5:
-                $this->setMessageId($value);
-                break;
-            case 6:
-                $this->setOpenedAt($value);
-                break;
-            case 7:
-                $this->setAnswredAt($value);
-                break;
-            case 8:
-                $this->setCreatedAt($value);
-                break;
-            case 9:
-                $this->setUpdatedAt($value);
+            case 2:
+                $this->setVoteId($value);
                 break;
         } // switch()
 
@@ -1437,37 +942,16 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ProjectNotificationTableMap::getFieldNames($keyType);
+        $keys = VotingUserOptionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setStudyId($arr[$keys[1]]);
+            $this->setUserId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setResponseText($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setTime($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setUserId($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setMessageId($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setOpenedAt($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setAnswredAt($arr[$keys[7]]);
-        }
-        if (array_key_exists($keys[8], $arr)) {
-            $this->setCreatedAt($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setUpdatedAt($arr[$keys[9]]);
+            $this->setVoteId($arr[$keys[2]]);
         }
     }
 
@@ -1488,7 +972,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\ProjectNotification The current object, for fluid interface
+     * @return $this|\VotingUserOption The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1508,37 +992,16 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ProjectNotificationTableMap::DATABASE_NAME);
+        $criteria = new Criteria(VotingUserOptionTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_ID)) {
-            $criteria->add(ProjectNotificationTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(VotingUserOptionTableMap::COL_ID)) {
+            $criteria->add(VotingUserOptionTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_STUDY_ID)) {
-            $criteria->add(ProjectNotificationTableMap::COL_STUDY_ID, $this->study_id);
+        if ($this->isColumnModified(VotingUserOptionTableMap::COL_USER_ID)) {
+            $criteria->add(VotingUserOptionTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_RESPONSE_TEXT)) {
-            $criteria->add(ProjectNotificationTableMap::COL_RESPONSE_TEXT, $this->response_text);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_TIME)) {
-            $criteria->add(ProjectNotificationTableMap::COL_TIME, $this->time);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_USER_ID)) {
-            $criteria->add(ProjectNotificationTableMap::COL_USER_ID, $this->user_id);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_MESSAGE_ID)) {
-            $criteria->add(ProjectNotificationTableMap::COL_MESSAGE_ID, $this->message_id);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_OPENED_AT)) {
-            $criteria->add(ProjectNotificationTableMap::COL_OPENED_AT, $this->opened_at);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_ANSWRED_AT)) {
-            $criteria->add(ProjectNotificationTableMap::COL_ANSWRED_AT, $this->answred_at);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_CREATED_AT)) {
-            $criteria->add(ProjectNotificationTableMap::COL_CREATED_AT, $this->created_at);
-        }
-        if ($this->isColumnModified(ProjectNotificationTableMap::COL_UPDATED_AT)) {
-            $criteria->add(ProjectNotificationTableMap::COL_UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(VotingUserOptionTableMap::COL_VOTE_ID)) {
+            $criteria->add(VotingUserOptionTableMap::COL_VOTE_ID, $this->vote_id);
         }
 
         return $criteria;
@@ -1556,8 +1019,8 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildProjectNotificationQuery::create();
-        $criteria->add(ProjectNotificationTableMap::COL_ID, $this->id);
+        $criteria = ChildVotingUserOptionQuery::create();
+        $criteria->add(VotingUserOptionTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1619,22 +1082,15 @@ abstract class ProjectNotification implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \ProjectNotification (or compatible) type.
+     * @param      object $copyObj An object of \VotingUserOption (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setStudyId($this->getStudyId());
-        $copyObj->setResponseText($this->getResponseText());
-        $copyObj->setTime($this->getTime());
         $copyObj->setUserId($this->getUserId());
-        $copyObj->setMessageId($this->getMessageId());
-        $copyObj->setOpenedAt($this->getOpenedAt());
-        $copyObj->setAnswredAt($this->getAnswredAt());
-        $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setVoteId($this->getVoteId());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1650,7 +1106,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \ProjectNotification Clone of current object.
+     * @return \VotingUserOption Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1664,26 +1120,26 @@ abstract class ProjectNotification implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildProjectMessages object.
+     * Declares an association between this object and a ChildVotingOption object.
      *
-     * @param  ChildProjectMessages $v
-     * @return $this|\ProjectNotification The current object (for fluent API support)
+     * @param  ChildVotingOption $v
+     * @return $this|\VotingUserOption The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setProjectMessages(ChildProjectMessages $v = null)
+    public function setVotingOption(ChildVotingOption $v = null)
     {
         if ($v === null) {
-            $this->setMessageId(NULL);
+            $this->setVoteId(NULL);
         } else {
-            $this->setMessageId($v->getId());
+            $this->setVoteId($v->getId());
         }
 
-        $this->aProjectMessages = $v;
+        $this->aVotingOption = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildProjectMessages object, it will not be re-added.
+        // If this object has already been added to the ChildVotingOption object, it will not be re-added.
         if ($v !== null) {
-            $v->addProjectNotification($this);
+            $v->addVotingUserOption($this);
         }
 
 
@@ -1692,87 +1148,36 @@ abstract class ProjectNotification implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildProjectMessages object
+     * Get the associated ChildVotingOption object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildProjectMessages The associated ChildProjectMessages object.
+     * @return ChildVotingOption The associated ChildVotingOption object.
      * @throws PropelException
      */
-    public function getProjectMessages(ConnectionInterface $con = null)
+    public function getVotingOption(ConnectionInterface $con = null)
     {
-        if ($this->aProjectMessages === null && ($this->message_id != 0)) {
-            $this->aProjectMessages = ChildProjectMessagesQuery::create()->findPk($this->message_id, $con);
+        if ($this->aVotingOption === null && ($this->vote_id != 0)) {
+            $this->aVotingOption = ChildVotingOptionQuery::create()->findPk($this->vote_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aProjectMessages->addProjectNotifications($this);
+                $this->aVotingOption->addVotingUserOptions($this);
              */
         }
 
-        return $this->aProjectMessages;
+        return $this->aVotingOption;
     }
 
     /**
-     * Declares an association between this object and a ChildProjectStudy object.
+     * Declares an association between this object and a ChildVotingUser object.
      *
-     * @param  ChildProjectStudy $v
-     * @return $this|\ProjectNotification The current object (for fluent API support)
+     * @param  ChildVotingUser $v
+     * @return $this|\VotingUserOption The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setProjectStudy(ChildProjectStudy $v = null)
-    {
-        if ($v === null) {
-            $this->setStudyId(NULL);
-        } else {
-            $this->setStudyId($v->getId());
-        }
-
-        $this->aProjectStudy = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildProjectStudy object, it will not be re-added.
-        if ($v !== null) {
-            $v->addProjectNotification($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildProjectStudy object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildProjectStudy The associated ChildProjectStudy object.
-     * @throws PropelException
-     */
-    public function getProjectStudy(ConnectionInterface $con = null)
-    {
-        if ($this->aProjectStudy === null && ($this->study_id != 0)) {
-            $this->aProjectStudy = ChildProjectStudyQuery::create()->findPk($this->study_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aProjectStudy->addProjectNotifications($this);
-             */
-        }
-
-        return $this->aProjectStudy;
-    }
-
-    /**
-     * Declares an association between this object and a ChildProjectUser object.
-     *
-     * @param  ChildProjectUser $v
-     * @return $this|\ProjectNotification The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setProjectUser(ChildProjectUser $v = null)
+    public function setVotingUser(ChildVotingUser $v = null)
     {
         if ($v === null) {
             $this->setUserId(NULL);
@@ -1780,12 +1185,12 @@ abstract class ProjectNotification implements ActiveRecordInterface
             $this->setUserId($v->getId());
         }
 
-        $this->aProjectUser = $v;
+        $this->aVotingUser = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildProjectUser object, it will not be re-added.
+        // If this object has already been added to the ChildVotingUser object, it will not be re-added.
         if ($v !== null) {
-            $v->addProjectNotification($this);
+            $v->addVotingUserOption($this);
         }
 
 
@@ -1794,26 +1199,26 @@ abstract class ProjectNotification implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildProjectUser object
+     * Get the associated ChildVotingUser object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildProjectUser The associated ChildProjectUser object.
+     * @return ChildVotingUser The associated ChildVotingUser object.
      * @throws PropelException
      */
-    public function getProjectUser(ConnectionInterface $con = null)
+    public function getVotingUser(ConnectionInterface $con = null)
     {
-        if ($this->aProjectUser === null && ($this->user_id != 0)) {
-            $this->aProjectUser = ChildProjectUserQuery::create()->findPk($this->user_id, $con);
+        if ($this->aVotingUser === null && ($this->user_id != 0)) {
+            $this->aVotingUser = ChildVotingUserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aProjectUser->addProjectNotifications($this);
+                $this->aVotingUser->addVotingUserOptions($this);
              */
         }
 
-        return $this->aProjectUser;
+        return $this->aVotingUser;
     }
 
     /**
@@ -1823,25 +1228,15 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aProjectMessages) {
-            $this->aProjectMessages->removeProjectNotification($this);
+        if (null !== $this->aVotingOption) {
+            $this->aVotingOption->removeVotingUserOption($this);
         }
-        if (null !== $this->aProjectStudy) {
-            $this->aProjectStudy->removeProjectNotification($this);
-        }
-        if (null !== $this->aProjectUser) {
-            $this->aProjectUser->removeProjectNotification($this);
+        if (null !== $this->aVotingUser) {
+            $this->aVotingUser->removeVotingUserOption($this);
         }
         $this->id = null;
-        $this->study_id = null;
-        $this->response_text = null;
-        $this->time = null;
         $this->user_id = null;
-        $this->message_id = null;
-        $this->opened_at = null;
-        $this->answred_at = null;
-        $this->created_at = null;
-        $this->updated_at = null;
+        $this->vote_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1862,9 +1257,8 @@ abstract class ProjectNotification implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
-        $this->aProjectMessages = null;
-        $this->aProjectStudy = null;
-        $this->aProjectUser = null;
+        $this->aVotingOption = null;
+        $this->aVotingUser = null;
     }
 
     /**
@@ -1874,7 +1268,7 @@ abstract class ProjectNotification implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ProjectNotificationTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(VotingUserOptionTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

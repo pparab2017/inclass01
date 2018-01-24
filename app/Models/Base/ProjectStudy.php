@@ -743,20 +743,8 @@ abstract class ProjectStudy implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-
-                if (!$this->isColumnModified(ProjectStudyTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
-                if (!$this->isColumnModified(ProjectStudyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(ProjectStudyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -2195,20 +2183,6 @@ abstract class ProjectStudy implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(ProjectStudyTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildProjectStudy The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[ProjectStudyTableMap::COL_UPDATED_AT] = true;
-
-        return $this;
     }
 
     /**

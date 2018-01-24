@@ -1,4 +1,4 @@
-<?php
+s<?php
 /**
  * Created by PhpStorm.
  * User: rlews
@@ -166,6 +166,48 @@ $notification->setStudyId(1);
 $notification->setTime("2017-12-02 16:32:22");
 $notification->setMessageId(4);
 $notification->save();
+
+
+
+$v_user = new VotingUser();
+$v_user->setEmail("jdavis@voteapp.com");
+$v_user->setFname("Jane");
+$v_user->setLname("Davis");
+$v_user->setHash(Utils::generateHash("1234"));
+$v_user->setGender("FEMALE");
+$v_user->save();
+
+
+$v_user = new VotingUser();
+$v_user->setEmail("jGrace@voteapp.com");
+$v_user->setFname("John");
+$v_user->setLname("Grace");
+$v_user->setHash(Utils::generateHash("1234"));
+$v_user->setGender("MALE");
+$v_user->save();
+//#FF1744', '#F57C00', '#FFD54F', '#FFF59D'
+$optionArray = ["Apple" => "#FF1744", "Orange" => "#F57C00", "Banana" => "#FFD54F", "Pineapple" => "#FFF59D"];
+
+foreach ($optionArray as $key => $value){
+    $option = new VotingOption();
+    $option->setName($key);
+    $option->setMore($key);
+    $option->setColor($value);
+    $option->save();
+}
+
+
+$user_vote = new VotingUserOption();
+$user_vote->setUserId(1);
+$user_vote->setVoteId(1);
+$user_vote->save();
+
+$user_vote = new VotingUserOption();
+$user_vote->setUserId(2);
+$user_vote->setVoteId(1);
+$user_vote->save();
+
+
 
 echo "" . date_default_timezone_get() .  date('Y-m-d H:i:s') .  PHP_EOL;
 

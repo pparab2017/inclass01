@@ -222,7 +222,7 @@
     </vendor>
   </table>
   <table name="inclass" idMethod="native" phpName="Inclass">
-    <column name="id" phpName="Id" type="INTEGER" primaryKey="true"  required="true"/>
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="first_name" phpName="FirstName" type="VARCHAR" size="100"/>
     <column name="last_name" phpName="LastName" type="VARCHAR" size="100"/>
     <column name="email" phpName="Email" type="VARCHAR" size="100"/>
@@ -254,7 +254,8 @@
     <column name="Time" phpName="Time" type="VARCHAR" size="45"/>
     <column name="Study_Id" phpName="StudyId" type="INTEGER" required="true"/>
     <column name="LastSent" phpName="Lastsent" type="TIMESTAMP"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
     <foreign-key foreignTable="project_study" name="fk_study_messgaes">
       <reference local="Study_Id" foreign="id"/>
     </foreign-key>
@@ -274,7 +275,8 @@
     <column name="message_id" phpName="MessageId" type="INTEGER"/>
     <column name="opened_at" phpName="OpenedAt" type="TIMESTAMP"/>
     <column name="answred_at" phpName="AnswredAt" type="TIMESTAMP"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
     <foreign-key foreignTable="project_messages" name="fk_message_notification_id">
       <reference local="message_id" foreign="id"/>
     </foreign-key>
@@ -301,7 +303,8 @@
     <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="study_name" phpName="StudyName" type="VARCHAR" size="45"/>
     <column name="study_description" phpName="StudyDescription" type="VARCHAR" size="300"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
@@ -316,7 +319,8 @@
     <column name="role" phpName="Role" type="CHAR" sqlType="enum('COORDINATOR','STUDENT')" defaultValue="STUDENT"/>
     <column name="Subscribed" phpName="Subscribed" type="CHAR" sqlType="enum('YES','NO')" defaultValue="YES"/>
     <column name="study_id" phpName="StudyId" type="INTEGER"/>
-    <behavior name="timestampable" />
+    <column name="created_at" phpName="CreatedAt" type="TIMESTAMP"/>
+    <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP"/>
     <foreign-key foreignTable="project_study" name="fk_project_study">
       <reference local="study_id" foreign="id"/>
     </foreign-key>
@@ -353,6 +357,52 @@
     <column name="count" phpName="Count" type="VARCHAR" size="45" defaultValue="0"/>
     <unique name="number_UNIQUE">
       <unique-column name="number"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="voting_option" idMethod="native" phpName="VotingOption">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45"/>
+    <column name="more" phpName="More" type="VARCHAR" size="500"/>
+    <column name="color" phpName="Color" type="VARCHAR" size="45"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="voting_user" idMethod="native" phpName="VotingUser">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="email" phpName="Email" type="VARCHAR" size="45" required="true"/>
+    <column name="fname" phpName="Fname" type="VARCHAR" size="45" required="true"/>
+    <column name="lname" phpName="Lname" type="VARCHAR" size="45" required="true"/>
+    <column name="gender" phpName="Gender" type="CHAR" sqlType="enum('MALE','FEMALE')" required="true"/>
+    <column name="hash" phpName="Hash" type="VARCHAR" size="45" required="true"/>
+    <unique name="email_UNIQUE">
+      <unique-column name="email"/>
+    </unique>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="voting_user_option" idMethod="native" phpName="VotingUserOption">
+    <column name="id" phpName="Id" type="INTEGER" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="user_id" phpName="UserId" type="INTEGER" required="true"/>
+    <column name="vote_id" phpName="VoteId" type="INTEGER" required="true"/>
+    <foreign-key foreignTable="voting_option" name="fkk_voting_option_id">
+      <reference local="vote_id" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="voting_user" name="fkk_voting_user_id">
+      <reference local="user_id" foreign="id"/>
+    </foreign-key>
+    <index name="fkk_voting_option_id_idx">
+      <index-column name="vote_id"/>
+    </index>
+    <unique name="user_id_UNIQUE">
+      <unique-column name="user_id"/>
+    </unique>
+    <unique name="id_UNIQUE">
+      <unique-column name="id"/>
     </unique>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>

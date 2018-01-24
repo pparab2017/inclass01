@@ -2,8 +2,8 @@
 
 namespace Map;
 
-use \ProjectNotification;
-use \ProjectNotificationQuery;
+use \VotingOption;
+use \VotingOptionQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'project_notification' table.
+ * This class defines the structure of the 'voting_option' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ProjectNotificationTableMap extends TableMap
+class VotingOptionTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class ProjectNotificationTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.ProjectNotificationTableMap';
+    const CLASS_NAME = '.Map.VotingOptionTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class ProjectNotificationTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'project_notification';
+    const TABLE_NAME = 'voting_option';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\ProjectNotification';
+    const OM_CLASS = '\\VotingOption';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'ProjectNotification';
+    const CLASS_DEFAULT = 'VotingOption';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 10;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,57 +69,27 @@ class ProjectNotificationTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 10;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'project_notification.id';
+    const COL_ID = 'voting_option.id';
 
     /**
-     * the column name for the study_id field
+     * the column name for the name field
      */
-    const COL_STUDY_ID = 'project_notification.study_id';
+    const COL_NAME = 'voting_option.name';
 
     /**
-     * the column name for the response_text field
+     * the column name for the more field
      */
-    const COL_RESPONSE_TEXT = 'project_notification.response_text';
+    const COL_MORE = 'voting_option.more';
 
     /**
-     * the column name for the time field
+     * the column name for the color field
      */
-    const COL_TIME = 'project_notification.time';
-
-    /**
-     * the column name for the user_id field
-     */
-    const COL_USER_ID = 'project_notification.user_id';
-
-    /**
-     * the column name for the message_id field
-     */
-    const COL_MESSAGE_ID = 'project_notification.message_id';
-
-    /**
-     * the column name for the opened_at field
-     */
-    const COL_OPENED_AT = 'project_notification.opened_at';
-
-    /**
-     * the column name for the answred_at field
-     */
-    const COL_ANSWRED_AT = 'project_notification.answred_at';
-
-    /**
-     * the column name for the created_at field
-     */
-    const COL_CREATED_AT = 'project_notification.created_at';
-
-    /**
-     * the column name for the updated_at field
-     */
-    const COL_UPDATED_AT = 'project_notification.updated_at';
+    const COL_COLOR = 'voting_option.color';
 
     /**
      * The default string format for model objects of the related table
@@ -133,11 +103,11 @@ class ProjectNotificationTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'StudyId', 'ResponseText', 'Time', 'UserId', 'MessageId', 'OpenedAt', 'AnswredAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'studyId', 'responseText', 'time', 'userId', 'messageId', 'openedAt', 'answredAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(ProjectNotificationTableMap::COL_ID, ProjectNotificationTableMap::COL_STUDY_ID, ProjectNotificationTableMap::COL_RESPONSE_TEXT, ProjectNotificationTableMap::COL_TIME, ProjectNotificationTableMap::COL_USER_ID, ProjectNotificationTableMap::COL_MESSAGE_ID, ProjectNotificationTableMap::COL_OPENED_AT, ProjectNotificationTableMap::COL_ANSWRED_AT, ProjectNotificationTableMap::COL_CREATED_AT, ProjectNotificationTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'study_id', 'response_text', 'time', 'user_id', 'message_id', 'opened_at', 'answred_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'More', 'Color', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'more', 'color', ),
+        self::TYPE_COLNAME       => array(VotingOptionTableMap::COL_ID, VotingOptionTableMap::COL_NAME, VotingOptionTableMap::COL_MORE, VotingOptionTableMap::COL_COLOR, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'more', 'color', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -147,11 +117,11 @@ class ProjectNotificationTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'StudyId' => 1, 'ResponseText' => 2, 'Time' => 3, 'UserId' => 4, 'MessageId' => 5, 'OpenedAt' => 6, 'AnswredAt' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'studyId' => 1, 'responseText' => 2, 'time' => 3, 'userId' => 4, 'messageId' => 5, 'openedAt' => 6, 'answredAt' => 7, 'createdAt' => 8, 'updatedAt' => 9, ),
-        self::TYPE_COLNAME       => array(ProjectNotificationTableMap::COL_ID => 0, ProjectNotificationTableMap::COL_STUDY_ID => 1, ProjectNotificationTableMap::COL_RESPONSE_TEXT => 2, ProjectNotificationTableMap::COL_TIME => 3, ProjectNotificationTableMap::COL_USER_ID => 4, ProjectNotificationTableMap::COL_MESSAGE_ID => 5, ProjectNotificationTableMap::COL_OPENED_AT => 6, ProjectNotificationTableMap::COL_ANSWRED_AT => 7, ProjectNotificationTableMap::COL_CREATED_AT => 8, ProjectNotificationTableMap::COL_UPDATED_AT => 9, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'study_id' => 1, 'response_text' => 2, 'time' => 3, 'user_id' => 4, 'message_id' => 5, 'opened_at' => 6, 'answred_at' => 7, 'created_at' => 8, 'updated_at' => 9, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'More' => 2, 'Color' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'more' => 2, 'color' => 3, ),
+        self::TYPE_COLNAME       => array(VotingOptionTableMap::COL_ID => 0, VotingOptionTableMap::COL_NAME => 1, VotingOptionTableMap::COL_MORE => 2, VotingOptionTableMap::COL_COLOR => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'more' => 2, 'color' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -164,23 +134,17 @@ class ProjectNotificationTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('project_notification');
-        $this->setPhpName('ProjectNotification');
+        $this->setName('voting_option');
+        $this->setPhpName('VotingOption');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\ProjectNotification');
+        $this->setClassName('\\VotingOption');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('study_id', 'StudyId', 'INTEGER', 'project_study', 'id', false, null, null);
-        $this->addColumn('response_text', 'ResponseText', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('time', 'Time', 'TIMESTAMP', false, null, null);
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', 'project_user', 'id', false, null, null);
-        $this->addForeignKey('message_id', 'MessageId', 'INTEGER', 'project_messages', 'id', false, null, null);
-        $this->addColumn('opened_at', 'OpenedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('answred_at', 'AnswredAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', false, 45, null);
+        $this->addColumn('more', 'More', 'VARCHAR', false, 500, null);
+        $this->addColumn('color', 'Color', 'VARCHAR', false, 45, null);
     } // initialize()
 
     /**
@@ -188,27 +152,13 @@ class ProjectNotificationTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('ProjectMessages', '\\ProjectMessages', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('VotingUserOption', '\\VotingUserOption', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':message_id',
+    0 => ':vote_id',
     1 => ':id',
   ),
-), null, null, null, false);
-        $this->addRelation('ProjectStudy', '\\ProjectStudy', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':study_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
-        $this->addRelation('ProjectUser', '\\ProjectUser', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
+), null, null, 'VotingUserOptions', false);
     } // buildRelations()
 
     /**
@@ -268,7 +218,7 @@ class ProjectNotificationTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ProjectNotificationTableMap::CLASS_DEFAULT : ProjectNotificationTableMap::OM_CLASS;
+        return $withPrefix ? VotingOptionTableMap::CLASS_DEFAULT : VotingOptionTableMap::OM_CLASS;
     }
 
     /**
@@ -282,22 +232,22 @@ class ProjectNotificationTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (ProjectNotification object, last column rank)
+     * @return array           (VotingOption object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ProjectNotificationTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ProjectNotificationTableMap::getInstanceFromPool($key))) {
+        $key = VotingOptionTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = VotingOptionTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ProjectNotificationTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + VotingOptionTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ProjectNotificationTableMap::OM_CLASS;
-            /** @var ProjectNotification $obj */
+            $cls = VotingOptionTableMap::OM_CLASS;
+            /** @var VotingOption $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ProjectNotificationTableMap::addInstanceToPool($obj, $key);
+            VotingOptionTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -320,18 +270,18 @@ class ProjectNotificationTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ProjectNotificationTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ProjectNotificationTableMap::getInstanceFromPool($key))) {
+            $key = VotingOptionTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = VotingOptionTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var ProjectNotification $obj */
+                /** @var VotingOption $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ProjectNotificationTableMap::addInstanceToPool($obj, $key);
+                VotingOptionTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -352,27 +302,15 @@ class ProjectNotificationTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_ID);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_STUDY_ID);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_RESPONSE_TEXT);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_TIME);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_MESSAGE_ID);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_OPENED_AT);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_ANSWRED_AT);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(ProjectNotificationTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(VotingOptionTableMap::COL_ID);
+            $criteria->addSelectColumn(VotingOptionTableMap::COL_NAME);
+            $criteria->addSelectColumn(VotingOptionTableMap::COL_MORE);
+            $criteria->addSelectColumn(VotingOptionTableMap::COL_COLOR);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.study_id');
-            $criteria->addSelectColumn($alias . '.response_text');
-            $criteria->addSelectColumn($alias . '.time');
-            $criteria->addSelectColumn($alias . '.user_id');
-            $criteria->addSelectColumn($alias . '.message_id');
-            $criteria->addSelectColumn($alias . '.opened_at');
-            $criteria->addSelectColumn($alias . '.answred_at');
-            $criteria->addSelectColumn($alias . '.created_at');
-            $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.more');
+            $criteria->addSelectColumn($alias . '.color');
         }
     }
 
@@ -385,7 +323,7 @@ class ProjectNotificationTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ProjectNotificationTableMap::DATABASE_NAME)->getTable(ProjectNotificationTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(VotingOptionTableMap::DATABASE_NAME)->getTable(VotingOptionTableMap::TABLE_NAME);
     }
 
     /**
@@ -393,16 +331,16 @@ class ProjectNotificationTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ProjectNotificationTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ProjectNotificationTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ProjectNotificationTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(VotingOptionTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(VotingOptionTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new VotingOptionTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a ProjectNotification or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a VotingOption or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or ProjectNotification object or primary key or array of primary keys
+     * @param mixed               $values Criteria or VotingOption object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -413,27 +351,27 @@ class ProjectNotificationTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectNotificationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VotingOptionTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \ProjectNotification) { // it's a model object
+        } elseif ($values instanceof \VotingOption) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ProjectNotificationTableMap::DATABASE_NAME);
-            $criteria->add(ProjectNotificationTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(VotingOptionTableMap::DATABASE_NAME);
+            $criteria->add(VotingOptionTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = ProjectNotificationQuery::create()->mergeWith($criteria);
+        $query = VotingOptionQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ProjectNotificationTableMap::clearInstancePool();
+            VotingOptionTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ProjectNotificationTableMap::removeInstanceFromPool($singleval);
+                VotingOptionTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -441,20 +379,20 @@ class ProjectNotificationTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the project_notification table.
+     * Deletes all rows from the voting_option table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ProjectNotificationQuery::create()->doDeleteAll($con);
+        return VotingOptionQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a ProjectNotification or Criteria object.
+     * Performs an INSERT on the database, given a VotingOption or Criteria object.
      *
-     * @param mixed               $criteria Criteria or ProjectNotification object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or VotingOption object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -463,22 +401,22 @@ class ProjectNotificationTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ProjectNotificationTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VotingOptionTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from ProjectNotification object
+            $criteria = $criteria->buildCriteria(); // build Criteria from VotingOption object
         }
 
-        if ($criteria->containsKey(ProjectNotificationTableMap::COL_ID) && $criteria->keyContainsValue(ProjectNotificationTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ProjectNotificationTableMap::COL_ID.')');
+        if ($criteria->containsKey(VotingOptionTableMap::COL_ID) && $criteria->keyContainsValue(VotingOptionTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.VotingOptionTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = ProjectNotificationQuery::create()->mergeWith($criteria);
+        $query = VotingOptionQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -487,7 +425,7 @@ class ProjectNotificationTableMap extends TableMap
         });
     }
 
-} // ProjectNotificationTableMap
+} // VotingOptionTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ProjectNotificationTableMap::buildTableMap();
+VotingOptionTableMap::buildTableMap();
