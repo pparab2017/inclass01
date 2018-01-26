@@ -17,95 +17,112 @@ use Propel\Runtime\Propel;
 $app->post('/voting_app/vote', function ($request, $response, $args) {
     $params = $request->getParsedBody();
     $_id = $this->jwt->user;
-try {
-    $getFruit =  VotingOptionQuery::create()
-        ->findOneByName($params['name']);
+    if(Utils::checkIfNotEmpty($_id)) {
+        $user = VotingUserQuery::create()
+            ->leftJoinVotingUserOption()
+            ->filterById($_id, VotingUserQuery::EQUAL)
+            ->findOne();
+        if($user != NULL) {
+                try {
+                    $getFruit =  VotingOptionQuery::create()
+                        ->findOneByName($params['name']);
 
-    $userVote = new VotingUserOption();
-    $userVote->setVoteId($getFruit->getId());
-    $userVote->setUserId($_id);
-    $userVote->save();
+                    $userVote = new VotingUserOption();
+                    $userVote->setVoteId($getFruit->getId());
+                    $userVote->setUserId($_id);
+                    $userVote->save();
 
-    $user = VotingUserQuery::create()
-        ->leftJoinVotingUserOption()
-        ->filterById($_id, VotingUserQuery::EQUAL)
-        ->findOne();
+                    $user = VotingUserQuery::create()
+                        ->leftJoinVotingUserOption()
+                        ->filterById($_id, VotingUserQuery::EQUAL)
+                        ->findOne();
 
-    if (count($user->getVotingUserOptions()) > 0) {
-        $vote = VotingOptionQuery::create()
-            ->findOneById($user->getVotingUserOptions()[0]->getVoteId());
-        $data["vote"] = $vote->getName();
-    } else {
-        $data["vote"] = "";
-    }
-    $data["userId"] = $user->getId();
-    $data["userId"] = $user->getId();
-    $data["userEmail"] = $user->getEmail();
-    $data["userFname"] = $user->getFname();
-    $data["userLname"] = $user->getLname();
-    $data["gender"] = $user->getGender();
-    $group = VotingOptionQuery::create()
-        ->leftJoinVotingUserOption()
-        ->groupById()
-        ->withColumn('count(VotingUserOption.VoteId)', 'val')
-        ->withColumn("VotingOption.Name", "name")
-        ->select(array("VotingOption.color" => "color"))
-        ->find();
-    return $response->withStatus(201)
-        ->withHeader("Content-Type", "application/json")
-        ->write(json_encode(["status" => "ok", "user" => $data, "voting" => $group->toArray()], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
-}
-catch (Exception $ex){
-    $data["status"] = "error";
-    $data["message"] = $ex->getPrevious()->getMessage();
-    return $response->withStatus(401)
-        ->withHeader("Content-Type", "application/json")
-        ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+                    if (count($user->getVotingUserOptions()) > 0) {
+                        $vote = VotingOptionQuery::create()
+                            ->findOneById($user->getVotingUserOptions()[0]->getVoteId());
+                        $data["vote"] = $vote->getName();
+                    } else {
+                        $data["vote"] = "";
+                    }
+                    $data["userId"] = $user->getId();
+                    $data["userId"] = $user->getId();
+                    $data["userEmail"] = $user->getEmail();
+                    $data["userFname"] = $user->getFname();
+                    $data["userLname"] = $user->getLname();
+                    $data["gender"] = $user->getGender();
+                    $group = VotingOptionQuery::create()
+                        ->leftJoinVotingUserOption()
+                        ->groupById()
+                        ->withColumn('count(VotingUserOption.VoteId)', 'val')
+                        ->withColumn("VotingOption.Name", "name")
+                        ->select(array("VotingOption.color" => "color"))
+                        ->find();
+                    return $response->withStatus(201)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode(["status" => "ok", "user" => $data, "voting" => $group->toArray()], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+                }
+                catch (Exception $ex){
+                    $data["status"] = "error";
+                    $data["message"] = $ex->getPrevious()->getMessage();
+                    return $response->withStatus(401)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+
+                }
+            return $response
+                ->withStatus(400)
+                ->withJson(['status'=>'error', "message"=>"invalid UserID ot Token"]);
+
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"invalid ID"]);
 }
 
 
 })->setName('voting_app.vote');
 
 $app->get('/voting_app/getVotes', function ($request, $response, $args) {
-
     $_id = $this->jwt->user;
+    if(Utils::checkIfNotEmpty($_id)) {
+        $user = VotingUserQuery::create()
+            ->leftJoinVotingUserOption()
+            ->filterById($_id, VotingUserQuery::EQUAL)
+            ->findOne();
+        if($user != NULL) {
 
-    $user = VotingUserQuery::create()
-        ->leftJoinVotingUserOption()
-        ->filterById($_id,VotingUserQuery::EQUAL)
-        ->findOne();
+            if (count($user->getVotingUserOptions()) > 0) {
+                $vote = VotingOptionQuery::create()
+                    ->findOneById($user->getVotingUserOptions()[0]->getVoteId());
+                $data["vote"] = $vote->getName();
+            } else {
+                $data["vote"] = "";
+            }
+            $data["userId"] = $user->getId();
+            $data["userId"] = $user->getId();
+            $data["userEmail"] = $user->getEmail();
+            $data["userFname"] = $user->getFname();
+            $data["userLname"] = $user->getLname();
+            $data["gender"] = $user->getGender();
+            $group = VotingOptionQuery::create()
+                ->leftJoinVotingUserOption()
+                ->groupById()
+                ->withColumn('count(VotingUserOption.VoteId)', 'val')
+                ->withColumn("VotingOption.Name", "name")
+                ->select(array("VotingOption.color" => "color"))
+                ->find();
+            return $response->withStatus(201)
+                ->withHeader("Content-Type", "application/json")
+                ->write(json_encode(["status" => "ok", "user" => $data, "voting" => $group->toArray()], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        }
+        return $response
+            ->withStatus(400)
+            ->withJson(['status'=>'error', "message"=>"invalid UserID ot Token"]);
 
-
-   // $data["vote"] = $user->getVotingUserOptions()[0]->getVotingOption()->getName();
-   // else
-    if(count( $user->getVotingUserOptions()) > 0)
-    {
-        $vote = VotingOptionQuery::create()
-            ->findOneById($user->getVotingUserOptions()[0]->getVoteId());
-        $data["vote"] =$vote->getName();
     }
-
-    else{
-        $data["vote"] ="";
-    }
-    $data["userId"] = $user->getId();
-    $data["userId"] = $user->getId();
-    $data["userEmail"] = $user->getEmail();
-    $data["userFname"] = $user->getFname();
-    $data["userLname"] = $user->getLname();
-    $data["gender"] = $user->getGender();
-    $group = VotingOptionQuery::create()
-        ->leftJoinVotingUserOption()
-        ->groupById()
-        ->withColumn('count(VotingUserOption.VoteId)', 'val')
-        ->withColumn("VotingOption.Name", "name")
-        ->select(array("VotingOption.color" => "color"))
-        ->find();
-    return $response->withStatus(201)
-        ->withHeader("Content-Type", "application/json")
-        ->write(json_encode(["status" => "ok", "user" => $data, "voting" =>$group->toArray()], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
-
-
+    return $response
+        ->withStatus(400)
+        ->withJson(['status'=>'error', "message"=>"invalid ID"]);
 
 })->setName('voting_app.getVotes');
 
